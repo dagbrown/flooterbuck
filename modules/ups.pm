@@ -4,7 +4,7 @@
 # If you give it a tracking number, it returns the last known
 # location of your UPS-delivered parcel.
 #
-# $Id: ups.pm,v 1.8 2002/02/04 17:52:24 awh Exp $
+# $Id: ups.pm,v 1.9 2004/04/23 01:05:25 dagbrown Exp $
 #------------------------------------------------------------------------
 
 package ups;
@@ -159,7 +159,7 @@ sub get($$) {
 sub scan(&$$) {
     my ($callback,$message,$who) = @_;
 
-    if($message=~/ups [0-9A-Z]+\??$/) {
+    if($message=~/^\s*ups [0-9A-Z]+\??$/) {
         return get($message,$callback);
     }
     return undef;
