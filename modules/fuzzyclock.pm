@@ -8,7 +8,7 @@
 # Make it psychic enough to figure out what timezone you're in, and have
 # it tell you the right time.  (Ha ha ha)
 #
-# $Id: fuzzyclock.pm,v 1.6 2001/12/13 16:53:20 dagbrown Exp $
+# $Id: fuzzyclock.pm,v 1.7 2001/12/13 17:05:09 awh Exp $
 #------------------------------------------------------------------------
 
 use strict;
@@ -69,7 +69,9 @@ sub fuzzytime {
             $timestring .= "in the middle of the night";
         } elsif($myhour >= 5 and $myhour <= 11) {
             $timestring .= "in the morning";
-        } elsif($myhour >= 12 and $myhour <= 17 ) {
+	} elsif($myhour = 12 ) {
+	    $timestring .= "noon";
+        } elsif($myhour >= 13 and $myhour <= 17 ) {
             $timestring .= "in the afternoon";
         } elsif($myhour >= 18 and $myhour <= 20 ) {
             $timestring .= "in the evening";
