@@ -34,6 +34,8 @@ sub scan(&$$) {
                     $reply .= ", so you'll have to figure it out yourself.";
                 }
             }
+        } else {
+            $reply = "Whoops!  That's not the name of a module.";
         }
         $callback->($reply);
         return 1;
