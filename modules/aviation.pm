@@ -29,10 +29,10 @@
 # 2003/02/22 dagbrown@rogers.com
 #            - Added patch to make it more picky about where words end
 #
-# $Id: Aviation.pm,v 1.15 2004/03/12 01:21:10 rich_lafferty Exp $
+# $Id: aviation.pm,v 1.1 2004/09/12 21:44:06 dagbrown Exp $
 #------------------------------------------------------------------------
 
-package Aviation;
+package aviation;
 
 my ($no_aviation, $no_entities, $no_posix);
 
@@ -489,5 +489,5 @@ sub airport {
 }
 
     
-"Aviation";
+"aviation";
 __END__

@@ -7,7 +7,7 @@
 # once again, thanks to Patrick Cole
 #------------------------------------------------------------------------
 
-package DNS;
+package dns;
 
 use strict;
 use Socket;
@@ -96,7 +96,7 @@ sub scan(&$$) {
     return undef;
 }
 
-"DNS";
+"dns";
 
 __END__
 

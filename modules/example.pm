@@ -2,10 +2,10 @@
 # A VERY minimal example of how to write a New And Improved Infobot
 # Module.  All it does is say "bar" when someone says "foo".
 #
-# $Id: Example.pm,v 1.6 2001/12/04 17:40:27 dagbrown Exp $
+# $Id: example.pm,v 1.1 2004/09/12 21:44:06 dagbrown Exp $
 #------------------------------------------------------------------------
 
-package Example;
+package example;
 
 sub scan(&$$) {
     my ($callback,$message,$who) = @_;
@@ -18,4 +18,4 @@ sub scan(&$$) {
     }
 }
 
-"Example";
+"example";
