@@ -1,9 +1,9 @@
 #------------------------------------------------------------------------
-# eBay auction status request
+# fcol url-shortener
 #
 # Dave Brown
 #
-# $Id: fcol.pm,v 1.15 2003/10/10 19:36:25 rharman Exp $
+# $Id: fcol.pm,v 1.16 2003/10/15 16:15:02 dagbrown Exp $
 #------------------------------------------------------------------------
 package fcol;
 use strict;
