@@ -3,7 +3,7 @@
 #
 # See the POD for more information
 #
-# $Id: message_center.pm,v 1.4 2003/04/25 02:23:58 dagbrown Exp $
+# $Id: message_center.pm,v 1.5 2003/04/25 02:34:08 dagbrown Exp $
 #------------------------------------------------------------------------
 
 =head1 NAME
@@ -56,6 +56,7 @@ sub leave_message {
     }
 
     my $msgs=::get(messages => $to);
+    my $new_message;
     if (length($msgs)==0) {
         $new_message="0\0";   # "knows about messages" flag
     } else {
