@@ -5,7 +5,7 @@
 # feel free to use, copy, cut up, and modify, but if
 # you do something cool with it, let me know.
 #
-# $Id: weather.pm,v 1.10 2004/09/12 21:46:10 dagbrown Exp $
+# $Id: weather.pm,v 1.11 2005/01/21 20:58:03 rich_lafferty Exp $
 #------------------------------------------------------------------------
 
 package weather;
@@ -19,10 +19,20 @@ BEGIN {
     $no_weather++ if ($@);
 }
 
-sub Weather::NOAA::get {
+sub get_weather {
     my ($station) = shift;
-    $station = uc($station);
     my $result;
+
+    # make this work like Aviation
+    $station = uc($station);
+    
+    my $station = uc($2);
+    $station =~ s/[.?!]$//;
+    $station =~ s/\s+$//g;
+    return "'$station' doesn't look like a valid ICAO airport identifier."
+        unless $station =~ /^[\w\d]{3,4}$/;
+    $station = "C" . $station if length($station) == 3 && $station =~ /^Y/;
+    $station = "K" . $station if length($station) == 3;
 
     if ($no_weather) {
         return 0;
@@ -98,13 +108,7 @@ sub scan (&$$) {
     if (::getparam('weather') 
             and ($message =~ /^\s*(wx|weather)\s+(?:for\s+)?(.*?)\s*\?*\s*$/)) {
         my $code = $2;
-        my $weath ;
-        if ($code =~ /^[a-zA-Z][a-zA-Z0-9]{3,4}$/) {
-            $weath = &Weather::NOAA::get($code);
-        } else {
-            $weath = "Try a 4-letter station code (see http://weather.noaa.gov/weather/curcond.html for locations and codes)";
-        }
-        $callback->($weath);
+        $callback->(get_weather($code));
         return 'NOREPLY';
     }
     return undef;
