@@ -28,13 +28,19 @@
 #            - added relative humidity function
 # 2003/02/22 dagbrown@rogers.com
 #            - Added patch to make it more picky about where words end
+# 2004/09/04 joant@ieee.org
+#            - Rewrote greatcircle function with new airrouting.com data,
+#              to support more airports
+#            - Initial heading is now calculated internally with standard
+#              algorithm from http://williams.best.vwh.net/avform.htm.
 #
-# $Id: aviation.pm,v 1.2 2004/09/12 21:58:50 dagbrown Exp $
+# $Id: aviation.pm,v 1.3 2004/10/04 14:42:46 wohali Exp $
 #------------------------------------------------------------------------
 
 package aviation;
 
 my ($no_aviation, $no_entities, $no_posix);
+my $pi = 3.1415926535;
 
 BEGIN {
     eval "use LWP::UserAgent";
@@ -43,6 +49,8 @@ BEGIN {
     if ($@) { $no_entities++};
     eval "use POSIX";
     if ($@) { $no_posix++};
+    eval "use HTML::TokeParser";
+    if ($@) { $no_aviation++};
 }
 
 # Set the following to 1 if you want the forecast separators in 
@@ -84,7 +92,7 @@ sub aviation::scan(&$$) {
 #
 sub aviation::get { 
     if ($no_aviation) {
-	&main::status("Aviation module requires LWP::UserAgent.");
+	&main::status("Aviation module requires LWP::UserAgent and HTML::TokeParser.");
 	return '';
     }
 
@@ -239,19 +247,33 @@ sub taf {
 #                 two airports
 sub greatcircle {
     my $line = shift;
-    if ($line =~ /^great-?circle\s+((from|between|for)\s+)?(\w+)\s+((and|to)\s)?(\w+)/i) {
+    if ($line =~ /^great-?circle\s+((from|between|for)\s+)?(\w+)\s+((and|to)\s+)?(\w+)(\s+(at\s+)?(\w+))?/i) {
 
 	# See metar part for explanation of this bit.
 	my $orig_apt = uc($3);
 	my $dest_apt = uc($6);
+	if ($orig_apt eq $dest_apt) {
+	  return "Cannot calculate great circle between two identical points.";
+	}
+
+	my $speed = $9;
+	if ($speed =~ s/^$//) {
+	   $speed = 1;
+	}
 
 	$dest_apt =~ s/[.?!]$//;
 	$dest_apt =~ s/\s+$//g;
+
+	$speed =~ s/[.?!]$//;
+	$speed =~ s/\s+$//g;
 
 	return "'$orig_apt' doesn't look like a valid ICAO airport identifier."
 	    unless $orig_apt =~ /^[\w\d]{3,4}$/;	
 	return "'$dest_apt' doesn't look like a valid ICAO airport identifier."
 	    unless $dest_apt =~ /^[\w\d]{3,4}$/;	
+
+	return "'$speed' doesn't look like a valid airspeed in knots."
+	    unless $speed =~ /^[\d]{1,5}$/;
 
 	$orig_apt = "C" . $orig_apt if length($orig_apt) == 3 && $orig_apt =~ /^Y/;
 	$orig_apt = "K" . $orig_apt if length($orig_apt) == 3;
@@ -259,7 +281,7 @@ sub greatcircle {
 	$dest_apt = "C" . $dest_apt if length($dest_apt) == 3 && $dest_apt =~ /^Y/;
 	$dest_apt = "K" . $dest_apt if length($dest_apt) == 3;
 
-	my $gc_url = "http://www8.landings.com/cgi-bin/nph-dist_apt?airport1=$orig_apt&airport2=$dest_apt";
+	my $gc_url = "http://www.airrouting.com/scripts/tdcalc.asp?DepartureCode=$orig_apt&ArrivalCode=$dest_apt&airspeed=$speed";
 
 	# Grab great-circle data
 	my $agent = new LWP::UserAgent;
@@ -271,25 +293,101 @@ sub greatcircle {
     
 	# If it can't find it, assume luser error :-)
 	unless ($reply->is_success) {
-	    return "I can't seem to retrieve data from www.landings.com right now.";
+	    return "I can't seem to retrieve data from www.airrouting.com right now.";
 	}  
-	
+
+	my $text = $reply->as_string;
+
 	# extract TAF from equally verbose webpage
-	my $webdata = $reply->as_string;
+	my $stream = HTML::TokeParser->new(\$text);
+
+	my ($orig, $orig_ident, $dest, $dest_ident, $nm, $sm, $km, $tt);
+	my ($lat1f, $lon1f, $lat2f, $lon2f);
+	# Search for origin airport
+	my $tag = $stream->get_tag("font");
+	if ($tag->[1]{color} and $tag->[1]{color} eq "#333333") {
+	  my $block = $stream->get_trimmed_text("/font");
+	  $block =~ m!^*Name: (.*) IATA: (.*) ICAO: (.*) Latitude: (.*) Longitude: (.*) Elevation: (.*)!;
+	  $orig = $1;
+	  my $lat = $4;
+	  my $lon = $5;
+	  $lat =~ m/(\d+)°(\d+)'\s+(\d+)"\s+(\w+)/;
+	  $lat1f = ($1 + ($2/60) + ($3/3600)) * ($pi/180);
+	  if ($4 =~ m/S/) {
+	    $lat1f = -$lat1f;
+	  }
+	  $lon =~ m/(\d+)°(\d+)'\s+(\d+)"\s+(\w+)/;
+	  $lon1f = ($1 + ($2/60) + ($3/3600)) * ($pi/180);
+	  if ($4 =~ m/S/) {
+	    $lon1f = -$lon1f;
+	  }
+	}
+
+	# Repeat for destination airport
+	$tag = $stream->get_tag("font");
+	if ($tag->[1]{color} and $tag->[1]{color} eq "#333333") {
+	  my $block = $stream->get_trimmed_text("/font");
+	  $block =~ m!^*Name: (.*) IATA: (.*) ICAO: (.*) Latitude: (.*) Longitude: (.*) Elevation: (.*)!;
+	  $dest = $1;
+	  my $lat = $4;
+	  my $lon = $5;
+          $lat =~ m/(\d+)°(\d+)'\s+(\d+)"\s+(\w+)/;
+          $lat2f = ($1 + ($2/60) + ($3/3600)) * ($pi/180);
+          if ($4 =~ m/S/) {
+            $lat2f = -$lat2f;
+          }
+          $lon =~ m/(\d+)°(\d+)'\s+(\d+)"\s+(\w+)/;
+          $lon2f = ($1 + ($2/60) + ($3/3600)) * ($pi/180);
+          if ($4 =~ m/S/) {
+            $lon2f = -$lon2f;
+          }
+	} else {
+	  return "www.airrouting.com is down or you have supplied an invalid ICAO identifier.";
+	}
+
+	# Finally parse useful information.
+	$tag = $stream->get_tag("font");
+	if ($tag->[1]{color} and $tag->[1]{color} eq "#333333") {
+	  my $block = $stream->get_trimmed_text("/font");
+	  $block =~ m!Nautical Miles :\s+(.*)\s+Statute Miles :\s+(.*)\s+Kilometers :\s+(.*)\s+Trip Time :\s+(.*)!;
+	  $nm = $1;
+	  $sm = $2;
+	  $km = $3;
+	  $tt = $4;
+	}
+
+	# Calculate initial heading $heading degrees true
+	my $d = 2 * asin(sqrt((sin(($lat1f-$lat2f)/2))**2 +
+	        cos($lat1f)*cos($lat2f)*(sin(($lon1f-$lon2f)/2))**2));
+
+	if (abs(cos($lat1f)) < 0.000000001) {
+	  if ($lat1f > 0) {
+	    $tc = $pi;
+	  } else {
+	    $tc = 2*$pi;
+	  }
+	} else {
+	  if (sin($lon2f-$lon1f) < 0) {
+	    $tc = acos((sin($lat2f)-sin($lat1f)*cos($d))/(sin($d)*cos($lat1f)));
+	  } else {
+	    $tc = 2*$pi-acos((sin($lat2f)-sin($lat1f)*cos($d))/(sin($d)*cos($lat1)));
+	  }
+	}
+	$tc = $tc * (180/$pi);
+	$heading = sprintf "%0.2f°", $tc;
+
 	my $gcd;
-	if ($webdata =~ m/circle: ([.\d]+).*?, ([.\d]+).*?, ([.\d]+).*?heading: ([.\d]+)/s) {
-	    $gcd = "Great-circle distance: $1 mi, $2 nm, $3 km, initial heading $4 degrees true";	
+	if ($speed == 1) {
+	   $gcd = "Great-circle from $orig ($orig_apt) to $dest ($dest_apt): $nm nm, $sm sm, $km km, true course $heading.";
+	} else {
+	   $gcd = "Great-circle from $orig ($orig_apt) to $dest ($dest_apt): $nm nm, $sm sm, $km km, true course $heading.  ETT @ $speed KTAS: $tt.";
 	}
-	else {
-	    $webdata =~ m/(No airport.*?database)/;
-	    $gcd = $1;
-	}
-	
+
 	return $gcd;
     }
     else {
 	# malformed
-	return "That doesn't look right. The 'great-circle' command takes two airport identifiers and returns the great circle distance and heading between them.";
+	return "That doesn't look right. The 'great-circle' command takes two airport identifiers (and an optional speed in KTAS) and returns the great circle distance and heading between them.";
     }
 }
 
@@ -417,9 +515,8 @@ sub airport {
 	    my $response   = '';
 
 	    foreach (@apt_lines) {
-		# skip over entries without ICAO idents (ICAO: n/a)
-		if    (/\(ICAO: <b>[^n]/) { $response .= "$_, "; $pnext = 1; }
-		elsif ($pnext)            { $response .= $_; $pnext = 0; }
+		if    (/\(ICAO: <b>/) { $response .= "$_, "; $pnext = 3; }
+		elsif ($pnext)            { $response .= $_; $pnext--; }
 	    }
 
      	    $response =~ s/(<.*?>)+/ /g; # naive, but works in *this* case.
