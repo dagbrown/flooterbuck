@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: fcol.pm,v 1.3 2002/08/02 22:22:28 dagbrown Exp $
+# $Id: fcol.pm,v 1.4 2002/08/02 22:25:40 dagbrown Exp $
 #------------------------------------------------------------------------
 package fcol;
 use strict;
@@ -49,7 +49,7 @@ Nickname interface added by Drew Hamilton <awh@awh.org>
 my ($no_fcol, $no_posix);
 
 BEGIN {
-    foreach $lib qw(LWP::Simple URI::Escape POSIX) {
+    foreach my $lib qw(LWP::Simple URI::Escape POSIX) {
         eval qq{
             use $lib;
         };
@@ -155,15 +155,11 @@ sub fcol::get($$) {
 sub scan(&$$) {
     my ($callback, $message, $who)=@_;
 
-    if ( $message =~ /^\s*fcol\s+(\w+:\S+)/i ) {
+    if ( $message =~ /^\s*(?:fcol|tinyurl|shrivel)\s+(\w+:\S+)/i ) {
         &main::status("fcol small-URL creation");
-        &fcol::get($message,$callback);
+        fcol::get($message,$callback);
         return 1;
     }
 }
 
 "fcol";
-
-if($ARGV[0]){
-    print fcol_create($ARGV[0]),"\n";
-}
