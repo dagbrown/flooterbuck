@@ -19,6 +19,14 @@ Bug Fixes
 - cleaned out obsolete infobot code in Extras
 - perlfaq feature removed, as associated website no longer exists
 - Cleaned up Extras.pl somewhat
+- Moved Extras.pl to src/ where it belongs
+- Also moved ANSI.pl to src/ where it belongs
+- Removed "myRoutines" processing, because nobody ever used that stuff.
+- Removed 'W3Search' and 'purldoc' because I've never seen anyone using
+  them for anything, either in original infobot land or in flooterbuck land
+- Totally removed the extras directory and all the code which dealt with it,
+  and expurgated all mention of it from the conf file.  "Extras" is now
+  officially dead.
 
 Feature Additions and Enhancements
 ==================================
@@ -136,7 +144,7 @@ Fixed some path names, made a new tarball.
 0.45.0
 
 Renamed the miscdir parameter to confdir (in 'infobot')
-Renames 'files' directory to 'conf'
+Renamed 'files' directory to 'conf'
 Seperated src/ into src/ and extras/
 Changed default name to 'i-bot' in the infobot.config file
 Rationalized the names of the dbs to use dbname as a prefix
