@@ -31,7 +31,7 @@ sub scan(&$$){
             return 1;
         }
 
-        my($r) = $::hello[int(rand(@hello))];
+        my($r) = $hello[int(rand(@hello))];
         $callback->("$r, $who.");
         return 1;
     }
