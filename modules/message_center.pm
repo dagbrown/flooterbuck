@@ -3,7 +3,7 @@
 #
 # See the POD for more information
 #
-# $Id: message_center.pm,v 1.5 2003/04/25 02:34:08 dagbrown Exp $
+# $Id: message_center.pm,v 1.6 2003/04/25 02:52:50 dagbrown Exp $
 #------------------------------------------------------------------------
 
 =head1 NAME
@@ -46,6 +46,11 @@ my $message_center;
 
 BEGIN {
     $message_center=1;  # used by User.pl to see if it should run have_message
+    ::openDBMx('messages');
+}
+
+END {
+    ::closeDBM('messages');
 }
 
 sub leave_message {
