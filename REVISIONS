@@ -1,3 +1,50 @@
+1.0 -- August 19, 2002
+
+Initial Release of Flooterbuck Infobot.
+
+Flooterbuck Infobot is a re-write of Kevin Lenzo's Infobot.  As
+of this initial release, the following things (and probably more)
+have changed:
+
+Programming Style
+=================
+
+ - Almost all of Flooterbuck's features have been modularized.  Now, each
+   individual feature is in its own *.pm file, each file defining a
+   package.  Features can be added and removed simply by adding and
+   removing these *.pm files, without disturbing any other features.
+
+ - Most feature modules give help to the Infobot owner by means of
+   embedded POD documentation, so that perldoc modulename.pm gives
+   purpose, usage, and dependency information.
+
+
+
+Program Features
+================
+
+ - Stock Quote lookups
+ - Several "shorter-link" style services
+ - "reset!" feature which allows bot owner to reload the bot's modules 
+   without restarting the bot
+ - Package tracking for several shipping companies
+ - Ebay auction status
+ - Flight tracking for North American flights
+ - The ability to handle Japanese text -- all text is converted from 
+   JIS to EUC immediately on receipt from the IRC server, and from
+   EUC to JUS immediately before sending a message to the server.
+ - "Top Ten" tracking to track the 10 most verbose channel participants,
+   as well as the 10 highest and lowest karma users
+
+
+
+
+
+
+
+
+---------REVISIONS FOR KEVIN LENZO'S INFOBOT-------------------------
+
 0.45.3 
 
 Really fix the stuff in DBM.pl for the %param hash.
