@@ -33,11 +33,11 @@ sub scan(&$$) {
         $X = lc($X);
 
         foreach my $d ("is","are") {
-            if (my $r = ::get($d, $X)) { 
+            if (my $r = &::get($d, $X)) { 
                 my $old = $r;
                 $matched++;
                 if ($r =~ s/$op/$np/i) {
-                    if (length($r) > ::getparam('maxDataSize')) {
+                    if (length($r) > &::getparam('maxDataSize')) {
                         $callback->("That's too long, $who");
                         return 'NOREPLY';
                     }
