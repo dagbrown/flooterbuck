@@ -17,6 +17,7 @@ Bug Fixes
 - fcol.pm: fcol is back, so no longer uses tinyurl
 - weather.pm no longer caches results
 - cleaned out obsolete infobot code in Extras
+- perlfaq feature removed, as associated website no longer exists
 
 Feature Additions and Enhancements
 ==================================
