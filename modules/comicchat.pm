@@ -7,7 +7,7 @@ sub scan(&$$) {
     my ($callback,$message,$who) = @_;
 
     # Check $message, if it's what you want, then do stuff with it
-    if( ::getparam('flighttracker') && $message =~ /^comicchat/)
+    if( ::getparam('comicchat') && $message =~ /^comicchat/)
     {
       $callback->("# Appears as FLOOT-ROBOT2.http://homepage1.nifty.com/iseshima/k-robot.avb");
       return 1;
