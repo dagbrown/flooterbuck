@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: shorterlink.pm,v 1.1 2002/08/01 23:42:06 dagbrown Exp $
+# $Id: shorterlink.pm,v 1.2 2002/08/01 23:44:04 dagbrown Exp $
 #------------------------------------------------------------------------
 package shorterlink;
 use strict;
@@ -160,7 +160,7 @@ sub shorterlink::get($$) {
 sub scan(&$$) {
     my ($callback, $message, $who)=@_;
 
-    if ( ::getparam('shorterlink') and $message =~ /^\s*shorterlink\s+(\w+:\S+)/i ) {
+    if ( $message =~ /^\s*shorterlink\s+(\w+:\S+)/i ) {
         &main::status("ShorterLink Creation");
         &shorterlink::get($message,$callback);
         return 1;
