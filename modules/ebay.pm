@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: ebay.pm,v 1.13 2002/01/17 01:46:40 dagbrown Exp $
+# $Id: ebay.pm,v 1.14 2002/02/04 17:52:23 awh Exp $
 #------------------------------------------------------------------------
 package ebay;
 use strict;
@@ -42,13 +42,18 @@ Dave Brown <dagbrown@csclub.uwaterloo.ca>
 # Check that LWP is available, so we don't waste our time
 # generating error messages later on.
 #------------------------------------------------------------------------
-my $no_ebay;
+my ($no_ebay, $no_posix);
 
 BEGIN {
     eval qq{
         use LWP::Simple qw();
     };
     $no_ebay++ if ($@);
+
+    eval qq{
+        use POSIX;
+    };
+    $no_posix++ if ($@);
 }
 
 #------------------------------------------------------------------------
@@ -170,7 +175,11 @@ sub ebay::get($$) {
     my $pid=eval { fork(); };         # Don't worry if OS isn't forking
     return 'NOREPLY' if $pid;
     $callback->(&ebay_getdata($line));
-    exit 0 if defined($pid);          # child exits, non-forking OS returns
+    if (defined($pid))                # child exits, non-forking OS returns
+    {
+        exit 0 if ($no_posix);
+        POSIX::_exit(0);
+    }
 }
 
 #------------------------------------------------------------------------
@@ -187,4 +196,4 @@ sub scan(&$$) {
     }
 }
 
-return "ebay";
+"ebay";

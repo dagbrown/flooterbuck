@@ -3,7 +3,7 @@
 #
 # See the POD documentation (right here!) for more info
 #
-# $Id: stockquote.pm,v 1.8 2002/01/26 17:32:35 awh Exp $
+# $Id: stockquote.pm,v 1.9 2002/02/04 17:52:24 awh Exp $
 #------------------------------------------------------------------------
 
 =head1 NAME
@@ -57,13 +57,18 @@ use strict;
 # Check that LWP is available, so we don't waste our time
 # generating error messages later on.
 #------------------------------------------------------------------------
-my $no_quote;
+my ($no_quote, $no_posix);
 
 BEGIN {
     eval qq{
         use LWP;
     };
     $no_quote++ if ($@);
+
+    eval qq{
+        use POSIX;
+    };
+    $no_posix++ if ($@);
 }
 
 #------------------------------------------------------------------------
@@ -171,12 +176,20 @@ sub scan(&$$) {
 	    $symbol = &get_index_symbol($symbol);
 	    if ($symbol =~ s/^notfound://) {
 	        $callback->("I don't know that index name!  I know $symbol");
-	        exit 0 if defined($pid);
+                if (defined($pid))
+                {
+	            exit 0 if ($no_posix);
+                    POSIX::_exit(0);
+                }
 	        return 1;
 	    }
 	}
         $callback->(quote_summary(uc($symbol)));
-        exit 0 if defined($pid);          # child exits, non-forking OS returns
+        if (defined($pid))               # child exits, non-forking OS returns
+        {
+            exit 0 if ($no_posix);
+            POSIX::_exit(0);
+        }
         return 1;
     } else {
         return undef;

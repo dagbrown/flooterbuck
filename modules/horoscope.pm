@@ -3,7 +3,7 @@
 #
 # Richard Harman
 #
-# $Id: horoscope.pm,v 1.1 2002/01/27 19:49:57 rharman Exp $
+# $Id: horoscope.pm,v 1.2 2002/02/04 17:52:23 awh Exp $
 #------------------------------------------------------------------------
 package horoscope;
 use strict;
@@ -41,7 +41,7 @@ Richard G Harman Jr <flooterbuck+horoscope.pm@richardharman.com>
 # Check that LWP is available, so we don't waste our time
 # generating error messages later on.
 #------------------------------------------------------------------------
-my $no_horoscope;
+my ($no_horoscope, $no_posix);
 
 my $horoscope_url = 'http://horoscopes.astrology.com/daily';
 
@@ -50,6 +50,11 @@ BEGIN {
         use LWP::Simple qw();
     };
     $no_horoscope++ if ($@);
+
+    eval qq{
+        use POSIX;
+    };
+    $no_posix++ if ($@);
 }
 
 #------------------------------------------------------------------------
@@ -84,7 +89,11 @@ sub horoscope_get($$)
     my $pid=eval { fork(); };         # Don't worry if OS isn't forking
     return 'NOREPLY' if $pid;
     $callback->(&horoscope_getdata($line));
-    exit 0 if defined($pid);          # child exits, non-forking OS returns
+    if (defined($pid))                # child exits, non-forking OS returns
+    {
+        exit 0 if ($no_posix);
+        POSIX::_exit(0);
+    }
 }
 
 sub horoscope_getdata($)

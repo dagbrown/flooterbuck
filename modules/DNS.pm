@@ -12,6 +12,13 @@ package DNS;
 use strict;
 use Socket;
 
+my $no_posix;
+
+BEGIN {
+    eval "use POSIX";
+    if ($@) { $no_posix++};
+}
+
 sub REAPER {
 	$SIG{CHLD} = \&REAPER;	# loathe sysV
 	my $waitedpid = wait;
@@ -59,7 +66,11 @@ sub DNS {
     $DNS_CACHE{$in} = $result;
 
     $callback->($result);
-    exit if defined($pid);			# bye child
+    if (defined($pid))			# bye child
+    {
+        exit 0 if ($no_posix);
+        POSIX::_exit(0);
+    }
 }
 
 sub scan(&$$) {

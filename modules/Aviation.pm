@@ -25,18 +25,20 @@
 # 2001/11/27 dagbrown@rogers.com
 #            - rearranged code to work with Hacked-Up Reloadable Modules
 #
-# $Id: Aviation.pm,v 1.6 2001/12/18 02:13:33 dagbrown Exp $
+# $Id: Aviation.pm,v 1.7 2002/02/04 17:52:22 awh Exp $
 #------------------------------------------------------------------------
 
 package Aviation;
 
-my ($no_aviation, $no_entities);
+my ($no_aviation, $no_entities, $no_posix);
 
 BEGIN {
     eval "use LWP::UserAgent";
     if ($@) { $no_aviation++};
     eval "use HTML::Entities";
     if ($@) { $no_entities++};
+    eval "use POSIX";
+    if ($@) { $no_posix++};
 }
 
 # Set the following to 1 if you want the forecast separators in 
@@ -88,7 +90,12 @@ sub Aviation::get {
     elsif ($line =~ /^airport/i)       { $callback->(airport($line))     }
     elsif ($line =~ /^aviation/i)      { $callback->(aviation($line))    }
     else  { $callback->("I think we just lost a wing!") }  # reach here -> Extras.pl problem
-    exit 0 if defined $pid;      # child exits, non-forking OS returns
+
+    if (defined($pid))
+    {
+        exit 0 if ($no_posix);
+        POSIX::_exit(0);
+    }
 }
 
 #

@@ -4,7 +4,7 @@
 # If you give it a tracking number, it returns the last known
 # location of your UPS-delivered parcel.
 #
-# $Id: ups.pm,v 1.7 2001/12/04 17:40:27 dagbrown Exp $
+# $Id: ups.pm,v 1.8 2002/02/04 17:52:24 awh Exp $
 #------------------------------------------------------------------------
 
 package ups;
@@ -18,13 +18,18 @@ my $ups_version = "1.03f";
 # Check that LWP is available, so we don't waste our time
 # generating error messages later on.
 #------------------------------------------------------------------------
-my $no_ups;
+my ($no_ups, $no_posix);
 
 BEGIN {
     eval qq{
         use LWP;
     };
     $no_ups++ if ($@);
+
+    eval qq{
+        use POSIX;
+    };
+    $no_posix++ if ($@);
 }
 
 #------------------------------------------------------------------------
@@ -137,7 +142,11 @@ sub get($$) {
     my $pid=eval { fork(); };         # Don't worry if OS isn't forking
     return 'NOREPLY' if $pid;
     $callback->(&ups_getdata($line));
-    exit 0 if defined($pid);          # child exits, non-forking OS returns
+    if (defined($pid))                # child exits, non-forking OS returns
+    {
+        exit 0 if ($no_posix);
+        POSIX::_exit(0);
+    }
 }
 
 #------------------------------------------------------------------------

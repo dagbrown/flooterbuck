@@ -3,7 +3,7 @@
 #
 # Richard Harman
 #
-# $Id: track.pm,v 1.3 2002/01/26 19:18:48 rharman Exp $
+# $Id: track.pm,v 1.4 2002/02/04 17:52:24 awh Exp $
 #------------------------------------------------------------------------
 package track;
 use strict;
@@ -43,7 +43,7 @@ Richard G Harman Jr <flooterbuck+track.pm@richardharman.com>
 # Check that LWP is available, so we don't waste our time
 # generating error messages later on.
 #------------------------------------------------------------------------
-my $no_track;
+my ($no_track, $no_posix);
 
 my $pakalert_url = 'http://www.pakalert.com/trackpack.asp?';
 my $pakalert_username = 'CHANGE ME';
@@ -55,6 +55,11 @@ BEGIN {
 	use XML::Simple qw();
     };
     $no_track++ if ($@);
+
+    eval qq{
+        use POSIX;
+    };
+    $no_posix++ if ($@);
 }
 
 #------------------------------------------------------------------------
@@ -75,7 +80,11 @@ sub track_get($$)
     my $pid=eval { fork(); };         # Don't worry if OS isn't forking
     return 'NOREPLY' if $pid;
     $callback->(&track_getdata($line));
-    exit 0 if defined($pid);          # child exits, non-forking OS returns
+    if (defined($pid))                # child exits, non-forking OS returns
+    {
+        exit 0 if ($no_posix);
+        POSIX::_exit(0);
+    }
 }
 
 sub track_getdata($)
