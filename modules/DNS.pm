@@ -49,17 +49,17 @@ sub DNS {
         $y = pack('C4', split(/\./, $match));
         $x = (gethostbyaddr($y, &AF_INET));
         if ($x !~ /^\s*$/) {
-            $result = $match." is ".$x unless ($x =~ /^\s*$/);
+            $result = "$who: $match is $x" unless ($x =~ /^\s*$/);
         } else {
-            $result = "I can't seem to find that address in DNS";
+            $result = "$who: I can't seem to find $in in DNS";
         }
     } else { 
         &::status("DNS query by name: $in");
         $x = join('.',unpack('C4',(gethostbyname($in))[4]));
         if ($x !~ /^\s*$/) {
-            $result = $in." is ".$x;
+            $result = "$who: $in is $x";
         } else {
-            $result = "I can\'t find that machine name";
+            $result = "$who: I can\'t find the machine name \"$in\"";
         }
     }
     $DNS_TIME_CACHE{$in} = time();
