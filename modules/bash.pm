@@ -1,10 +1,4 @@
-#------------------------------------------------------------------------
-# eBay auction status request
-#
-# Dave Brown
-#
-# $Id $
-#------------------------------------------------------------------------
+# $Id: bash.pm,v 1.2 2003/01/22 21:26:13 rharman Exp $
 package bash;
 use strict;
 
@@ -113,10 +107,14 @@ sub bash::get($$) {
     my $pid=eval { fork(); };         # Don't worry if OS isn't forking
     return 'NOREPLY' if $pid;
     my @lines = &bash_getdata($line);
-    foreach (@lines)
-    {
-      $callback->($_);
-      sleep 1;
+    if (! scalar @lines)
+    { $callback->("Either that quote id does't exist, or bash.org is busted at the moment."); }
+    else {
+      foreach (@lines)
+      {
+	$callback->($_);
+	sleep 1;
+      }
     }
     if (defined($pid))                # child exits, non-forking OS returns
     {
