@@ -157,6 +157,13 @@ allowUpdate      1
 # How much verbage to display on the console
 VERBOSITY        1
 
+# whether or not to handle Japanese.  if this is set to true, flooterbuck
+# will convert JIS->EUC upon receiving text from the server, and 
+# EUC->JIS just before sending out.  This means that Japanese factoids
+# will be remembered properly, and also that modules can work with
+# japanese as EUC and not have to worry about doing conversions.
+# japanese	true
+
 # the magic hack word to unignore everyone
 unignoreWord     unignore-everyone
 
