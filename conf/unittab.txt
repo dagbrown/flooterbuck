@@ -118,6 +118,8 @@ mat	tatami
 cc      cm3
 liter   (decimeter)3
 ml      milliliter
+l       liter
+litre   liter
 stere   m3
 floz    29.573 ml      # `floz' means `fluid ounce', which is different
                        # from `ounce', which is a measurement of mass.
