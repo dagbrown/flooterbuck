@@ -18,6 +18,7 @@ Bug Fixes
 - weather.pm no longer caches results
 - cleaned out obsolete infobot code in Extras
 - perlfaq feature removed, as associated website no longer exists
+- Cleaned up Extras.pl somewhat
 
 Feature Additions and Enhancements
 ==================================
