@@ -43,7 +43,6 @@ sub process {
     if ($msgType =~ /public/ 
         and $message =~ /((?:http|ftp|mailto|telnet|file|https):\S+)/) {
         $url=$1;
-        status("Stashing URL $url");
         mentionURL(channel(),$url,$who);
     }
 
