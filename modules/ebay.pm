@@ -3,9 +3,8 @@
 #
 # Dave Brown
 #------------------------------------------------------------------------
-
-use strict;
 package ebay;
+use strict;
 
 
 =head1 NAME
@@ -186,7 +185,7 @@ sub scan(&$$) {
     my ($callback, $message, $who) = @_;
 
     if ( ::getparam('ebay') and $message =~ /^\s*ebay\s+(\d+)$/i ) {
-        &status("eBay query");
+        &main::status("eBay query");
         &ebay::get($message,$callback);
         return 1;
     }
