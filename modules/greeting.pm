@@ -31,8 +31,8 @@ sub scan(&$$){
             return 1;
         }
 
-        my($r) = $hello[int(rand(@::hello))];
-        $callback->($r);
+        my($r) = $::hello[int(rand(@::hello))];
+        $callback->("$r, $who.");
         return 1;
     }
     return undef;
