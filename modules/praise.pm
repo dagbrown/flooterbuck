@@ -5,11 +5,22 @@
 use strict;
 package praise;
 
+my @welcomes = ('no problem', 
+        'my pleasure', 
+        'sure thing',
+        'no worries', 
+        'de nada', 
+        'de rien', 
+        'bitte',
+        'pas de quoi');
+
 sub scan(&$$) {
     my ($callback,$message,$who) = @_;
 
-# Gotta be gender-neutral here... we're sensitive to purl's needs. :-)
-    if ($message =~ /(good(\s+fuckin[\'g]?)?\s+(bo(t|y)|g([ui]|r+)rl))|(bot(\s|\-)?snack)/i) {
+    # Gotta be gender-neutral here... we're sensitive to purl's needs. :-)
+    if ($message =~ /(good(\s+fuckin[\'g]?)?\s+(bo(t|y)|
+                     g([ui]|r+)rl))|
+                     (bot(\s|\-)?snack)/ix) {
         &::status("random praise [$::msgType,$::addressed]: $message");
         if (rand()  < .5)  {
             $callback->("thanks $who :)");
@@ -30,7 +41,7 @@ sub scan(&$$) {
         }
         if ($message =~ /thank(s| you)/i) {
             if (rand()  < .5)  {
-                $callback->($::welcomes[int(rand(@::welcomes))]." ".$who);
+                $callback->($welcomes[int(rand(@welcomes))]." ".$who);
             }
             return 'NOREPLY';
         }

@@ -7,6 +7,18 @@
 use strict;
 package greeting;
 
+# ways to say hello
+my @hello = ('hello', 
+             'hi',
+             'hey',
+             'niihau',
+             'bonjour',
+             'hola',
+             'salut',
+             'que tal',
+             'privet',
+             "what's up");
+
 sub scan(&$$){
     my ($callback,$message,$who) = @_;
 
@@ -19,7 +31,7 @@ sub scan(&$$){
             return 1;
         }
 
-        my($r) = $::hello[int(rand(@::hello))];
+        my($r) = $hello[int(rand(@::hello))];
         $callback->($r);
         return 1;
     }
