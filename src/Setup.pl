@@ -25,7 +25,6 @@ sub setup {
 
     $startTime = time();
 
-    &setup_help;
     &openDBM(%dbs);
 
     $qCount = &get("is", "the qCount");
