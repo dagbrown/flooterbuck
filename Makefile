@@ -42,3 +42,6 @@ tarball: ../$(TARBALL)
 ../$(TARBALL): ../$(RELEASEDIR)
 	cd .. ; tar cvvf - $(RELEASEDIR) | gzip -9 > $(TARBALL)
 	cd .. && rm -r $(RELEASEDIR)
+
+tag:
+	cvs rtag release-$(shell sed 's/\./-/g' VERSION) .
