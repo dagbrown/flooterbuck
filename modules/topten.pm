@@ -3,14 +3,14 @@
 #
 # See the POD documentation (right here!) for more info
 #
-# $Id: topten.pm,v 1.1 2002/08/13 17:27:51 awh Exp $
+# $Id: topten.pm,v 1.2 2002/08/13 18:56:18 awh Exp $
 #------------------------------------------------------------------------
 
 
 =head1 NAME
 
 topten.pm - List the top 10 participants by karma or by number of
-lines spoken
+lines spoken, or the bottom 10 participants by karma.
 
 =head1 PREREQUISITES
 
@@ -19,16 +19,19 @@ An understanding of the numbers from 1 to 10
 =head1 PARAMETERS
 
 topten [karma]
+bottomten karma
 
 =head1 SERVING SUGGESTION
 
 floot, topten
 floot, topten karma
+floot, bottomten karma
 
 =head1 DESCRIPTION
 
 topten returns the most frequent channel participant, by lines spoken.
-topten karma returns the 10 highest-karma participants.
+topten karma returns the 10 highest-karma participants.  bottomten karma
+returns the 10 lowest-karma participants
 
 =head1 AUTHOR
 
@@ -50,14 +53,19 @@ sub scan(&$$) {
     my ($callback,$message,$who) = @_;
 
     # Now with INTENSE CASE INSENSITIVITY!  SUNDAY SUNDAY SUNDAY!
-    if ($message =~ /^topten/i) {
+    if ($message =~ /^(?:topten)|(bottomten)(?:\s+karma)?\s*$/i) {
 	my @showtop;
 	my $reply;
 	if ($message =~ /karma/i) {
-        	@showtop = &::showtop("plusplus" ,10);
-		$reply = "Top 10 karma is: ";
+		if ($message =~ /bottomten/i) {
+        		@showtop = &::showtop("plusplus" ,10, "bottom");
+			$reply = "Bottom 10 karma is: ";
+		} else {
+        		@showtop = &::showtop("plusplus" ,10, "top");
+			$reply = "Top 10 karma is: ";
+		}
 	} else {
-		@showtop = &::showtop("topten", 10);
+		@showtop = &::showtop("topten", 10, "top");
 		$reply = "Top 10 are: ";
 	}
 	my $counter = 1;
