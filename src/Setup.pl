@@ -52,7 +52,7 @@ sub setup {
         &openDBMx('ignore');
     }
 
-    ::openDBMx('messages');
+    &openDBMx('messages');
 
     if ($param{sanePrefix}) {
         for $d (qw/is are/) {
@@ -134,10 +134,10 @@ sub paramSetup {
     $param{'DEBUG'} = $initdebug;
 
     if (!@paramfiles) {
-	# if there is no list of param files, just go for the default
-	# (usually ./files/infobot.config)
+        # if there is no list of param files, just go for the default
+        # (usually ./files/infobot.config)
 
-	@paramfiles = ("$param{confdir}/infobot.config");
+        @paramfiles = ("$param{confdir}/infobot.config");
     }
 
     # now read in the parameter files
