@@ -104,6 +104,10 @@ cicero   12dd  # TeX likes to abbreviate this to cc, but cc is cubic centimeter
 scaledpoint 1|65536 pt # Internal to TeX
 sp       scaledpoint
 
+# Sysadmin
+rackunit  1.75 inch
+U       rackunit
+
 # AREA
 are     (10 m)2        # Implies `hectare'
 acre    chain furlong  # Now you know why an acre is the size it is
