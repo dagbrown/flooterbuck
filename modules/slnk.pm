@@ -3,7 +3,7 @@
 #
 # Richard Harman
 #
-# $Id: slnk.pm,v 1.2 2004/09/17 14:23:09 rich_lafferty Exp $
+# $Id: slnk.pm,v 1.3 2004/10/15 22:38:11 rharman Exp $
 #------------------------------------------------------------------------
 package slnk;
 use strict;
@@ -19,7 +19,6 @@ LWP::UserAgent
 =head1 PUBLIC INTERFACE
 
 sigsegv, slnk <url>
-sigsegv, prefix.slnk <url>
 
 =head1 DESCRIPTION
 
@@ -34,14 +33,6 @@ This allows you to generate a short link on slnk.org from a long unweildy url.
 Turns the slnk module on and off.  Defaults to off.  Valid "on" options are "true", "yes", and 1.  Anything else turns it off.
 
 =back
-
-=over 8
-
-=item slnk_prefix [prefix]
-
-Sets the bot-wide default prefix for short links generated on slnk.org.  Don't use the option if you don't want a bot-wide prefix.
-
-=over 8
 
 =head1 AUTHOR
 
@@ -70,8 +61,7 @@ sub slnk_create(@) {
   my %request_ref = @_;
   my ($callback,$who) = ($request_ref{callback},$request_ref{who});
 
-  my $prefix = $request_ref{prefix} || $::param{"slnk_prefix"};
-  my $response = $user_agent->post( 'http://slnk.org/interface/simplebot/interface', {url => $request_ref{url}, prefix => $prefix , automated => "no" });
+  my $response = $user_agent->post( 'http://slnk.org/interface/simplebot/interface', {url => $request_ref{url}, automated => "no" });
 
   if ( $response->is_success ) {
     my $content = $response->content();
@@ -88,7 +78,7 @@ sub slnk_create(@) {
       { $callback->(sprintf( "$who, that short link points to %s", $response_data{LONG_URL} )); }
       elsif ( $response_data{SHORT_URL} )
       { $callback->(sprintf( "$who, your short link is %s",        $response_data{SHORT_URL} )); }
-      else { $callback->("Sorry $who, slnk.org returned something I didn't understand.");
+      else { $callback->("Sorry $who, slnk.org returned something I didn't understand."); }
     } elsif ( $response_data{STATUS} eq "BAD" ) {
       # defined error supplied by the website
       $callback->($response_data{MESSAGE});
@@ -105,10 +95,10 @@ sub slnk_create(@) {
 sub slnk_getdata(@) {
   my ($callback,$line,$who) = @_;
 
-  if ( $line =~ /(?:(\w+)\.)?(?:slnk|xev|fcol)\s+(that(,?\s+please)?|please)?\s*$/ ) {
-    return slnk_create( url => &::lastURL( &::channel() ), prefix => $1, callback => $callback, who => $who );
-  } elsif ( $line =~ /(?:(\w+)\.)?(?:slnk|xev|fcol)\s+(.+)/i ) {
-    return slnk_create( url => $2, prefix => $1 , callback => $callback, who => $who);
+  if ( $line =~ /^\s*(?:un)?(?:slnk|xev|fcol)\s+(that(,?\s+please)?|please)?\s*$/i ) {
+    return slnk_create( url => &::lastURL( &::channel() ), callback => $callback, who => $who );
+  } elsif ( $line =~ /^\s*(?:un)?(?:slnk|xev|fcol)\s+(\w+:\S+)\??/i ) {
+    return slnk_create( url => $1, callback => $callback, who => $who);
   }
 }
 
@@ -142,12 +132,11 @@ sub slnk::get {
 sub scan(&$$) {
   my ( $callback, $message, $who ) = @_;
 
-  if ( $message =~ /^\s*(?:\w+\.)?(?:slnk|fcol|xev)\s+(\w+:\S+)\??/i ) {
+  if ( $message =~ /^\s*(?:un)?(?:slnk|fcol|xev)\s+(\w+:\S+)\??/i ) {
     &main::status("slnk small-URL creation");
     slnk::get( $callback, $message, $who );
     return 1;
-  }
-  if ( $message =~ /\s*(\w+\.)?(?:slnk|fcol|xev)\s+(?:that|please)/i ) {
+  } elsif ( $message =~ /^\s*(?:un)?(?:slnk|fcol|xev)\s+(?:that|please)/i ) {
     &main::status("auto-slnk last-url creation");
     slnk::get( $callback, $message, $who );
     return 1;
@@ -155,7 +144,7 @@ sub scan(&$$) {
 }
 
 sub help {
-    return "If you ask me slnk http://really-long-url/, I will shorten it for you on slnk.org.  If you ask me to shorten an already shortened url on slnk.org, I'll tell you the long url.";
+    return "If you ask me slnk http://really-long-url/, I will shorten it for you on slnk.org.  You can ask me to unshorten a slnk url with unslnk http://short-url/.";
 }
 
 "slnk";
