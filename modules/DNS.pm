@@ -19,12 +19,6 @@ BEGIN {
     if ($@) { $no_posix++};
 }
 
-sub REAPER {
-	$SIG{CHLD} = \&REAPER;	# loathe sysV
-	my $waitedpid = wait;
-}
-
-$SIG{CHLD} = \&REAPER;
 my $DNS_CACHE_EXPIRE_TIME = 7*24*60*60;
 my %DNS_CACHE;
 my %DNS_TIME_CACHE;
@@ -81,7 +75,7 @@ sub dns_getdata {
 sub get {
     my($callback, $addr, $who)=@_;
 
-    $SIG{CHLD}=\&REAPER;
+    $SIG{CHLD}="IGNORE";
     my $pid=eval { fork(); }; # Don't worry if the OS doesn't fork
     return 'NOREPLY' if $pid;
     $callback->("$who: ".&dns_getdata($addr));
