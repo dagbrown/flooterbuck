@@ -32,6 +32,9 @@ plusplus         $dbname-karma
 # persistant "seen" db
 seen             $dbname-seen
 
+# "topten" db
+topten           $dbname-topten
+
 # do we have an ignore database? uncomment this if not.
 ignore           $dbname-ignore
 
