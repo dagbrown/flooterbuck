@@ -1,7 +1,9 @@
-1.?.? - ?     ? , ?
+1.2.2 - ????
 
 Bug Fixes
 =========
+- Made RDF try harder to get something useful out of an RSS feed,
+  even if the feed itself isn't perfect.
 - weather.pm: no longer fills in missing data with previous results
 
 
