@@ -1,5 +1,9 @@
 # Template infobot extension
 
+# CHANGES
+#
+# 2002/08/20 -- Added check for Net::Telnet -- awh@awh.org
+
 use strict;
 package insult;
 
@@ -13,8 +17,13 @@ sub scan(&$$) {
     my ($callback,$message,$who) = @_;
 
     # Check $message, if it's what you want, then do stuff with it
-    if($message =~ /insult\ (\w+)?/)
+    if($message =~ /^insult\s+/)
     {
+	if ($no_insult)
+	{
+		$callback->("insult.pm requires Net::Telnet, $who");
+		return 1;
+	}
       my $nick = $1;
       my $t = new Net::Telnet (Errmode => "return", Timeout => 3);
       $t->Net::Telnet::open(Host => "insulthost.colorado.edu", Port => "1695");
