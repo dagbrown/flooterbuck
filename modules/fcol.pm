@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: fcol.pm,v 1.4 2002/08/02 22:25:40 dagbrown Exp $
+# $Id: fcol.pm,v 1.5 2002/08/03 13:31:24 dagbrown Exp $
 #------------------------------------------------------------------------
 package fcol;
 use strict;
@@ -11,11 +11,11 @@ use strict;
 
 =head1 NAME
 
-fcol.pm - generate a fcol from a big long one
+fcol.pm - generate a fcol from a big long url
 
 =head1 PREREQUISITES
 
-LWP::Simple
+LWP::Simple, URI::Escape, POSIX
 
 =head1 PARAMETERS
 
@@ -27,16 +27,11 @@ sigsegv, fcol <url>
 
 =head1 DESCRIPTION
 
-This allows you to generate a "fcol" from a great big long one.
-
-When called with a seller nickname, fetches abbreviated statuses for
-each of his first 10 auctions.
+This allows you to generate a "fcol" from a great big long url.
 
 =head1 AUTHOR
 
 Dave Brown <dagbrown@csclub.uwaterloo.ca>
-
-Nickname interface added by Drew Hamilton <awh@awh.org>
 
 =cut
 
@@ -46,51 +41,18 @@ Nickname interface added by Drew Hamilton <awh@awh.org>
 # Check that LWP is available, so we don't waste our time
 # generating error messages later on.
 #------------------------------------------------------------------------
-my ($no_fcol, $no_posix);
+my $no_fcol;
+my $no_posix;
 
 BEGIN {
-    foreach my $lib qw(LWP::Simple URI::Escape POSIX) {
+    foreach my $lib qw(LWP::Simple URI::Escape) {
         eval qq{
             use $lib;
         };
         $no_fcol++ if ($@);
     }
-}
-
-#------------------------------------------------------------------------
-# snag_element
-#
-# Sifts through a slug of HTML, and returns a list of items that live
-# in the container you asked for.
-#------------------------------------------------------------------------
-sub snag_element($$) {
-    my $element=shift;
-    my $blob_o_html=shift;
-
-    return ($blob_o_html=~/\<$element[^>]*\>(.*?)\<\/$element\>/gis);
-}
-
-#------------------------------------------------------------------------
-# strip_html
-#
-# Takes the HTML junk out of a string.  Think of it as a very poor
-# man's "lynx -dump".
-#------------------------------------------------------------------------
-sub strip_html($) {
-    my $blob=shift;
-    chomp $blob;
-    $blob=~s/\<[^>]+\>//g;
-    $blob=~s/\&[a-z]+\;?//g;
-    $blob=~s/\s+/ /g;
-    return $blob;
-}
-
-sub snag_file($) {
-    my $file=shift;
-    open(FILE,"<$file");
-    my @lines=<FILE>;
-    close(FILE);
-    return join("",@lines);
+    eval qq/use POSIX;/;
+    $no_posix++ if ($@);
 }
 
 #------------------------------------------------------------------------
@@ -101,13 +63,9 @@ sub snag_file($) {
 sub fcol_create($) {
     my $longurl=shift;
 
-    my $response=LWP::Simple::get(
-        'http://fcol.org/add?life=7&url='
-        .uri_escape($longurl));
+    my $fcol=LWP::Simple::get('http://fcol.org/bot?'.uri_escape($longurl));
 
-    print STDERR $response,"\n";
-    my ($fcol)=snag_element("a",$response);
-
+    chomp $fcol;
     return "Your fcol is $fcol";
 }
 
