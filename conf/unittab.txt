@@ -574,3 +574,9 @@ registerton     register ton
 # roentgen: R = 2.58e-4 C/kg
 # rad: rad = centigray
 # rem: rem = centisievert
+
+# yarn measurements
+cut	300 yards
+heer	2 cuts
+hank	6 heers
+spindle 4 hanks
