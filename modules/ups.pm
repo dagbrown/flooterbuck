@@ -149,7 +149,7 @@ sub scan(&$$) {
     return undef;
 }
 
-"ups";
+return "ups";
 
 __END__
 
