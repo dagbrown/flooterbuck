@@ -93,7 +93,7 @@ use strict;
                             (get_timediff($lasttime))[0].
                             " ago by ".
                             ($lastnick==$who?
-                                "yourself":
+                                "yourself" :
                                 $lastnick)."!")
                     } else {
                         ::say("$who: You out-of-it clod.  That URL was ".
