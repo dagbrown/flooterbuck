@@ -209,7 +209,7 @@ sub parse_flightdata
 
     # return the abbreviated flight information
     for my $flightsnum(0..$#{$flightdata{status}}) {
-        if ($flightdata{status}->[$flightsnum] =~ /Arrived|Planned/) {
+        if ($flightdata{status}->[$flightsnum] =~ /Landed|Arrived|Planned/) {
              $flightdata{summary}->[$flightsnum] = $flight_id . " " . 
                    $flightdata{depcity}->[$flightsnum] . "[" . 
                    $flightdata{deptime}->[$flightsnum] . "]->" . 
