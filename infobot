@@ -9,8 +9,8 @@
 # Rereleased under the GPL, 2001, with the "Flooterbuck" fork.
 
 BEGIN {
-  $VER_MAJ = 0;
-  $VER_MIN = 5;
+  $VER_MAJ = 1;
+  $VER_MIN = 0;
   $VER_MOD = 0;
 
   $version = "Flooterbuck infobot $VER_MAJ\.$VER_MIN\.$VER_MOD [dagbrown]";
