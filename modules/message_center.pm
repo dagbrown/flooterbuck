@@ -3,7 +3,7 @@
 #
 # See the POD for more information
 #
-# $Id: message_center.pm,v 1.1 2003/04/25 02:15:55 dagbrown Exp $
+# $Id: message_center.pm,v 1.2 2003/04/25 02:20:39 dagbrown Exp $
 #------------------------------------------------------------------------
 
 =head1 NAME
@@ -110,8 +110,6 @@ sub message_read {
 
 sub scan(&$$) {
     my ($callback,$message,$who) = @_;
-
-    return unless ::getparam('message_center');
 
     # Check $message, if it's what you want, then do stuff with it
     if($message =~ /^(?:message|msg)\s+help$/i) {
