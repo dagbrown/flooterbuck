@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------
 # "exchange" command, change currencies
 #
-# $Id: exchange.pm,v 1.10 2003/07/11 18:27:00 awh Exp $
+# $Id: exchange.pm,v 1.11 2003/10/18 21:25:01 dagbrown Exp $
 #------------------------------------------------------------------------
 
 use strict;
@@ -98,12 +98,10 @@ sub scan(&$$) {
         &::status("message($message)");
         my $response='';
 
-        my $pid = fork;
-        if ($pid) {
-            # this takes some time, so fork.
-            return 1;
-        }
-
+        $SIG{CHLD}="IGNORE";
+        my $pid=eval { fork(); };         # Don't worry if OS isn't forking
+        return 'NOREPLY' if $pid;
+        
         if ($message =~ /^\s*(?:ex)?change\s+  # "exchange" 
                          ([\d\.\,]+)           # some number of $CURRENCY
                          \s+                   # (whitespace)
