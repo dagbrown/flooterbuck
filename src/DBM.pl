@@ -1,4 +1,4 @@
-# $Id: DBM.pl,v 1.2 2002/08/13 17:21:28 awh Exp $
+# $Id: DBM.pl,v 1.3 2002/08/13 18:56:42 awh Exp $
 #
 # infobot :: Kevin Lenzo  (c) 1997
 
@@ -663,12 +663,12 @@ sub showdb {
 
 # showtop - awh@awh.org
 #
-# Shows the top $num_to_show entries in database $dbname, sorted by
+# Shows the top or bottom $num_to_show entries in database $dbname, sorted by
 # the rocketship operator.
 #
 # Currently used only by the topten.pm module.
 sub showtop {
-    my ($dbname, $num_to_show) = @_;
+    my ($dbname, $num_to_show, $what_to_show) = @_;
     my @result;
 
     if (!$dbname) {
@@ -689,10 +689,21 @@ sub showtop {
     lock $rdb, LOCK_SH;
     my $rhash = $rdb->[F_HASH];
 
-    foreach (sort { $rhash->{$b} <=> $rhash->{$a} } keys %$rhash)
+    if ($what_to_show =~ /bottom/)
     {
-	last unless ($num_to_show--);
-        push @result, "$_ => $rhash->{$_}";
+        foreach (sort { $rhash->{$a} <=> $rhash->{$b} } keys %$rhash)
+        {
+            last unless ($num_to_show--);
+            unshift @result, "$_ => $rhash->{$_}";
+        }
+    }
+    else
+    {
+        foreach (sort { $rhash->{$b} <=> $rhash->{$a} } keys %$rhash)
+        {
+            last unless ($num_to_show--);
+            push @result, "$_ => $rhash->{$_}";
+        }
     }
     lock $rdb, LOCK_UN;
 
