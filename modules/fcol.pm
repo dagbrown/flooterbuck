@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: fcol.pm,v 1.1 2002/08/02 22:08:29 dagbrown Exp $
+# $Id: fcol.pm,v 1.2 2002/08/02 22:10:44 dagbrown Exp $
 #------------------------------------------------------------------------
 package fcol;
 use strict;
@@ -108,7 +108,7 @@ sub fcol_create($) {
         'http://www.fcol.com/add?life=7&url='
         .$longurl);
 
-    my ($longurl,$fcol)=snag_element("blockquote",$response);
+    my ($fcol)=snag_element("TEXTAREA",$response);
 
     return "Your fcol is $fcol";
 }
