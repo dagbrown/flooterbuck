@@ -1,3 +1,14 @@
+1.2.1 -- March 13, 2004
+
+Release early, release often, release all of the files.
+
+Bug Fixes
+=========
+- Missing files in conf/ restored.
+- units.pm compiles and warns if it cannot find its unittab, instead
+  of failing to compile.
+
+
 1.2 -- March 11, 2004
 
 The "Yep, it's really a release" release. Lots of churn over the 

@@ -41,8 +41,10 @@ use constant BOT_UNITTAB => "$main::param{confdir}/unittab.txt";
 
 sub read_defs {
 	my ($file) = @_;
-	open D, $file
-	  or die "Couldn't read definitions from from `$file': $!; aborting";
+	unless (open D, $file) {
+       &main::status("units: Couldn't read definitions from from `$file': $!");
+       return;
+   }
 	while (<D>) {
 		s/\#.*$//;
 		trim($_);
@@ -51,7 +53,7 @@ sub read_defs {
 		print ">>> $_\n" if $DEBUG_d;
 		my $r = definition_line($_);
 		unless (defined $r) {
-			warn "Error in line $. of $file: $PARSE_ERROR.  Skipping.\n";  
+			&main::status("Error in line $. of $file: $PARSE_ERROR.  Skipping.\n");
 		}
 	}
 }
