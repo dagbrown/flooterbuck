@@ -56,7 +56,6 @@ use strict;
     sub ::mentionURL {
         my ($channel,$url,$who)=@_;
 
-        ::status("Storing url $url from $channel");
         $urls{$channel}=$url;
         ::seenURL($channel,$url,$who);
     }
@@ -80,7 +79,6 @@ use strict;
 
             my $oldurl = ::get(seenurls => "$channel|$url");
             if($oldurl) {
-                &status("Found URL again: $url at $oldurl");
                 my @instances=split(/\;/,$oldurl);
                 ($firsttime,$firstnick)=split(/,/,$instances[0]);
                 ($lasttime,$lastnick)=split(/,/,$instances[-1]);
