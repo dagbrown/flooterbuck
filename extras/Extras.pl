@@ -16,7 +16,11 @@ my @modules;
 sub loadmodules() {
     @modules=();
     opendir(MODS,$::param{'moddir'});
-    for my $module (grep { /\.pm$/ && -f $::param{'moddir'}."/$_" } readdir(MODS)) {
+    for my $module (
+        grep {
+            /\.pm$/ && -f $::param{'moddir'}."/$_" 
+        } readdir(MODS)
+    ) {
         &::status("Loading $module...");
         push @modules,eval { do $::param{'moddir'}."/$module" };
         die "$@" if $@;
@@ -32,15 +36,31 @@ sub main::Extras {
 
     for my $module(@modules) {
         if($::msgType eq 'public') {
-            if (eval qq|${module}::scan {::say shift;} "\$::message",\$::who|)
-            { &::status("caught by $module");return 'NOREPLY'}
+            if (
+                eval qq{
+                    ${module}::scan( sub {
+                        ::say shift;
+                    },"\$::message",\$::who )
+                }
+            ) {
+                &::status("caught by $module");return 'NOREPLY'
+            }
+
             warn "$@" if "$@";
+
         } else {
-            if (eval qq{ ${module}::scan { ::msg("\$::who",shift); } "\$::message","\$::who" })
-            { &::status("caught by $module");return 'NOREPLY'}
+            if (
+                eval qq{ 
+                    ${module}::scan( sub {
+                        ::msg("\$::who",shift); 
+                    },"\$::message","\$::who" )
+                }
+            ) { 
+                &::status("caught by $module");
+                return 'NOREPLY'
+            }
             warn "$@" if "$@";
         }
-
     }
     return undef; # To keep stock infobot happy
 }
