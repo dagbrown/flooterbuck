@@ -1,8 +1,12 @@
-# $Id: slashdot.pm,v 1.4 2001/12/04 15:33:58 rharman Exp $
-
 #------------------------------------------------------------------------
 # "slashdot" command
+#
+# See the Big Ugly Block Comment, preserved from the original
+# version of the code.
+#
+# $Id: slashdot.pm,v 1.5 2001/12/04 17:40:27 dagbrown Exp $
 #------------------------------------------------------------------------
+
 #####################
 #                   #
 #  Slashdot.pl for  #

@@ -1,8 +1,8 @@
-# $Id: factoidmodify.pm,v 1.6 2001/12/04 15:33:58 rharman Exp $
-
 #------------------------------------------------------------------------
 # Modify a factoid
 # substitution: X =~ s/A/B/
+#
+# $Id: factoidmodify.pm,v 1.7 2001/12/04 17:40:27 dagbrown Exp $
 #------------------------------------------------------------------------
 
 package factoids;

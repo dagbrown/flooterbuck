@@ -1,4 +1,11 @@
-# $Id: ups.pm,v 1.6 2001/12/04 15:33:58 rharman Exp $
+#------------------------------------------------------------------------
+# UPS module
+#
+# If you give it a tracking number, it returns the last known
+# location of your UPS-delivered parcel.
+#
+# $Id: ups.pm,v 1.7 2001/12/04 17:40:27 dagbrown Exp $
+#------------------------------------------------------------------------
 
 package ups;
 use strict;

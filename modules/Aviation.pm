@@ -1,4 +1,3 @@
-# $Id: Aviation.pm,v 1.4 2001/12/04 15:33:58 rharman Exp $
 #------------------------------------------------------------------------
 # aviation -- infobot module for various flight-planning bits.
 #             Was originally 'metar' until infobot 44.5.
@@ -25,6 +24,8 @@
 #            - added airport name/code lookups, fixed minor bugs in other parts
 # 2001/11/27 dagbrown@rogers.com
 #            - rearranged code to work with Hacked-Up Reloadable Modules
+#
+# $Id: Aviation.pm,v 1.5 2001/12/04 17:40:27 dagbrown Exp $
 #------------------------------------------------------------------------
 
 package Aviation;

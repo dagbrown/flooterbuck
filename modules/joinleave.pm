@@ -1,9 +1,9 @@
-# $Id: joinleave.pm,v 1.3 2001/12/04 15:33:58 rharman Exp $
-
 #------------------------------------------------------------------------
 # "joinleave" module
 #
 # Lets you tell the bot to leave or join channels
+#
+# $Id: joinleave.pm,v 1.4 2001/12/04 17:40:27 dagbrown Exp $
 #------------------------------------------------------------------------
 
 use strict;

@@ -1,8 +1,12 @@
-# $Id: sunhelp.pm,v 1.4 2001/12/04 15:33:58 rharman Exp $
-
 #------------------------------------------------------------------------
 # "sunhelp" command
+#
+# Based on "slashdot" module, but this should be torn apart a bit
+# to make a generid RDF module.
+#
+# $Id: sunhelp.pm,v 1.5 2001/12/04 17:40:27 dagbrown Exp $
 #------------------------------------------------------------------------
+
 #####################
 #                   #
 #  Sunhelp.pl for   #

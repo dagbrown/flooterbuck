@@ -1,9 +1,9 @@
-# $Id: stockquote.pm,v 1.5 2001/12/04 17:11:38 dagbrown Exp $
-
 #------------------------------------------------------------------------
-# Yahoo module
+# Yahoo stock quote module
 #
 # See the POD documentation (right here!) for more info
+#
+# $Id: stockquote.pm,v 1.6 2001/12/04 17:40:27 dagbrown Exp $
 #------------------------------------------------------------------------
 
 =head1 NAME

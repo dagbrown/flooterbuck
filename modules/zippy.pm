@@ -1,10 +1,10 @@
-# $Id: zippy.pm,v 1.5 2001/12/04 15:33:58 rharman Exp $
-
 #------------------------------------------------------------------------
 # zippy -- infobot module for Zippy the Pinhead quotes
 #          hacked up by Rich Lafferty (mendel) <rich@vax2.concordia.ca> 
 #
 # Data gratuitously swiped from fortune-mod-9708, the 'fortune' program.
+#
+# $Id: zippy.pm,v 1.6 2001/12/04 17:40:27 dagbrown Exp $
 #------------------------------------------------------------------------
 
 package zippy;

@@ -1,7 +1,7 @@
-# $Id: wakeup.pm,v 1.4 2001/12/04 15:33:58 rharman Exp $
-
 #------------------------------------------------------------------------
 # "shut up" and "wake up" commands - control how much it rattles on
+#
+# $Id: wakeup.pm,v 1.5 2001/12/04 17:40:27 dagbrown Exp $
 #------------------------------------------------------------------------
 
 use strict;

@@ -1,9 +1,9 @@
-# $Id: greeting.pm,v 1.9 2001/12/04 15:33:58 rharman Exp $
-
 #------------------------------------------------------------------------
 # greeting.pm
 #
 # People saying "hi"--respond in kind (some of the time)
+#
+# $Id: greeting.pm,v 1.10 2001/12/04 17:40:27 dagbrown Exp $
 #------------------------------------------------------------------------
 
 use strict;

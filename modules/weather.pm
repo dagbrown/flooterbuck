@@ -1,13 +1,20 @@
-# $Id: weather.pm,v 1.4 2001/12/04 15:33:58 rharman Exp $
-
-package Weather;
-
+#------------------------------------------------------------------------
+# NOAA Weather module.
+#
 # kevin lenzo (C) 1999 -- get the weather forcast NOAA.
 # feel free to use, copy, cut up, and modify, but if
 # you do something cool with it, let me know.
-
+#
+# $Id: weather.pm,v 1.5 2001/12/04 17:40:27 dagbrown Exp $
+#------------------------------------------------------------------------
+#
+# CHANGES
+#
 # 16-SEP-99 lenzo@cs.cmu.edu switched to LWP::UA and 
 #           put in a timeout.
+#------------------------------------------------------------------------
+
+package Weather;
 
 my $no_weather;
 my $cache_time = 60 * 40 ; # 40 minute cache time

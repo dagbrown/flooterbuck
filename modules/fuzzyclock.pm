@@ -1,5 +1,3 @@
-# $Id: fuzzyclock.pm,v 1.4 2001/12/04 15:33:58 rharman Exp $
-
 #------------------------------------------------------------------------
 # fuzzyclock.pm
 #
@@ -9,6 +7,8 @@
 # TODO
 # Make it psychic enough to figure out what timezone you're in, and have
 # it tell you the right time.  (Ha ha ha)
+#
+# $Id: fuzzyclock.pm,v 1.5 2001/12/04 17:40:27 dagbrown Exp $
 #------------------------------------------------------------------------
 
 use strict;

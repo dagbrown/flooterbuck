@@ -1,9 +1,9 @@
-# $Id: reset.pm,v 1.5 2001/12/04 15:33:58 rharman Exp $
-
 #------------------------------------------------------------------------
 # "reset!" module
 #
 # Allows on-the-fly rescanning of the modules directory
+#
+# $Id: reset.pm,v 1.6 2001/12/04 17:40:27 dagbrown Exp $
 #------------------------------------------------------------------------
 
 package reset;

@@ -1,9 +1,9 @@
-# $Id: forget.pm,v 1.5 2001/12/04 15:33:58 rharman Exp $
-
 #------------------------------------------------------------------------
 # forget.pm
 #
 # A module to let people tell infobot to forget factoids.
+#
+# $Id: forget.pm,v 1.6 2001/12/04 17:40:27 dagbrown Exp $
 #------------------------------------------------------------------------
 
 use strict;
