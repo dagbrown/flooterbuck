@@ -26,8 +26,10 @@
 #            - rearranged code to work with Hacked-Up Reloadable Modules
 # 2002/06/13 joant@ieee.org
 #            - added relative humidity function
+# 2003/02/22 dagbrown@rogers.com
+#            - Added patch to make it more picky about where words end
 #
-# $Id: Aviation.pm,v 1.9 2003/02/22 20:29:54 dagbrown Exp $
+# $Id: Aviation.pm,v 1.10 2003/02/22 21:07:22 dagbrown Exp $
 #------------------------------------------------------------------------
 
 package Aviation;
