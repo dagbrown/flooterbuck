@@ -44,4 +44,4 @@ tarball: ../$(TARBALL)
 	cd .. && rm -r $(RELEASEDIR)
 
 tag:
-	cvs rtag release-$(shell sed 's/\./-/g' VERSION) .
+	cd .. && cvs tag release-$(shell sed 's/\./-/g' VERSION) .
