@@ -1,6 +1,41 @@
+1.2 -- March ??, 2004
+
+The "Yep, it's really a release" release. Lots of churn over the 
+past year, so this change list is advisory.
+
+Flooterbuck now requires perl 5.6.0.
+
+Bug Fixes
+=========
+- Many modules now clean up their child processes correctly.
+- babel.pm now uses html-independent scraping, understands Unicode
+- slashdot and sunhelp RSS parsers removed; use the generic rss
+  feature to get RSS headlines.
+- ebay.pm updated to scrape new layout
+- exchange.pm now! uses! Yahoo!'s exchange! rates! 
+- flighttracker.pm updated to scrape new layout, better error reporting
+- fcol.pm: fcol is back, so no longer uses tinyurl
+- weather.pm no longer caches results
+- cleaned out obsolete infobot code in Extras
+
+Feature Additions and Enhancements
+==================================
+- license normalized across all files (same as Perl itself)
+- pager.pm: "page nickname message" sends email to address contained
+  in "nickname's pager" factoid
+- Whole bunch of new units in unittab
+- metar TAF feature optionally returns multiple lines of output
+- ping.pm: "ping hostname" returns summary of ping results
+- speller.pm: old infobot spellchecker ported to flooterbuck
+- re-added old infobot dbmext-test script 
+- scripts/hysteresis: restart a program but not necessarily right away
+
+
+
 1.1 -- March 03, 2003
 
 Maintenance release.  Nothing really new or huge here.  
+(It appears that 1.1 was never made public. --rich)
 
 Bug Fixes
 =========
