@@ -8,7 +8,9 @@ sub parseUserfile {
     %user = ();
     @userList = ();
 
-    open(FH, $file);
+    open(FH, $file)
+      or die "Could not open $file ($!). Perhaps you forgot to rename the example file in conf/infobot.users-dist?\n";
+
     while (<FH>) {
 	if (!/^#/ && defined $_) {
 	    if (/^UserEntry\s+(.+?)\s/) {

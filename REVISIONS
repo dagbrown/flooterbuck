@@ -5,9 +5,10 @@ Release early, release often, release all of the files.
 Bug Fixes
 =========
 - Reinstated a couple of missing files from the conf directory
-  (unittab.txt and magic8ball.txt)
+  (unittab.txt and magic8.txt)
 - units.pm compiles and warns if it cannot find its unittab, instead
   of failing to compile.
+- floot now complains if it can't open infobot.users (or equivalent).
 
 1.2 -- March 11, 2004
 
