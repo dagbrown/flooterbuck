@@ -124,6 +124,7 @@ sub auction_summary($) {
     my $auction_id=shift;
 
     my $ua=new LWP::UserAgent;
+    $ua->timeout(12);
     my $request=new HTTP::Request(
         GET=>
             'http://cgi.ebay.com/aw-cgi/eBayISAPI.dll?ViewItem&item='
