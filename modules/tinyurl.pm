@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: tinyurl.pm,v 1.3 2002/08/08 13:38:00 dagbrown Exp $
+# $Id: tinyurl.pm,v 1.4 2003/03/28 16:26:30 dagbrown Exp $
 #------------------------------------------------------------------------
 package tinyurl;
 use strict;
@@ -97,7 +97,7 @@ sub tinyurl_create($) {
         'http://www.tinyurl.com/create.php?url='
         .$longurl);
 
-    my ($longurl,$tinyurl)=snag_element("blockquote",$response);
+    my ($newlongurl,$tinyurl)=snag_element("blockquote",$response);
 
     return "Your tinyurl is $tinyurl";
 }
@@ -111,9 +111,11 @@ sub tinyurl_create($) {
 sub tinyurl_getdata($) {
     my $line=shift;
 
-    if($line =~ /tinyurl\s+(\w+:\S+)/i) {
+    if($line =~ /^\s*tinyurl\s+(?:that|please)/i) {
+        return tinyurl_create(::lastURL(::channel()));
+    } elsif($line =~ /tinyurl\s+(\w+:\S+)/i) {
         return tinyurl_create($1);
-    }
+    } 
 }
 
 #------------------------------------------------------------------------
@@ -148,6 +150,11 @@ sub scan(&$$) {
 
     if ( ::getparam('tinyurl') and $message =~ /^\s*tinyurl\s+(\w+:\S+)/i ) {
         &main::status("TinyURL creation");
+        &tinyurl::get($message,$callback);
+        return 1;
+    }
+    if ( ::getparam('tinyurl') and $message =~ /^\s*tinyurl\s+(?:that|please)/i ) {
+        &main::status("auto-TinyURL last URL creation");
         &tinyurl::get($message,$callback);
         return 1;
     }
