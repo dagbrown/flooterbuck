@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: shorterlink.pm,v 1.2 2002/08/01 23:44:04 dagbrown Exp $
+# $Id: shorterlink.pm,v 1.3 2002/08/02 00:17:17 dagbrown Exp $
 #------------------------------------------------------------------------
 package shorterlink;
 use strict;
@@ -50,7 +50,12 @@ my ($no_shorterlink, $no_posix);
 
 BEGIN {
     eval qq{
-        use LWP::Simple qw();
+        use LWP;
+    };
+    $no_shorterlink++ if ($@);
+
+    eval qq{
+        use LWP::UserAgent;
     };
     $no_shorterlink++ if ($@);
 
@@ -104,16 +109,25 @@ sub snag_file($) {
 sub shorterlink_create($) {
     my $longurl=shift;
 
-    my $response=LWP::Simple::get(
-        'http://www.makeashorterlink.com/index.php?url='
-        .$longurl);
+    my $ua=new LWP::UserAgent or die "oh fuck";
+    $ua->agent("Flooterbuck/0.1 ".$ua->agent);
+    my $request=HTTP::Request->new(
+        POST => "http://makeashorterlink.com/index.php"
+    ) or die "oh shit";
+    $request->content_type('application/x-www-form-urlencoded');
+    $request->content("url=$longurl");
 
-    my (@elements)=snag_element("a",$response);
-    my ($shorterlink)=grep { /http\:\/\/makeashorterlink\.com\/\?/ } @elements;
-    
-    # my ($longurl,$shorterlink)=snag_element("blockquote",$response);
+    my $response=$ua->request($request);
 
-    return "Your shorter link is $shorterlink";
+    if($response->is_success) {
+        my $content=$response->content;
+        my @elements=snag_element("a",$content);
+        my ($shorterlink)=grep { /http\:\/\/makeashorterlink\.com\/\?/ } @elements;
+        
+        return "Your shorter link is $shorterlink";
+    } else {
+        return "Couldn't get hold of makeashorterlink.com";
+    }
 }
 
 #------------------------------------------------------------------------
