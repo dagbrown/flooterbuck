@@ -3,7 +3,7 @@
 #
 # Gives a quick summary of the bot's status.
 #
-# $Id: status.pm,v 1.5 2001/12/04 17:40:27 dagbrown Exp $
+# $Id: status.pm,v 1.6 2002/01/03 23:40:16 rharman Exp $
 #------------------------------------------------------------------------
 
 package status;
@@ -20,8 +20,12 @@ sub scan(&$$) {
                 . "I have been awake for $upString this session, "
                 . "and currently reference $::factoidCount factoids. "
                 . "Addressing is in ".lc(::getparam('addressing'))." mode.");
+	return 1;
     }
+    else
+    {
     return undef;
+    }
 }
 
 "status";
