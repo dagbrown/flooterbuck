@@ -8,7 +8,7 @@
 # Make it psychic enough to figure out what timezone you're in, and have
 # it tell you the right time.  (Ha ha ha)
 #
-# $Id: fuzzyclock.pm,v 1.5 2001/12/04 17:40:27 dagbrown Exp $
+# $Id: fuzzyclock.pm,v 1.6 2001/12/13 16:53:20 dagbrown Exp $
 #------------------------------------------------------------------------
 
 use strict;
@@ -81,7 +81,7 @@ sub fuzzytime {
     $myhour-=12 if $myhour>=12;
 
     my @hours=(
-            "zero", "one", "two", "three", "four", "five", "six",
+            "twelve", "one", "two", "three", "four", "five", "six",
             "seven", "eight", "nine", "ten", "eleven", "twelve"
             );
 
