@@ -39,22 +39,11 @@ BEGIN {
     $param{'srcdir'} = $param{'basedir'}.$filesep."src";
 
     opendir DIR, $param{'srcdir'}
-	or die "can't open source directory $param{srcdir}: $!";
+    or die "can't open source directory $param{srcdir}: $!";
 
     while ($file = readdir DIR) {
-	next unless $file =~ /\.pl$/;
-	require "$param{srcdir}$filesep$file";
-    }
-    closedir DIR;
-
-    $param{'extradir'} = $param{'basedir'}.$filesep."extras";
-
-    opendir DIR, $param{'extradir'}
-	or die "can't open extras directory $param{extradir}: $!";
-
-    while ($file = readdir DIR) {
-	next unless $file =~ /\.pl$/;
-	require "$param{extradir}$filesep$file";
+        next unless $file =~ /\.pl$/;
+        require "$param{srcdir}$filesep$file";
     }
     closedir DIR;
 }
