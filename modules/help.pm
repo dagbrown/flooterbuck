@@ -66,7 +66,7 @@ sub help_scan {
         return "Help topics: ", join(", ", sort(Extras::modules()) ) ;
     }
     if ($message =~ /help\W*$/) {
-        return q{Hi, I'm a flooterbuck infobot. I learn mainly by observing declarative statements such as "x is at http://www.xxx.com", and then reply when people ask things like "Where can I find x?" For a list of the other things I can do, ask me about 'help index'.};
+        return q{Hi, I'm a Flooterbuck infobot. I learn mainly by observing declarative statements such as "x is at http://www.xxx.com", and then reply when people ask things like "Where can I find x?" For a list of the other things I can do, ask me about 'help index'.};
     }
 }
 
