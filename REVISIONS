@@ -1,13 +1,13 @@
-1.2.1 -- March 13, 2004
+1.2.1 - March 13, 2004
 
 Release early, release often, release all of the files.
 
 Bug Fixes
 =========
-- Missing files in conf/ restored.
+- Reinstated a couple of missing files from the conf directory
+  (unittab.txt and magic8ball.txt)
 - units.pm compiles and warns if it cannot find its unittab, instead
   of failing to compile.
-
 
 1.2 -- March 11, 2004
 
