@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------
 # Russian Roulette
 #
-# $Id: roulette.pm,v 1.1 2003/03/11 22:22:38 rharman Exp $
+# $Id: roulette.pm,v 1.2 2003/03/17 12:56:02 dagbrown Exp $
 #
 # Includes the BOFH roulette file grabbed from:
 #       http://www.cs.wisc.edu/~ballard/bofh/roulettes
@@ -16,7 +16,7 @@ my $no_roulette;
 sub scan(&$$) {
     my ($callback, $message, $who)=@_;
 
-    unless($message =~ /(?:rr|roulette)/) {
+    unless($message =~ /^(?:rr|roulette)$/) {
         return undef;
     }
 
