@@ -4,3 +4,27 @@ Future ideas:
 A modularized help system where each module is responsible for
 generating its own help.  Maybe as well as scan() each module can
 also define a help() subroutine or something.  
+
+
+Stuff that never got fixed in infobot, and still needs to get fixed
+here:
+
+  - Normalize license. (LICENSE says "Artistic" but also "same 
+    as Perl" which is ARTISTIC || GPL, infobot says X11.) 
+    (2001/06/18 -- Kevin says "Same as Perl".)
+
+  - Make replacements work when they look like matching operators:
+    "bot, foo =~ s/this /that/" should change "this " to "that",
+    but instead makes bot look for a factoid matching "that" in
+    the factoid with the key "foo =~ s/this" (I think --rich)
+
+  - make "botnick, no, factoid is foo" equivalent to "no, botnick,
+    factoid is foo". Requested by Sean "TorgoX" Burke.
+
+  - Make 'seen' less precise when absences are long. (Does it matter if
+    it's been a year and three seconds, or a year and eight?) (From
+    Sean "TorgoX" Burke")
+
+
+
+
