@@ -152,7 +152,7 @@ sub parse_flightdata($)
     
 
     # make sure that this page contains flight information.
-    return "That flight was not found." if ($flightdata =~ /The flight is not in the database!/);
+    return "That flight was not found." if ($flightdata =~ /Flight Not Found in Database/);
 
     # get the flight identifier.  The only place it's shown is as the
     # default value for one of the form inputs.
