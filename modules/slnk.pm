@@ -3,7 +3,7 @@
 #
 # Richard Harman
 #
-# $Id: slnk.pm,v 1.1 2004/09/17 02:10:33 rharman Exp $
+# $Id: slnk.pm,v 1.2 2004/09/17 14:23:09 rich_lafferty Exp $
 #------------------------------------------------------------------------
 package slnk;
 use strict;
@@ -88,16 +88,16 @@ sub slnk_create(@) {
       { $callback->(sprintf( "$who, that short link points to %s", $response_data{LONG_URL} )); }
       elsif ( $response_data{SHORT_URL} )
       { $callback->(sprintf( "$who, your short link is %s",        $response_data{SHORT_URL} )); }
-      else { $callback->("Sorry $who, slnk.org returned something I didn't understand.  You may want to email slnk\@richardharman.com to help get this fixed.") }
+      else { $callback->("Sorry $who, slnk.org returned something I didn't understand.");
     } elsif ( $response_data{STATUS} eq "BAD" ) {
       # defined error supplied by the website
       $callback->($response_data{MESSAGE});
     } else {
       # undefined error
-      $callback->("$who, It looks like slnk.org is having problems, as it returned an undefined error while generating a shortlink for that url.  Please email slnk\@richardharman.com for support.");
+      $callback->("$who, It looks like slnk.org is having problems.");
     }
   } else {
-    $callback->("Sorry $who, I had problems trying to talk to slnk.org, the web request wasn't a success.  Try again later?");
+    $callback->("Sorry $who, I had problems trying to talk to slnk.org. Try again later?");
   }
 }
 
@@ -118,7 +118,6 @@ sub slnk::get {
   if (scalar @unavailable_modules) {
     my $message = sprintf( "Sorry $who, slnk.pm requires the following module(s) that were not found: %s", join( ", ", @unavailable_modules ) );
     &main::status($message);
-    $callback->($message);
     return "";
   }
 
@@ -156,7 +155,7 @@ sub scan(&$$) {
 }
 
 sub help {
-    return "If you ask me slnk http://really-long-url/, I will shorten it for you on slnk.org.  If you ask me to shorten an already shortened url on slnk.org, I'll tell you the long url.  If you want to use a prefix, you can ask me myprefix.slnk http://url/.";
+    return "If you ask me slnk http://really-long-url/, I will shorten it for you on slnk.org.  If you ask me to shorten an already shortened url on slnk.org, I'll tell you the long url.";
 }
 
 "slnk";
