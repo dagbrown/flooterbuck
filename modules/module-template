@@ -20,7 +20,7 @@ sub scan(&$$) {
     return undef;
 }
 
-"modulename";
+return "modulename";
 
 __END__
 
