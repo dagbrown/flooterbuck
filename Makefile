@@ -12,14 +12,21 @@ MODULESDIR=modules
 CONFDIR=conf
 SRCDIR=src
 
-RELEASEDIR=flooterbuck-$(shell cat VERSION)
+
+CONFS=infobot.channels-dist infobot.config-dist infobot.help-dist \
+	infobot.users-dist magic8.txt sane-are.txt sane-ignore.txt \
+	sane-is.txt unittab.txt
 
 SOURCES=ANSI.pl CTCP.pl Channel.pl DBM.pl Extras.pl HandleURLs.pl \
 	Help.pl Irc.pl IrcExtras.pl IrcHooks.pl Misc.pl Norm.pl Params.pl \
 	Process.pl Question.pl RDF.pl Reply.pl Search.pl Setup.pl Statement.pl \
 	Update.pl User.pl Util.pm
 
+# computed variables
 SRC_FILES=$(shell for f in $(SOURCES);do echo $(SRCDIR)/$$f;done)
+CONF_FILES=$(shell for f in $(CONFS);do echo $(CONFDIR)/$$f;done)
+RELEASEDIR=flooterbuck-$(shell cat VERSION)
+TAG=release-$(shell sed 's/\./-/g' VERSION)
 
 TARBALL=$(RELEASEDIR).tar.gz
 
@@ -31,7 +38,7 @@ default: $(TARBALL)
 		$(wildcard $(MODULESDIR)/*.pm) \
 		$(SRC_FILES) \
 		$(DOCS) \
-		$(CONFDIR)/*-dist $(CONFDIR)/sane-*.txt | \
+		$(CONF_FILES) | \
 		( cd ../$(RELEASEDIR) && tar xf - )
 
 $(TARBALL): ../$(TARBALL)
@@ -43,5 +50,7 @@ tarball: ../$(TARBALL)
 	cd .. ; tar cvvf - $(RELEASEDIR) | gzip -9 > $(TARBALL)
 	cd .. && rm -r $(RELEASEDIR)
 
+release: tag tarball
+
 tag:
-	cd .. && cvs tag release-$(shell sed 's/\./-/g' VERSION) .
+	cd .. && cvs tag $(TAG)
