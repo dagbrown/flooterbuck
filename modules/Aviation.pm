@@ -29,7 +29,7 @@
 # 2003/02/22 dagbrown@rogers.com
 #            - Added patch to make it more picky about where words end
 #
-# $Id: Aviation.pm,v 1.12 2003/03/14 17:51:10 rharman Exp $
+# $Id: Aviation.pm,v 1.13 2003/04/20 00:39:24 dagbrown Exp $
 #------------------------------------------------------------------------
 
 package Aviation;
@@ -145,7 +145,7 @@ sub metar {
 	my $reply = $agent->request($grab);
 	
 	# If it can't find it, assume luser error :-)
-	return "Either $site_id doesn't exist (try a 4-letter station code like KAGC), or the site NOAA site is unavailable right now." 
+	return "Either $site_id doesn't exist (try a 4-letter station code like KAGC), or the NOAA site is unavailable right now." 
 	    unless $reply->is_success;
 	
 	# extract METAR from incredibly and painfully verbose webpage
