@@ -29,7 +29,7 @@
 # 2003/02/22 dagbrown@rogers.com
 #            - Added patch to make it more picky about where words end
 #
-# $Id: Aviation.pm,v 1.10 2003/02/22 21:07:22 dagbrown Exp $
+# $Id: Aviation.pm,v 1.11 2003/02/22 22:20:58 dagbrown Exp $
 #------------------------------------------------------------------------
 
 package Aviation;
@@ -59,14 +59,14 @@ sub Aviation::scan(&$$) {
     my($callback,$message,$who) = @_;
 
     if(defined(::getparam('aviation') or defined(::getparam('metar'))) and
-       $message =~ /^(metar     |
-		      taf       |
-		      great[-\s]?circle | 
-		      zulutime  |
-		      tsd       |
-		      airport   |
-		      rh        |
-                      aviation)/xi) 
+       $message =~ /^(metar             |
+                      taf               |
+                      great[-\s]?circle | 
+                      zulutime          |
+                      tsd               |
+                      airport           |
+                      rh                |
+                      aviation)\s+/xi) 
     {
         &Aviation::get($message, $callback);
         return 1;
