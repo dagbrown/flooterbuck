@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: fcol.pm,v 1.2 2002/08/02 22:10:44 dagbrown Exp $
+# $Id: fcol.pm,v 1.3 2002/08/02 22:22:28 dagbrown Exp $
 #------------------------------------------------------------------------
 package fcol;
 use strict;
@@ -49,15 +49,12 @@ Nickname interface added by Drew Hamilton <awh@awh.org>
 my ($no_fcol, $no_posix);
 
 BEGIN {
-    eval qq{
-        use LWP::Simple qw();
-    };
-    $no_fcol++ if ($@);
-
-    eval qq{
-        use POSIX;
-    };
-    $no_posix++ if ($@);
+    foreach $lib qw(LWP::Simple URI::Escape POSIX) {
+        eval qq{
+            use $lib;
+        };
+        $no_fcol++ if ($@);
+    }
 }
 
 #------------------------------------------------------------------------
@@ -105,10 +102,11 @@ sub fcol_create($) {
     my $longurl=shift;
 
     my $response=LWP::Simple::get(
-        'http://www.fcol.com/add?life=7&url='
-        .$longurl);
+        'http://fcol.org/add?life=7&url='
+        .uri_escape($longurl));
 
-    my ($fcol)=snag_element("TEXTAREA",$response);
+    print STDERR $response,"\n";
+    my ($fcol)=snag_element("a",$response);
 
     return "Your fcol is $fcol";
 }
@@ -165,3 +163,7 @@ sub scan(&$$) {
 }
 
 "fcol";
+
+if($ARGV[0]){
+    print fcol_create($ARGV[0]),"\n";
+}
