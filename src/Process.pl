@@ -194,7 +194,7 @@ sub process {
         return "FEEDBACK";
     }
 
-    if (($message =~ /^\s*$param{'nick'}\s*([\,\:\> ]+) */i) 
+    if (($message =~ /^\s*$param{'nick'}\s*([\,\:\>\- ]+) */i) 
             or ($message =~ /^\s*$param{'nick'}\s*-+ *\??/i)) {
         # i have been addressed!
         my($it) = $&;
