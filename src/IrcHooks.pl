@@ -30,15 +30,6 @@ sub IrcMsgHook {
             $delay = time() - $prevtime;
             $prevcount++;
 
-            if (0 and $delay < 1) {
-                # this is where to put people on ignore if they flood you
-                if (IsFlag("o") ne "o") {
-                    &msg($who, "You will be ignored -- flood detected.");
-                    &postInc(ignore => $who);
-                    &log_line("ignoring ".$who);
-                    return;
-                }
-            }
             return if (($message eq $prevmsg) && ($delay < 10));
         } else {
             $prevcount = 0;
