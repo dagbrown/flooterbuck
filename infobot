@@ -5,6 +5,8 @@
 
 # no warrantee expressed or implied. terms as the 
 # license for X11R6 when needed.
+#
+# Rereleased under the GPL, 2001, with the "Flooterbuck" fork.
 
 BEGIN {
   $VER_MAJ = 0;
