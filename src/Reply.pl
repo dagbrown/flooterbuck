@@ -171,12 +171,6 @@ sub getReply {
         $shortReply = 0;
         $noReply = 0;
 
-        if (0 and $theMsg =~ s/^\s*<noreply>\s*//i) { 
-            # specially defined type. No reply. Experimental.
-            $noReply = 1;
-            return 'NOREPLY';
-        }
-
         if (!$msgType) {
             $msgType = 'private';
             &status("NO MSG TYPE / set to private\n");
