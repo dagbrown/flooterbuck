@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: ebay.pm,v 1.18 2002/05/21 23:11:12 rharman Exp $
+# $Id: ebay.pm,v 1.19 2003/02/15 18:00:52 dagbrown Exp $
 #------------------------------------------------------------------------
 package ebay;
 use strict;
@@ -124,10 +124,10 @@ sub parse_response($) {
     # fix the Buy It Now bug
     $snagged_info{"Currently"} =~ s/Buy.*//;
 
-    my $reply = $title."[".$snagged_info{"Seller (Rating)"}."] ".
+    my $reply = $title."[".$snagged_info{"Seller (rating)"}."] ".
         "Qty ".$snagged_info{"Quantity"}." ".
-        $snagged_info{"Currently"}.
-        " [".$snagged_info{"High bid"}."] ".
+        $snagged_info{"Current bid"}.
+        " [".$snagged_info{"High bidder"}."] ".
         $snagged_info{"Time left"};
 }
 
