@@ -4,7 +4,7 @@
 # See the Big Ugly Block Comment, preserved from the original
 # version of the code.
 #
-# $Id: slashdot.pm,v 1.5 2001/12/04 17:40:27 dagbrown Exp $
+# $Id: slashdot.pm,v 1.6 2003/03/04 20:59:07 dagbrown Exp $
 #------------------------------------------------------------------------
 
 #####################
@@ -49,7 +49,7 @@ sub getslashdotheads {
     };
     $ua->timeout(12);
     my $maxheadlines=5;
-    my $slashurl='http://www.slashdot.org/slashdot.xml';
+    my $slashurl='http://slashdot.org/slashdot.xml';
     my $story=0;
     my $slashindex = new HTTP::Request('GET',$slashurl);
     my $response = $ua->request($slashindex);
@@ -67,7 +67,8 @@ sub getslashdotheads {
                 $headlines .= " | $1";
             }
             elsif (/<url>(.*?)<\/url>/){
-                # do nothing
+                # Grab the URL (Vooch++)
+                $headlines .= " ($1)";
             }
             elsif (/<time>(.*?)<\/time>/){
                 # do nothing
