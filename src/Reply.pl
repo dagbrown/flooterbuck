@@ -286,12 +286,14 @@ sub getReply {
 
 
     if (1) {			# $date, $time 
-        $curDate = scalar(localtime());
+        $curEpoch = time;
+        $curDate = scalar(localtime($curEpoch));
         chomp $curDate;
         $curDate =~ s/\:\d+(\s+\w+)\s+\d+$/$1/;
         $theMsg =~ s/\$date/$curDate/gi;
         $curDate =~ s/\w+\s+\w+\s+\d+\s+//;
         $theMsg =~ s/\$time/$curDate/gi;
+        $theMsg =~ s/\$epoch/$curEpoch/gi;
     }
 
     $theMsg =~ s/\$who/$who/gi;
