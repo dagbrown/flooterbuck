@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: fcol.pm,v 1.9 2003/02/10 04:16:50 dagbrown Exp $
+# $Id: fcol.pm,v 1.10 2003/03/28 16:23:27 dagbrown Exp $
 #------------------------------------------------------------------------
 package fcol;
 use strict;
@@ -115,12 +115,12 @@ sub fcol::get($$) {
 sub scan(&$$) {
     my ($callback, $message, $who)=@_;
 
-    if ( $message =~ /^\s*(?:fcol|tinyurl|shrivel)\s+(\w+:\S+)/i ) {
+    if ( $message =~ /^\s*(?:fcol|shrivel)\s+(\w+:\S+)\??/i ) {
         &main::status("fcol small-URL creation");
         fcol::get($message,$callback);
         return 1;
     }
-    if ( $message =~ /\s*(?:fcol|tinyurl|shrivel)\s+(?:that|please)/i) {
+    if ( $message =~ /\s*(?:fcol|shrivel)\s+(?:that|please)/i) {
         &main::status("auto-fcol last-url creation");
         fcol::get($message,$callback);
     }
