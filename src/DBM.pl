@@ -1,4 +1,4 @@
-# $Id: DBM.pl,v 1.3 2002/08/13 18:56:42 awh Exp $
+# $Id: DBM.pl,v 1.4 2004/08/10 20:31:01 dagbrown Exp $
 #
 # infobot :: Kevin Lenzo  (c) 1997
 
@@ -661,6 +661,30 @@ sub showdb {
     return @result;
 }
 
+#------------------------------------------------------------------------
+# a better top ten which only sorts a small number of things
+# (but does it a lot) instead of sorting a huge number of things
+# once and then throwing most of them away
+sub topofthecharts(&$@) {
+    my $sortfun=shift;
+    my $numtoreturn=shift;
+    # and the rest of @_ is the values themselves
+
+    if(scalar(@_)<=$numtoreturn) { 
+        return sort { &$sortfun($a,$b) } (@_) 
+    }
+
+    my @b=sort { &$sortfun($a,$b) } @_[0..$numtoreturn-1];
+
+    for my $x (@_) {
+        if(&$sortfun($x,$b[$numtoreturn-1])==1) {
+            unshift @b,$x;
+            @b=sort { $b <=> $a } @b[0..$numtoreturn-1];
+        }
+    }
+    return @b;
+}
+
 # showtop - awh@awh.org
 #
 # Shows the top or bottom $num_to_show entries in database $dbname, sorted by
@@ -691,19 +715,13 @@ sub showtop {
 
     if ($what_to_show =~ /bottom/)
     {
-        foreach (sort { $rhash->{$a} <=> $rhash->{$b} } keys %$rhash)
-        {
-            last unless ($num_to_show--);
-            unshift @result, "$_ => $rhash->{$_}";
-        }
+        @result = topofthecharts { $rhash->{$_[0]} <=> $rhash->{$_[1]} }
+            $num_to_show, keys %$rhash;
     }
     else
     {
-        foreach (sort { $rhash->{$b} <=> $rhash->{$a} } keys %$rhash)
-        {
-            last unless ($num_to_show--);
-            push @result, "$_ => $rhash->{$_}";
-        }
+        @result = topofthecharts { $rhash->{$_[1]} <=> $rhash->{$_[0]} }
+            $num_to_show, keys %$rhash;
     }
     lock $rdb, LOCK_UN;
 
