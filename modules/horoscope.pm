@@ -3,7 +3,7 @@
 #
 # Richard Harman
 #
-# $Id: horoscope.pm,v 1.2 2002/02/04 17:52:23 awh Exp $
+# $Id: horoscope.pm,v 1.3 2004/08/14 04:40:34 dagbrown Exp $
 #------------------------------------------------------------------------
 package horoscope;
 use strict;
@@ -119,6 +119,8 @@ sub horoscope_getdata($)
     $horoscope =~ s/^\s+//sgi;
     $horoscope =~ s/\s+^//sgi;
   }
+
+  $horoscope =~ s/\s+Send this page to a friend.\s*$//;
   return $horoscope;
 }
 
