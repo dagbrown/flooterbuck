@@ -8,7 +8,7 @@
 # Make it psychic enough to figure out what timezone you're in, and have
 # it tell you the right time.  (Ha ha ha)
 #
-# $Id: fuzzyclock.pm,v 1.10 2001/12/13 18:52:33 awh Exp $
+# $Id: fuzzyclock.pm,v 1.11 2002/01/26 01:01:55 rharman Exp $
 #------------------------------------------------------------------------
 
 use strict;
@@ -92,7 +92,7 @@ sub fuzzytime {
 sub scan(&$$) {
     my ($callback, $message, $who) = @_;
     
-    if($message =~ /^what time (is it|do you have)\??\s*$/i) {
+    if($message =~ /^(?:what time (?:is it|do you have)\??|fuzzy(?:clock|time|date)\s*)$/i) {
 	if(rand()>0.5) {
 		$callback->("It's ".fuzzytime.", $who.");
 	} else {
