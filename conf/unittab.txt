@@ -111,6 +111,8 @@ rood    1|4 acre
 township 36 mi2        # Who uses these?
 barn    (1.0E-12 centimeter)2 # Particle physics
 board   144 in3/ft     # Implies `board feet'
+tatami  (1.82405 m*m)  # Japanese apartment sizes!
+mat	tatami
 
 # VOLUME
 cc      cm3
