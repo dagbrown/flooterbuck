@@ -1,3 +1,46 @@
+1.1 -- March 03, 2003
+
+Maintenance release.  Nothing really new or huge here.  
+
+Bug Fixes
+=========
+
+- ebay.pm: changed to deal with eBay's changed HTML
+- insult.pm:  won't crash the bot if Net::Telnet is not available
+- joinleave.pm:  bot will now listen to people telling it to leave
+- slashdot.pm:  works now
+- units.pm:  now responds with an error message when it doesn't recognize
+             the units, rather than sitting there not saying andything and
+             looking like an idiot
+- weather.pm:  fixed so it gets the weather now
+- aviation.pm:  won't answer if its keywords are mentionned as parts 
+                of other words
+
+
+Feature Additions and Enhancements
+==================================
+
+- units:  "l" and "litre" are now synonyms for "liter"
+- units:  added "tatami" and "mat", Japanese apartment-size measurement
+- comicchat:  Made floot a bit more comicchat-friendly if the
+  "comicchat" configuration option is set to true.  It will properly
+  respond to Comicchat requests (ie, strip out that (#G02020202) crap
+  at the beginning of each message), as well as announce a character
+  upon request
+- fcol:  Floot will now "remember" the most recent URL pasted so that
+  "fcol that" will cause the most recent URL to be shortened.
+- excuse.pm:  added, using a static list of excuses, rather than
+              old-style "excuse server" which didn't work anymore.
+- combinatorics:  Floot now knows how to do combination, permutation, and
+                  factorial!
+- bash.pm:  I'm sure it does something useful, but for the life of
+            me I can't figure out what.
+- babelfish:  Now allows translation between any of Babelfish's 
+              allowed language, and will also translate between
+              arbitraty supported languages by translating "through"
+              an intermediary language (most likely English)
+
+
 1.0 -- August 19, 2002
 
 Initial Release of Flooterbuck Infobot.
