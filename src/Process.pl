@@ -60,7 +60,7 @@ sub process {
         &status("IGNORE <$who> $message");
         return 'IGNORE';
     }
-
+    
     foreach (&getDBMKeys('ignore')) {
         my $ignoreRE = $_;
         my @parts = split /\*/, "a${ignoreRE}a";
@@ -117,7 +117,6 @@ sub process {
     }
 
     $VerifWho = &verifyUser($nuh);
-
     if ($VerifWho) {
         if (IsFlag("i") eq "i") {
             &status("Ignoring $who: $VerifWho");
@@ -158,6 +157,11 @@ sub process {
 
     # see User.pl for the "special" user commands
     return 'NOREPLY' if &userProcessing() eq 'NOREPLY';
+
+    # make this more Comic Chat friendly
+    if ( ::getparam('comicchat') ) {
+        $message =~ s/\(\#G[^\)]*\)//;
+    }
 
     if ($msgType !~ /public/) { $addressed = 1; }
 
