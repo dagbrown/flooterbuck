@@ -16,7 +16,7 @@ use Math::Trig;
 
 use vars qw($VERSION $score $verbose);
 
-$VERSION = '$Revision: 1.1 $';	# '
+$VERSION = '$Revision: 1.2 $';	# '
 $VERSION =~ s/^.*?([\d.]+).*?$/$1/;
 
 sub nickometer ($) {
@@ -210,7 +210,7 @@ sub punish ($$) {
 #------------------------------------------------------------------------
 
 sub scan(&$$) {
-    my ($callback, $message, $who)=@_;
+    my ($callback, $message, $who) = @_;
     if ($message =~ /^\s*(?:lame|nick)-?o-?meter(?: for)? (\S+)/i) {
         my $term = $1;
         if (lc($term) eq 'me') {

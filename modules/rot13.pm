@@ -8,7 +8,7 @@ use strict;
 package rot13;
 
 sub scan(&$$) {
-    my ($callback,$message,$who)=@_;
+    my ($callback,$message,$who) = @_;
 
     if ($message =~ /^rot13\s+(.*)/i) {
         # rot13 it

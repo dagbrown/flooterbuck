@@ -183,7 +183,7 @@ sub ebay::get($$) {
 #------------------------------------------------------------------------
 
 sub scan(&$$) {
-    my ($callback, $message, $who)=@_;
+    my ($callback, $message, $who) = @_;
 
     if ( ::getparam('ebay') and $message =~ /^\s*ebay\s+(\d+)$/i ) {
         &status("eBay query");

@@ -8,7 +8,7 @@ use strict;
 package greeting;
 
 sub scan(&$$){
-    my ($callback,$message,$who)=@_;
+    my ($callback,$message,$who) = @_;
 
     if ($message =~ /^\s*(h(ello|i(\s+there)?|owdy|ey|ola)|
                          salut|bonjour|niihau|que\s*tal)

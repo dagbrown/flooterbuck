@@ -48,7 +48,7 @@ my $taf_highlight_bold = 1;
 # Figure out if we're supposed to do something, and do it if we are
 #
 sub Aviation::scan(&$$) {
-    my($callback,$message,$who)=@_;
+    my($callback,$message,$who) = @_;
 
     if(defined(::getparam('aviation') or defined(::getparam('metar'))) and
        $message =~ /^(metar     |

@@ -6,7 +6,7 @@ package status;
 use strict;
 
 sub scan(&$$) {
-    my ($callback,$message,$who)=@_;
+    my ($callback,$message,$who) = @_;
     
     if ($message =~ /^statu?s/) {
         my $upString = &::timeToString(time()-$::startTime);

@@ -98,26 +98,8 @@ sub Weather::NOAA::get {
     }
 }
 
-sub scan (&$) {
-    my ($callback,$message)=@_;
-
-    if (::getparam('weather') 
-            and ($message =~ /^\s*weather\s+(?:for\s+)?(.*?)\s*\?*\s*$/)) {
-        my $code = $1;
-        my $weath ;
-        if ($code =~ /^[a-zA-Z][a-zA-Z0-9]{3,4}$/) {
-            $weath = &Weather::NOAA::get($code);
-        } else {
-            $weath = "Try a 4-letter station code (see http://weather.noaa.gov/weather/curcond.html for locations and codes)";
-        }
-        $callback->($weath);
-        return 'NOREPLY';
-    }
-    return undef;
-}
-
 sub scan (&$$) {
-    my ($callback,$message,$who)=@_;
+    my ($callback,$message,$who) = @_;
 
     if (::getparam('weather') 
             and ($message =~ /^\s*weather\s+(?:for\s+)?(.*?)\s*\?*\s*$/)) {

@@ -9,10 +9,8 @@ package zippy;
 
 my $no_zippy; # Can't think of any situation in which this won't work..
 
-sub zippy::scan(&$$) {
-    my $callback = shift;
-    my $line = shift;
-    my $who = shift;
+sub scan(&$$) {
+    my ($callback,$message,$who) = @_;
 
     unless ($line =~ /^yow[!? ]*$/i or $line =~ /^be zippy\?*$/i) { 
         return undef;

@@ -8,7 +8,7 @@ use strict;
 package seen;
 
 sub scan(&$$) {
-    my ($callback,$message,$who)=@_;
+    my ($callback,$message,$who) = @_;
 
     # Now with INTENSE CASE INSENSITIVITY!  SUNDAY SUNDAY SUNDAY!
     if ($message =~ /^seen (\S+)/i) {

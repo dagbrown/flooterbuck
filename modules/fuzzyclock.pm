@@ -87,7 +87,7 @@ sub fuzzytime {
 }
 
 sub scan(&$$) {
-    my ($callback, $message, $who)=@_;
+    my ($callback, $message, $who) = @_;
     
     if($message =~ /what time (is it|do you have)\??\s*$/i) {
 	if(rand()>0.5) {

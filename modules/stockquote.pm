@@ -121,7 +121,7 @@ sub quote_summary($) {
 #------------------------------------------------------------------------
 
 sub scan(&$$) {
-    my ($callback,$message,$who)=@_;
+    my ($callback,$message,$who) = @_;
 
     if ($message =~ /^(?:quote|stock price)(?: of| for)? ([A-Z]{1,7})\?*$/) {
         if($no_quote) {

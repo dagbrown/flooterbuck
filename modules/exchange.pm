@@ -374,7 +374,7 @@ sub GetTlds {
 }
 
 sub scan(&$$) {
-    my ($callback,$message,$who)=@_;
+    my ($callback,$message,$who) = @_;
 
     # currency exchanger, bobby@bofh.dk
     if( defined(::getparam('exchange'))

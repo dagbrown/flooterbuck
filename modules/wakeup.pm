@@ -7,7 +7,7 @@ use strict;
 package wakeup;
 
 sub scan(&$$) {
-    my ($callback, $message, $who)=@_;
+    my ($callback, $message, $who) = @_;
 
     # Aldebaran++ !
     if (::getparam("shutup")) {

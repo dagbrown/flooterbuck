@@ -77,7 +77,7 @@ sub getslashdotheads {
 }
 
 sub scan(&$$) {
-    my($callback,$message,$who)=@_;
+    my($callback,$message,$who) = @_;
 
     if (defined(::getparam('slash')) 
             and $message =~ /^\s*slashdot( headlines)?\W*\s*$/) {
