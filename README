@@ -1,0 +1,146 @@
+
+You will need to update your infobot.config 
+and infobot.users.  See the example files.
+
+--
+
+This requires perl 5.
+
+You should be able to start up just by running
+infobot.  If you are using macperl, you will
+(currently) have to make one minor change (because
+$^O didn't work for me under os8).
+
+The infobot uses parameter files, typically in the
+params directory, to set up with.  It treats anything
+on the command line as a parameter file and tries to 
+load it. 
+
+If you are using macperl, you will want to set 
+the value of the macperl parameter to 1 in the
+two given param files (in the 'files' dir).
+
+By default, the infobot uses the IRC setup.  This
+may change.  NOTE that the irc version has no output
+by default; you'll have to turn up the debug level
+to get more.
+
+to start up the infobot, just invoke it from the 
+command line.
+
+   infobot 
+
+---
+
+A note on forms:  you can prepend the tag <reply>
+to values in the db to just get a reply with no 
+extra info.
+
+e.g.
+
+   x => <reply> y
+
+then when you ask 'x?' it will just reply 'y' instead
+of something like "i think x is y".
+
+---
+
+* extending the bot by adding your own code
+
+try to keep your changes inside src/myRoutines.pl
+so that you can easily just replace this file when 
+there are new revs.  this is called just after some
+of the normalization stuff in urlProcess.pl. take
+a look at the file for details.
+
+basically, if myRoutines returns non-null, it's
+taken to have 'caught' the event.  you can just
+return '' to let the rest of the processing go at
+it.
+
+---
+
+* update_db & dump_db
+
+update_db is a little perl script that will take a
+flat ascii file and make an infobot-style db out
+of it (currently just a couple of dbm files). You'll
+want to make 2, even if theye contain only 1 element
+each.  it will also simply add (and overwrite entries
+in) existing dbs.  This is especially nice if
+you don't allow updates to the databases through IRC
+and just want a collection of permanent factoids.
+
+update_db <inputfile> <dbname>
+
+where <inputfile> is an ascii file like (in the case
+of an url-style infobot):
+
+infobot => at http://www.cs.cmu.edu/~lenzo/hocus.html
+
+one key => value per line.  In the current setup,
+you need an is-database and an are-database, mainly
+for legacy reasons about representing plurality and
+being able to give the proper form.  in the infobot-is.txt
+file and infobot-are.txt files you have examples.  these
+are a fine starting point:
+
+1.1  update_db infobot-is.txt infobot-is
+     update_db infobot-are.txt infobot-are
+
+2. Now you need to edit infobot to set up your bot.
+   Don't forget to set the path to perl properly at
+   the top and make it executable.
+
+3. Then try running infobot.  At present, there's a
+   bunch of VERY BAD code in it, so don't use the -w
+   switch unless you want to fix a bunch of things and
+   mail me.
+
+Eventually, kill it and then you'll probably
+want to crontab it.  included is a sample crontab
+and the script that you will need to edit.
+
+dump_db <dbname> 
+
+will just make a flat ascii file out of the named db,
+e.g.
+
+   dump_db infobot-is
+
+Both update_db and dump_db take an optional switch, -m, which tells them
+what DBM module to use.  You'll need to specify this if you set
+DBMModule in your config file in order to get the bot to use something
+other than Perl's default.  Eg,
+
+   update_db -m DB_File infobot-is.txt infobot-is
+   dump_db   -m DB_File infobot-is
+
+good luck, and mail me!
+
+kevin
+lenzo@cs.cmu.edu
+
+ps - i am just releasing this _now_ instead of waiting
+     to fix everything.  If you use this and like it,
+     or even if you don't, please mail me!
+
+---
+
+thanks to:
+
+You, for getting this and using this.  Especially if
+you mail me and let me put you on the mailing list.
+lenzo@cs.cmu.edu
+
+special thanks to:
+
+steve orens (sorens) for being a tour-de-force beta bomber
+yo for working with script.  this is a big one!
+amug and everyone there for hosting the undernet url
+#macintosh for dealing with url through his troubled childhood
+tris for being an early guinea pig
+jadin for pointing out the @verb bug... fixed in 0.17b
+chucky burnett for tons of stuff
+
+

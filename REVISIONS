@@ -1,0 +1,687 @@
+0.45.3 
+
+Really fix the stuff in DBM.pl for the %param hash.
+
+0.45.1,2
+
+Fixed some path names, made a new tarball.
+
+0.45.0
+
+Renamed the miscdir parameter to confdir (in 'infobot')
+Renames 'files' directory to 'conf'
+Seperated src/ into src/ and extras/
+Changed default name to 'i-bot' in the infobot.config file
+Rationalized the names of the dbs to use dbname as a prefix
+
+0.44.5
+
+Push ./src onto the path so Util.pm gets in.
+New Airport.pl replaces METAR2 with a lot nicer stuff.
+  mendel++.  Very nice example of a module with forking, 
+  etc.
+Fixed excuse.pl's return codes.
+Roderick++'s extensive factoid locking patches for 
+  sharing DBs between infobots.
+Added scripts/make_snap and scripts/restore_snap , which
+  make and restore ASCII snapshots of the databases, 
+  respectively.  This is good to do periodically as a
+  backup.
+Added stockquote.pl to get stock quotes (LotR++) and added
+  a boolean parameter ('stockquotes') to turn it on or off.
+Fixed a bug in the http proxy in the RDF fetching code (LotR++)
+Messages no longer record the apparent last channel 
+  when given in private.
+Changed src/excuse.pl to guard against the server being 
+  down, though i'm afraid the server is never going
+  to come back up.
+Cleaned extra white space off the end of parameter values
+  during the read of the config file.
+Currency exchance is now case-insensetive.
+There were several other small bugfixes that didn't make it
+  into this file during a move.  
+
+0.44.4
+
+Removed 'factpacks' subdirectory.  These packs are all on 
+    the web site (http://www.infobot.org), and more.
+Tidying of purldoc code.
+Tidying of W3Search triggers
+Tidying of IMDB, Websters, etc.
+Splitting lines in say()/msg()
+HTTP proxy support
+Little tidying of the Math code.
+More informative return values from Process
+Better support for `no, $nick, ...' 
+Much increased `tell' support
+perlfaq' support: uses RSS to get faqtoids from perlfaqprime
+Much needed fixes to Zippy factoids
+Babelfish rewritten
+Net::Telnet timeout fix to insult
+Fixed `exchange' typo in infobot.config.
+\| for quoting pipes in factoids, Avi++
+Added the channels patch. infobot.channels now sets channel-specific 
+    options. The format is pretty much the same as the users file.
+Documented all the extensions.
+Fixed the `eval' command, which you shouldn't be using anyway.
+Removed spurious line breaks in Zippy's data.
+The `msgonly' parameter, if set, will see a question on channel and
+    respond to it via /msg
+The `continuity' parameter controls how many seconds must elapse before
+    the infobot assumes you have stopped addressing it. Set this to 0,
+    and the infobot will never assume that it is being addressed.
+Added a warning to Babel.pl if target language is `en'
+Close `karma' and `seen' databases in &killed, now karma doesn't
+    get reset.
+
+0.44.3
+
+NOTE: You must update WWW::Search to the latest version
+    for the Google search to work.
+NOTE: As usual, the new features (mostly) have new
+    parameters that need to be defined in 
+    files/infobot.config -- to update, you'll need
+    to move your dbm files into the new source
+    tree and edit infobot.config.  this is the best way.
+Made return values from myRoutines.pl said or messaged
+    rather than using &say and &msg inside myRoutines.
+    Use 'NOREPLY' to override this if you want to
+    use msg and/or say yourself (such as in a callback
+    or when forking).
+Moved the current myRoutines.pl file to a file called
+    Extras.pl.  myRoutines.pl is reserved for local
+    user extensions, and Extras.pl is now where the
+    add-ons in the distribution are.  They both 
+    behave the same as the old myRoutines.pl did.
+    Extras is called after myRoutines.
+Moved several redirects out of Reply.pl and into Extras.
+Added 'literal' query -- 'literal foo' will show the
+    factoid for the key foo, with tags and |s literally.
+Added RDF/RSS support (LotR++) in RDF.pl.  Uses the tag 
+    <rss="http://path/to/rdf/file"> and replaces it in-line.
+    RSS is RDF Site Summary; many sites now use this
+    standard format to encode their headlines/topics.
+    Requires XML::RSS.
+Added currency exchange module (exchange.pl) from 
+    bobby@bofh.dk (thanks!)
+Added excuse module (excuse.pl), also from bobby@bofh.dk!
+Added 'purldoc' -- ^Masque++ -- which searches through
+    perl FAQ question titles.
+Removed usair module. They changed the interface and
+    this should just be re-written more gerally.
+Added support for Zippy.pl, which provides Zippy witticisms. 
+    i made it require to be addressed. "infobot, yow" or 
+    "infobot, be zippy" is the trigger.  (mendel++)
+    the parameter is "zippy" in infobot.config. 
+Added 'divine (.*)', a magic 8-ball (boojum++)
+Made Search work again for users with the +s user flag set.
+    I still don't recommend this for bots with very big
+    dbs.
+Another pass at getting the 'reload' code to work (Simon++).
+Target adressing in 'tell' made more consistent (Simon++).
+Now works with MD5 passwords also (thanks to Bobby Billingsley).
+Added timeouts to LWP-using modules.
+Fixed CTCP ping reply.
+Started RIPE whois to complement Internic whois, moved the
+    whois stuff into myRoutines.  This is getting to be 
+    a mess and still needs work. (Thanks to Bo Krosgaard for 
+    this suggestion).
+
+0.44.2
+
+Added USAir flight information: 'usair flight 781'. requires LWP.
+    This should be replaced with a more general one.
+Added keyed channel patch from Eden Li (tile).
+Added new slashdot headline retrieval code care of Richard Hoelscher 
+    (Rahga). It makes Chris Tessone's code go to the XML file on /.
+    Also restricted its recongized form to "slashdot" or "slashdot 
+    headlines". Now called "Slashdot3". 
+Added a factpack on Security to factopacks/ submitted by Peter
+    Johnson (rottz), and one that has all the ports listed for tcp 
+    and udp from Samy Kamkar (CommPort5). Keep it up! :)
+Applied a patch to the insult server code from michael@limit.org.
+    should fix the function as well as "insult x in german".
+    btw, i can't send email to limit.org, so i hope he sees this :)
+Modified METAR code from Lazarus Long <lazarus@frontiernet.net>
+    and added a status line so it tells the owner it requires
+    LWP and Geo::METAR.
+Added Simon Cozens' Google search. Requires WWW::Search::Google. 
+    "google for foo", "search google for foo". 
+Expanded the Google search to do everything WWW::Search knows about,
+    and to fork so it wouldn't block the bot. Dejanews, Google,
+    Gopher, Excite, Infoseek, HotBot, Lycos, AltaVista, Magellan, 
+    PLweb, SFgate, and Verity. try 'search <engine> for <keywords>'.
+    But you really need to install WWW::Search to use this.
+Added "shut up" (which changes Addressing to "REQUIRE"), 
+    "wake up" (changes it to "OPTIONAL"), and "showmode" that
+    tells which mode it's in. Aldebaran++ for this. the param
+    "shutup" controls whether this is on; turn it off if you always
+    want it to be REQUIRE.
+Made the output of "seen" nicer; reports how long it's been.
+By the way, the Nickometer code is due to Adam Spiers, and it
+    was one of the earlier, relatively undocumented add-ons that
+    made an example for others to start off with. Added comment.
+
+
+0.44.1
+
+Fixed the CTCP bug which people were exploiting to crash. Thanks!
+Wrapped the babelfish translation code 'use's in evals so
+    lack of URI::Escape won't stop you from running the bot.
+Added Chris Tessone's slashdot headlines module with a few minor
+    changes (the same eval trick as above).
+Added some documentation to infobot_guide.html (gasp!)
+Added some factpacks in factpacks/ that were on the web site.
+
+0.44.0
+
+WARNING: many changes have been undocumented, but 
+    i'm getting lots of requests to release the current
+    state -- warts and all.  Here it is, 6:35 AM Jun 24 99,
+    an hour before yapc 99 opens.
+many small things, as usual.
+babel code (jdf++) for using babelfish to translate
+    things. 'translate to german: hello'. this
+    can be shortened to 'x to de hello'.  *note: 
+    LWP must be installed for this to work.
+'insult server' code; probably not very useful.
+    Also requires LWP.
+
+
+0.43.6
+
+freeside++ for code to clean up the imbd redirect.
+fimmtiu++ for 'your' patches. blame him now.
+fixed the text of the foldoc redirect (TorgoX++)
+added passwords for servers with passwords (ksiero++)
+    including server_pass in infobot.config
+made s/// case-insensetive (mendel++)
+added vhost support and vhost_name to infobot.config (elph++)
+changed some trivial status messages to be prettier
+made miscdir fully qualified, and changed it to ./files in
+    the default infobot.config file.
+moved stray help setup code into a subroutine and call it
+    from Setup.pl
+added "say" for +o (/msg <botname> say #channel foo)
+made it so that +o can make the bot join any channel
+added NOAA.pl, inspired by geniusj's sh script 
+    to myRoutines.pl
+added METAR support (mendel++ for metar.pl), and this
+    plus the weather routine make nice examples
+
+0.43.5
+
+added <action> as a species of <reply>: X is <action> foo!
+added murrayb++'s patches for an ignore list file
+made help path relative (also murrayb++)
+renamed "scripts/make_db" to "scripts/update_db"
+added "scripts/unupdate_dbs" to back out all changes by nick
+    from a log file or part of a log file. good for removing
+    vandalism.
+made 'forget' logging more friendly to reversing it
+moved all the setup stuff more cleanly into Setup.pl
+made the ignore list modifiab;e at run-time with the P flag
+    and added 'ignore' and 'unignore' commands via msg
+added substitutions: X =~ s/A/B/
+
+0.43.4
+
+made private messages not respoken under the persistant
+    "seen" -- this was allowing people to get private 
+    information on 0.43.3.  0.43.3 was only available for
+    a few hours, so i hope this impact is minimal.
+
+0.43.3
+
+many undocumented little things.  fixes, of course!
+fixed the reply after seen.
+made seen persistant.  added the infobot.config line 'seen'
+    for the seen-db location
+added what the last thing seen was.
+made the karma path fully specified.
+
+0.43.2
+
+fixed the learning from other bots based on URL policy
+
+0.43.1
+
+minor fixes here and there.
+fixed the math bug (finally! i think!) 
+several NL patches.  Small CTCP fix. 
+some statement and question changes.  nothing major.
+wanted to get this version out before i tried getting
+    things working on a few more platforms.  seems
+    pretty stable.
+
+0.43.0
+
+* UPDATE YOUR irc.params to infobot.config FILES *
+* UPDATE YOUR userfile.txt files to infobot.users FILES *
+* SOME DOCUMENTATION is now in doc/infobot_guide.html
+
+changed DEBUG parameter name to VERBOSITY
+removed the broken STANDALONE mode for now
+    and eviscerated the code for it
+removed some lint from the params file
+files/irc.params IS NOW CALLED files/infobot.config
+removed vestigial paramdbm code.
+removed MacOS-specific code.  this needs-writing.
+fixed the "out-loud" comment "you are not a bot owner"
+    to be silent
+removed the vesitigial and misleading infobot.doc
+    and created some documentation ! in doc/infobot.html
+    and children
+renamed userfile.txt to files/infobot.users
+added variable interpolation to infobot.config so
+    you can use $ident and all previously-defined
+    parameter values in the assignent of subsequent
+    paramters.
+moved userfile diagnostics into User.pl (!) from 
+    top level infobot script
+renamed crontab.infobot to infobot.crontab
+converted all prints to status() for uniform logging
+    and console output
+removed other vesitigal logging code (Log.pl)
+redid the ansi color by type and status
+made internic reply via msg only
+removed MLF's -- these need rewriting
+moved the addressing code ALL out of Irc*.pl
+cleared initial negative on statements when the entry
+    doesn't yet exist (less weird factoids)
+added 'also |' to add disjuncts easily 
+allowed coherent protection of any word from
+    processing using \. e.g. \is for
+    x \is y is y
+added %channels, %seen, %verified hashes
+added password + hostmask protection and command-on-request
+    with the syntax   /msg <bot> <password> <command>
+    where <command> is {eval (mode e), op (mode p), die (mode o)}
+previously public bot commands are now private message only or
+    privmsg + password
+added "sane" files (sane-is.txt amd sane-are.txt) that
+    will be loaded into the -is and -are dbs at startup
+    and will set some items to sane values.  put things
+    that you want to be permanent in these.
+isolated statement rejection code
+moved math into Math.pl
+moved search code into Search.pl
+rolled the requires in the top level script into a 
+    single loop that automatically loads all the perl
+    files in the src directory
+fixed the interaction between addressing and volunteering.
+    minVolunteerLength applies only if addressing is not REQUIRED
+fixed the grotty math bug in perlMath that prevented negative
+    numbers from evalling properly
+
+0.42.1
+
+made it go for the _first_ verb rather than 
+    the first verb in the list.  cleaned up the
+    debug info. 
+fixed the underscore-erasing bug.
+there was a problem is \b$verb\b missing
+    things like .is; fixed.
+karma fix... allow "me", tolerate whitespace
+    (thanks fimmtiu and SirGawain)
+
+0.42
+
+fixed an interaction between marked questions,
+    minimum volunteering length, and addressing.
+allowed talk between friendly bots 
+rationalized some of the logging, so you can see
+    who did everything ('is also' updates, in
+    particular).
+fixed the traceroute calling syntax
+for some, karma didn't work with 0.41.5; it may now :)
+
+0.41.5
+
+closed the traceroute hole
+fixed the reverse DNS
+fixed some 'huh?' replies -- made sure to return
+    the NOREPLY token in Update.pl
+* desire: cut confirmation replies (mode)
+* desire: silent mode (learn only)
+
+rev 0.41.0 - 0.41.4
+
+many minor things, mostly natural language,
+    some infrastructure. allowed "forget" to
+    end with final punctuation.
+added factpack subdirectory.  use these to
+    load up the bot with things.  more to come.
+fixed "addressing" -> REQUIRE.
+
+revision 0.41
+
+added "karma".  now "x++" or "x--" will change x's karma.
+    "karma for x" will show it's current standing.  This 
+    idea came from dkindred@cs.cmu.edu and his plusplus
+    Zephyr bot.  Darrel Kindred is the mastermind here;
+    I just liked the idea and added it.
+added e mode in userfile to expose eval.  this is not 
+    recommended.  requires a crypted pass, then
+    /msg bot <pass> eval <perl code>
+
+revision 0.40.1
+
+replaced default userfile and fixed a tiny bit of NL where
+    it would say "OK" even when X already was Y.
+the next rev will be the one for MacPerl etc., i hope. this
+    was just a quick fix because 0.40 wasn't letting people
+    teach by default.
+
+revision 0.40
+
+several small fixes -- fixed a big with article deletion,
+    made it so it doesn't echo when told to die by a non-master,
+    fixed a few NL things, removed the CTCP die command.
+Mailing list opens.
+I plan one more rev to make sure this pre-version works
+    with MacPerl, then we'll switch to the new model.
+
+revision 0.39
+
+integrated wf's changes with my own NL stuff from
+    purl exploits.  this is a quick-turnaround rev to
+    get things in place for an upcoming major rev.
+since nslookup, etc are now keyworded, removed 
+    ipmatch and dmatch regexen from their preconditions.
+added param for default signoff message
+
+revision 0.38
+
+user system reworked flags are settable to limit
+    access to the bot's features.  Examples can
+    be found in files/userfile.txt.
+non-blocking sockets added to allow use of DCC
+    and other various functions to come soon.
+
+revision 0.37
+
+Standalone mode works again after an oops in the
+hooks by wildy... :)
+
+revision 0.36
+
+NL stuff, some fixes from purl.
+
+revision 0.35
+
+new option;  multiline factoids. you can use the
+    following syntax to teach infobot facts on 
+    multiple lines:
+        <mynick> infobot: something is <multi>
+    anything said from there on will be recorded
+    as part of the fact.  make sure you designate
+    the end of the fact or it will continue adding
+    everything you say into the fact.
+        <mynick> <end>
+    this will end the fact and store it in the db.
+    made MLFs work with repeatIgnoreInterval to prevent
+        some nasty abuse potential; added status
+        line for repeat ignore
+
+revision 0.34
+
+fixed the addressing bug found in Irc.pl
+removed the "okay" message when it doesn't replace
+    a key with the same message; this makes it nicer
+    when more than one is on the same channel, though
+    they still all reply
+changed the default params to make urls optional
+fixed the "the" bug, and expanded the "can" grammar
+    to handle cases more flexibly.  
+undid some bug that were introduced in handing the
+    code back and forth
+folded in code that got out of sync in parallel revs.
+
+revision 0.33.3
+
+added the formatting of public channel messages and
+    changed the hook code to be a bit more sane
+
+revision 0.33.2
+
+re changed infobot to OPTIONAL listening/learning
+    instead of just url's as default
+
+revision 0.33.1
+
+added a few irc operator things in param file
+fixed the math routines
+commented out the dotwise domain thing in Question.pl
+    because its regex didn't function correctly, etc
+    maybe just use the one nslookup so it doesnt get
+    confused with messages.
+
+cleaned up for a hopefully stable-ish 0.33
+
+revision 0.32b
+
+infobot doesn't require perl 5.004 anymore, you
+    can run safely with perl 5.001 i'm pretty sure.
+added support for ANSI Color -- enjoy, you
+    can turn this on/off in the params file. also
+    might ansi-fy a few more parts. not much though.
+fixed bugs with irc code where infobot
+    couldn't join &channels (local) or channels
+    with weird things like '!'.
+-patrick
+
+fixed the :) bug
+fixed non-default param file to files/irc.params
+-kevin
+
+revision 0.31b
+
+ok, reintegrating the irc modules.
+re-added $nuh support so that users can use their 
+    passwords, etc.
+made numbers with more than 16 digits "a very big
+    number" in the math handling.
+it's indentation wars!  now that the tabs are gone,
+    most things indent nicely.
+cut out a few vestigial lines from the inlet code,
+    such as the hard-coded dbs (not used now anyway).
+i'm still torn about the copyright/license thing. have 
+    to figure out how to handle that.
+changed the default nick back the Newbie.
+removed the #$%#$% param db that was bugging me so
+    much.  just read in the param file and be 
+    happy.
+renamed "run_infobots.pl" to "run_if_needed.pl" and
+    made a couple of minor changes in it.
+
+
+revision 0.30b
+
+thanks, patrick!  Patrick Cole (wildfire) did 
+    everything for rev 029b... many many thanks.
+made the irc version the default
+changed the default server to cmu
+changed the default channel to #infobot
+will do more in the near future...
+NOTE infobot now requires perl 5.004
+
+
+revision 0.29b
+
+the first and greatest appearance of the inlet code rolled
+    into infobot.   new look makes it easier to see what's
+    going on and gives it a greater feel to it.  All irc
+    code rewritten by Patrick Cole graciously
+added a traceroute command for lazy people, etc
+nslookup for domain lookups
+reindented all the code by hand (ugh) because it was in an
+    "Eight Megs and Constantly Swapping" kind of way :)
+infobot can now reconnect split servers ...
+    "/ctcp infobot autorecon on"
+internic whois querys should work now hopefully
+
+
+revision 0.28b
+
+the first appearance of "curl", the command-line url.
+    useful for one-line queries and updates of the db.
+    not as full-featured as the standalone url -- 
+    these will probably merge.
+fixed a minor bug in writeParamFile
+woops.  it was set to userLevel > 100 for the eval 
+    instead of >= 100. 
+
+
+revision 0.27b
+
+aha! there was a bug in the argument parser; used pop 
+    instead of shift.  this ought to work better now.
+added absolute path to url in in4m.  use this if you're
+    going to invoke url from anywhere other than the
+    home directory.
+cleaned up in4m (top level) somewhat
+added mkpasswd and ckpasswd in anticipation of userlevels
+added writeParamFile in urlParams.pl.  I still would like
+    to get away from the param db and just read and write
+    a flat file.
+allowed $date, $time variables in values, e.g. "date is $date"
+allowed \i \me \my in values that prevents "person-switching",
+    e.g. "x is go ahead and tell \me" so it doesn't turn me 
+    into "in4m" or whatever on output
+moved $safeWho generation into &purifyNick, which makes a
+    nick safe to use in a regex (among other things).  it 
+    really just removes 'bad' characters.
+lifted the 'forget' code above most of the text processing
+    so it's more wysiwyf ('what you see is what you forget').
+stamped out what i hope is the last nick bracket bug 
+lifted the normalize query and switch person calls into urlQuestion
+    so that they don't cause weird interaction problems
+fixed a bug in 'you' (in switchPerson) referring to the bot
+added a 'chomp' on reading init files to keep out extra \n's
+added more stuff in urlUser.pl
+removed the secretWord potential nightmare and replaced it 
+    with the userlist potential nightmare
+addusers, readUserFile, writeUserFile, ckuser, users, etc 
+    etc. in urlUser.pl
+userList parameter in irc.params, standalone.params
+userlevel 100 exposes eval (!), userlevel 10 lets you
+    override the 'REQUIRE' option for urls.  come to
+    think of it, REQUIRE could be a number... 
+allowed 'allowUrls' to be a number, in which case it is 
+    interpreted as the min userlevel to enter a non-url
+
+
+revision 0.26b
+
+added a '<reply>' prepended tag to allow simple responses
+    (thanks, scuzzi_)
+made the default behaviour not to whine about things that
+    are already defined (...but x is y...) unless addressed
+    which makes it nicer when more than one are on the same
+    channel
+
+
+revision 0.25b
+
+mucked around with run_infobots.pl to get it working with
+    cron more obviously
+urlProcess had an old-style %params ; changed to %param
+moved a check for null paramfile names into loadParams loop
+fixed a bracketing error that led to irc mode overriding
+made it optional to use the parameter dbm; it's actually
+    reasonable to just read the irc.params file only
+    and not go for the "persistant parameters"
+
+
+revision 0.24b
+
+added a "commitDBM every Nth transaction" form of the parameter
+made dbm retry 10 times to open if it fails
+changed the default standalone params to point to the right files dir
+added a 'usage' output to dump_db to match make_db
+added param allowLeave, which lets people make the bot leave a chan
+changed the top-level name to just in4m.
+added args to the command line: -p, -i, -s, -h
+added a src/myRoutines.pl file so people can customize easily
+
+
+revision 0.23b
+
+fixed dump_db :/ silly me
+fixed another little problem in urlDBM.pl
+
+
+revision 0.22b
+
+set up params as a db.  it's still a hack and needs work,
+    but it allows for persistant params that you can set
+    within a session.
+fixed various problems in referring to the right dbs
+removed gratuitous accesses to the dbs
+exposed more stuff in the standalone version.  see standalone.txt.
+set up initialization of dbs within in4m.pl
+removed RUN_ME_FIRST
+changed %params to %param to make set look nicer
+moved make_db and dump_db into scripts/ subdir 
+    and cleaned them up slightly
+renamed params/ to files/
+made a doc dir and put the README for standalone in there
+added 'where is x at' form (thanks, scuzzi)
+
+
+revision 0.21b
+
+got rid of the question count access to the db.
+made -w happier.  someday i'll make -s happy too.
+added parameter files to make life better.
+the first appearance of the standalone desktop interactive 
+    version that doesn't depend on irc.
+added params and hooks for the standalone version.
+params{nick} behaviour made consistant (urlSetup was overriding).
+@allowed_channels fixed to $params{'allowed_channels'}.
+fixed the if (($params{'addressing'} eq 'REQUIRE') && $addressed)
+    to !addressed in urlStatement (thanks again, cburnett).
+made it open and close dbm files on each update unless 
+    told otherwise. some implementations did not guarantee
+    commit.  you can check your implementation and set
+    this to null or something else if you have a smart dbm.
+added params for maxKeyLength and maxDataLength.
+added params and fixed the help files. help files are
+    still ugly in the standalone mode.
+added allowUpdate parameter so you can have strictly answerbots;
+    this will tie in to having restricted lists of users + levels.
+made it so by default the irc version has no output.  turn
+    up the debug level if you need more insight into what's
+    going in.
+
+
+revision 0.20b
+
+this was a quick rev.
+fixed some of the gratuitous named stuff in urlProcess.pl
+made it so dns wouldn't try to fork under macperl
+got the tracking back up
+
+
+revision 0.19b:
+
+changed the default db's to be infobot-is and infobot-are
+changed RUN_ME_FIRST to deal with that and renamed the .txt files
+made a wantNick param
+make it so dbs are created if don't exist (as option)
+fixed $addressed so it didn't just look for prefixes
+fixed a couple of the parameters that weren't referring to the hash
+changed $urlCount to $factoidCount
+
+
+revision 0.18b:
+
+moved a bunch of params into the global hash %params
+added &params so people can see the settings 
+   e.g. /msg in4m mysecretword &params();
+added some parameters up-front for server, port, etc.
+changed the bad nickname code 
+the burnett fix (:$realname)
+added infobot.help as a default help file
+
