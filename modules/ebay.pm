@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: ebay.pm,v 1.14 2002/02/04 17:52:23 awh Exp $
+# $Id: ebay.pm,v 1.15 2002/02/04 20:14:44 awh Exp $
 #------------------------------------------------------------------------
 package ebay;
 use strict;
@@ -19,20 +19,26 @@ LWP::UserAgent
 
 =head1 PARAMETERS
 
-quote
+ebay
 
 =head1 PUBLIC INTERFACE
 
-purl, quote <eBay auction ID>
+purl, ebay <eBay auction ID>
+purl, ebay <eBay seller nickname>
 
 =head1 DESCRIPTION
 
 This allows you to fetch the current status of an eBay
 auction.
 
+When called with a seller nickname, fetches abbreviated statuses for
+each of his first 10 auctions.
+
 =head1 AUTHOR
 
 Dave Brown <dagbrown@csclub.uwaterloo.ca>
+
+Nickname interface added by Drew Hamilton <awh@awh.org>
 
 =cut
 
@@ -121,6 +127,41 @@ sub parse_response($) {
         $snagged_info{"Time left"};
 }
 
+
+#------------------------------------------------------------------------
+# parse_seller_response
+#
+# Given an eBay "search by seller" results page, return summary of each
+# item for sale.
+#------------------------------------------------------------------------
+sub parse_seller_response($) {
+    my $response = shift;
+
+    $response =~ s/\n//g;
+    $response =~ s/\r//g;
+
+    my @rows = snag_element("tr", $response);
+
+    my ($reply, $gotreply);
+    foreach (@rows)
+    {
+        my @cols = snag_element("td", $_);
+        # it's the right row if the first column is a URL to an item listing.
+        if ($cols[0] =~ m#ViewItem#) {
+            my ($item) = ($cols[0] =~ /item=(\d+)/);
+            my ($price) = $cols[3];
+            ($price) = snag_element("b", $price) if ($price =~ /<b>/); 
+            $price .= " (No Bids)" if ($cols[5] =~ m#No Bids#);
+            $reply .= "$item - $price, ";
+            $gotreply++;
+        }
+    }
+
+    $reply =~ s/, $//;
+    $reply = "No listings by that seller.\n" unless ($gotreply);
+    $reply;
+}
+
 #------------------------------------------------------------------------
 # auction_summary
 #
@@ -136,12 +177,34 @@ sub auction_summary($) {
 
     my ($title)=snag_element("title",$response);
 
-    if($title eq "eBay '$auction_id' - Invalid Item") {
+    if($title =~ /Invalid Item/) {
         return "I'm sorry, I couldn't find that item on eBay.";
     } else {
         return parse_response($response);
     }
 }
+
+#------------------------------------------------------------------------
+# auction_sellerlist
+#
+# Given an eBay seller ID, grab the page and return a
+# quick summary of his first 10 auctions listed.
+#------------------------------------------------------------------------
+sub auction_sellerlist($) {
+    my $seller_id=shift;
+
+    my $response=LWP::Simple::get(
+        "http://cgi6.ebay.com/aw-cgi/eBayISAPI.dll?MfcISAPICommand=ViewListedItems&userid=$seller_id&include=0&since=-1&sort=3&rows=10");
+
+    my ($title)=snag_element("title",$response);
+
+    if($title =~ /User Error/) {
+        return "I'm sorry, I couldn't find that seller ID on eBay.";
+    } else {
+        return parse_seller_response($response);
+    }
+}
+
 
 #------------------------------------------------------------------------
 # ebay_getdata
@@ -154,8 +217,10 @@ sub ebay_getdata($) {
 
     if($line =~ /ebay\s+(\d+)/i) {
         return auction_summary($1);
+    } elsif ($line =~ /ebay\s+(\S+)/i) {
+        return auction_sellerlist($1);
     } else {
-        return "That doesn't look like an eBay item number";
+        return "That doesn't look like an eBay item number or seller ID.\n";
     }
 }
 
@@ -189,7 +254,7 @@ sub ebay::get($$) {
 sub scan(&$$) {
     my ($callback, $message, $who)=@_;
 
-    if ( ::getparam('ebay') and $message =~ /^\s*ebay\s+(\d+)$/i ) {
+    if ( ::getparam('ebay') and $message =~ /^\s*ebay\s+(\S+)$/i ) {
         &main::status("eBay query");
         &ebay::get($message,$callback);
         return 1;
