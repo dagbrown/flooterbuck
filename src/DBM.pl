@@ -1,4 +1,4 @@
-# $Id: DBM.pl,v 1.1 2001/12/03 23:48:36 dagbrown Exp $
+# $Id: DBM.pl,v 1.2 2002/08/13 17:21:28 awh Exp $
 #
 # infobot :: Kevin Lenzo  (c) 1997
 
@@ -86,6 +86,7 @@ BEGIN {
 	postInc
 	set
 	showdb
+        showtop
 	syncDBM
 	whatdbs
     );
@@ -656,6 +657,44 @@ sub showdb {
 	}
 	lock $rdb, LOCK_UN;
     }
+
+    return @result;
+}
+
+# showtop - awh@awh.org
+#
+# Shows the top $num_to_show entries in database $dbname, sorted by
+# the rocketship operator.
+#
+# Currently used only by the topten.pm module.
+sub showtop {
+    my ($dbname, $num_to_show) = @_;
+    my @result;
+
+    if (!$dbname) {
+	status "no db given";
+	status "try showtop <db> <num_to_show>";
+	return();
+    }
+
+    # default to "top 10"
+    $num_to_show = 10 if (!$num_to_show);
+
+    my $rdb = $DBMS{$dbname};
+    if (!$rdb) {
+        status "the database $dbname is not open.  try showtop <db> <num_to_show>";
+	return();
+    }
+
+    lock $rdb, LOCK_SH;
+    my $rhash = $rdb->[F_HASH];
+
+    foreach (sort { $rhash->{$b} <=> $rhash->{$a} } keys %$rhash)
+    {
+	last unless ($num_to_show--);
+        push @result, "$_ => $rhash->{$_}";
+    }
+    lock $rdb, LOCK_UN;
 
     return @result;
 }
