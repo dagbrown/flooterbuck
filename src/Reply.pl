@@ -39,6 +39,7 @@ sub getReply {
         $verbs = join '|', @verb;
 
         $message = " $message ";
+        study $message; # because we've broken the last study
 
         if ($message =~ / ($verbs) /i) {
             $X = $`;
