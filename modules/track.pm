@@ -3,7 +3,7 @@
 #
 # Richard Harman
 #
-# $Id: track.pm,v 1.1 2002/01/25 21:42:16 rharman Exp $
+# $Id: track.pm,v 1.2 2002/01/25 21:50:59 rharman Exp $
 #------------------------------------------------------------------------
 package track;
 use strict;
@@ -102,7 +102,7 @@ sub track_getdata($)
 sub scan(&$$) {
     my ($callback, $message, $who)=@_;
 
-    if ( ::getparam('track') and $message =~ /^\s*track\s+(\d+)$/i ) {
+    if ( ::getparam('track') and $message =~ /^\s*track\s+(\.+)$/i ) {
         &main::status("Pakalert (track) query");
         &track_get($message,$callback);
         return 1;
