@@ -27,7 +27,7 @@
 # 2002/06/13 joant@ieee.org
 #            - added relative humidity function
 #
-# $Id: Aviation.pm,v 1.8 2002/06/13 02:48:55 dagbrown Exp $
+# $Id: Aviation.pm,v 1.9 2003/02/22 20:29:54 dagbrown Exp $
 #------------------------------------------------------------------------
 
 package Aviation;
@@ -85,14 +85,14 @@ sub Aviation::get {
     $SIG{CHLD} = 'IGNORE';
     my $pid = eval { fork() };   # catch non-forking OSes and other errors
     return 'NOREPLY' if $pid;              # parent does nothing
-    if    ($line =~ /^metar/i)         { $callback->(metar($line))       }
-    elsif ($line =~ /^taf/i)           { $callback->(taf($line))         }
-    elsif ($line =~ /^great[-\s]?circle/i) { $callback->(greatcircle($line)) }
-    elsif ($line =~ /^tsd/i)           { $callback->(tsd($line))         }
-    elsif ($line =~ /^zulutime/i)      { $callback->(zulutime($line))    }
-    elsif ($line =~ /^airport/i)       { $callback->(airport($line))     }
-    elsif ($line =~ /^rh/i)            { $callback->(rh($line))          }
-    elsif ($line =~ /^aviation/i)      { $callback->(aviation($line))    }
+    if    ($line =~ /^metar\s+/i)         { $callback->(metar($line))       }
+    elsif ($line =~ /^taf\s+/i)           { $callback->(taf($line))         }
+    elsif ($line =~ /^great[-\s]?circle\s+/i) { $callback->(greatcircle($line)) }
+    elsif ($line =~ /^tsd\s+/i)           { $callback->(tsd($line))         }
+    elsif ($line =~ /^zulutime\s+/i)      { $callback->(zulutime($line))    }
+    elsif ($line =~ /^airport\s+/i)       { $callback->(airport($line))     }
+    elsif ($line =~ /^rh\s+/i)            { $callback->(rh($line))          }
+    elsif ($line =~ /^aviation\s+/i)      { $callback->(aviation($line))    }
     else  { $callback->("I think we just lost a wing!") }  # reach here -> Extras.pl problem
 
     if (defined($pid))
