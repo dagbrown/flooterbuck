@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: fcol.pm,v 1.16 2003/10/15 16:15:02 dagbrown Exp $
+# $Id: fcol.pm,v 1.17 2004/04/01 04:52:31 dagbrown Exp $
 #------------------------------------------------------------------------
 package fcol;
 use strict;
@@ -90,7 +90,7 @@ sub fcol_getdata($) {
 #
 # This handles the forking (or not) stuff.
 #------------------------------------------------------------------------
-sub fcol::get($$) {
+sub fcol::get {
     if($no_fcol) {
         &main::status("Sorry, fcol.pm requires LWP and couldn't find it");
         return "";
