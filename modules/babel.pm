@@ -3,7 +3,7 @@
 #
 # See the POD documentation (right here!) for more info
 #
-# $Id: babel.pm,v 1.2 2003/10/18 21:26:50 dagbrown Exp $
+# $Id: babel.pm,v 1.3 2004/03/09 04:54:45 dagbrown Exp $
 #------------------------------------------------------------------------
 
 
@@ -141,7 +141,7 @@ sub translate {
 	$req->content_type('application/x-www-form-urlencoded');
 
 	# translate Japanese from EUC into UTF-8
-	if ($from_lang eq "ja") {
+	if ($from_lang eq "ja" && !defined($no_japanese)) {
 		$phrase = Jcode::convert($phrase, 'utf8');
 	}
     else {
@@ -163,7 +163,7 @@ sub translate {
 		# even translating from Japanese to English convert the 
 		# result because it probably has some characters that didn't
 		# translate
-		if (($from_lang eq "ja") || ($to_lang eq "ja")) {
+		if (($from_lang eq "ja") || ($to_lang eq "ja") && !defined($no_japanese)) {
 			$html = Jcode::convert($html, 'euc', 'utf8');
 		}
         else {
