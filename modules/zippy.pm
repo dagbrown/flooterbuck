@@ -1,3 +1,5 @@
+# $Id $
+
 #------------------------------------------------------------------------
 # zippy -- infobot module for Zippy the Pinhead quotes
 #          hacked up by Rich Lafferty (mendel) <rich@vax2.concordia.ca> 

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+# $Id $
 
 #------------------------------------------------------------------------
 # A VERY minimal example of how to write a New And Improved Infobot

@@ -1,3 +1,5 @@
+# $Id $
+
 #------------------------------------------------------------------------
 # Adam Spiers' nickometer
 #
@@ -16,7 +18,7 @@ use Math::Trig;
 
 use vars qw($VERSION $score $verbose);
 
-$VERSION = '$Revision: 1.2 $';	# '
+$VERSION = '$Revision: 1.3 $';	# '
 $VERSION =~ s/^.*?([\d.]+).*?$/$1/;
 
 sub nickometer ($) {

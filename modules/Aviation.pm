@@ -1,3 +1,4 @@
+# $Id $
 #------------------------------------------------------------------------
 # aviation -- infobot module for various flight-planning bits.
 #             Was originally 'metar' until infobot 44.5.

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+# $Id $
 
 package Weather;
 
