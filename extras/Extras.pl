@@ -1,15 +1,15 @@
+#------------------------------------------------------------------------
+# Load modules
+# 
+# Loads all files in the infobot "moddir" (see infobot.conf in the
+# config directory) with the extension of .pm
+#------------------------------------------------------------------------
 # loadmodules written by dagbrown
 # updated by rharman
 
 use strict;
 package Extras;
 
-
-#------------------------------------------------------------------------
-# Load modules
-# 
-# loads all files in infobot/modules with the extention of .pm
-#------------------------------------------------------------------------
 
 my @modules;
 
@@ -26,7 +26,7 @@ sub loadmodules() {
 }
 
 
-sub Extras {
+sub main::Extras {
     my $callback;
     loadmodules unless @modules;
 
@@ -44,5 +44,5 @@ sub Extras {
     }
     return undef;
 }
-1;
 
+1;
