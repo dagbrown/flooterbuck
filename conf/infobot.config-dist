@@ -278,7 +278,7 @@ ebay true
 track true
 
 # tinyurl module to shorten URLs
-track true
+tinyurl true
 
 # bash module to replay bash.org IRC quotes
 bash true
