@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: fcol.pm,v 1.13 2003/04/21 00:15:20 dagbrown Exp $
+# $Id: fcol.pm,v 1.14 2003/09/10 05:20:53 rharman Exp $
 #------------------------------------------------------------------------
 package fcol;
 use strict;
@@ -117,15 +117,11 @@ sub scan(&$$) {
 
 
     if ( $message =~ /^\s*(?:fcol|shrivel)\s+(\w+:\S+)\??/i ) {
-        $callback->("Use tinyurl instead of fcol: fcol's out of order");
-        return 0;  # fcol is out of order, so this is now officially stubbed out.
         &main::status("fcol small-URL creation");
         fcol::get($message,$callback);
         return 1;
     }
     if ( $message =~ /\s*(?:fcol|shrivel)\s+(?:that|please)/i) {
-        $callback->("Use tinyurl instead of fcol: fcol's out of order");
-        return 0;  # fcol is out of order, so this is now officially stubbed out.
         &main::status("auto-fcol last-url creation");
         fcol::get($message,$callback);
     }
