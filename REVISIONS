@@ -27,6 +27,8 @@ Bug Fixes
 - Totally removed the extras directory and all the code which dealt with it,
   and expurgated all mention of it from the conf file.  "Extras" is now
   officially dead.
+- -dist files for sample configuration means upgrading in-place will
+  not clobber your configuration.
 
 Feature Additions and Enhancements
 ==================================
@@ -39,7 +41,6 @@ Feature Additions and Enhancements
 - speller.pm: old infobot spellchecker ported to flooterbuck
 - re-added old infobot dbmext-test script 
 - scripts/hysteresis: restart a program but not necessarily right away
-
 
 
 1.1 -- March 03, 2003
