@@ -29,7 +29,7 @@
 # 2003/02/22 dagbrown@rogers.com
 #            - Added patch to make it more picky about where words end
 #
-# $Id: Aviation.pm,v 1.11 2003/02/22 22:20:58 dagbrown Exp $
+# $Id: Aviation.pm,v 1.12 2003/03/14 17:51:10 rharman Exp $
 #------------------------------------------------------------------------
 
 package Aviation;
@@ -131,7 +131,7 @@ sub metar {
 	$site_id = "K" . $site_id if length($site_id) == 3;
 	
 	# HELP isn't an airport, so we use it for a reference work.
-	return "For observations, ask me 'metar <code>'. For information on decoding Aerodrome Weather Observations (METAR), see http://www.avweb.com/toc/metartaf.html"
+	return "For observations, ask me 'metar <code>'. For information on decoding Aerodrome Weather Observations (METAR), see http://www.avweb.com/weather/metartaf.html"
 	    if $site_id eq 'HELP';
 	
 	my $metar_url = "http://weather.noaa.gov/cgi-bin/mgetmetar.pl?cccc=$site_id";
