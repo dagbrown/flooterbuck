@@ -103,7 +103,7 @@ use strict;
                               ($lastnick==$who?
                                   ($firstnick==$lastnick?
                                       "yourself (again)!":
-                                      "yourself")
+                                      "$lastnick")
                                   :($lastnick==$firstnick?
                                       "$lastnick (again)!":
                                       "$lastnick.")));
