@@ -38,11 +38,13 @@ sub get_headlines {
             $rss = new XML::RSS;
             eval { $rss->parse($str); };
             if ($@) {
-                return "that gave some error";
-                $error="$@";
-            } else {
-                my $return;
+                main::status("RDF: $@")
+                # but soldier on, in hopes that we've gotten
+                # something sensible nonetheless
+            } 
+            my $return;
 
+            if ( scalar(@{$rss->{"items"}}) > 0 ) {
                 foreach my $item (@{$rss->{"items"}}) {
                     $return .= $item->{"title"} . "; ";
                     last if length($return) > $param{maxDataSize};
@@ -51,6 +53,8 @@ sub get_headlines {
                 $return =~ s/; $//;
 
                 return $return;
+            } else {
+                return "I'm sorry; something went wrong with that RSS feed and I couldn't find anything sensible in it.  Is it well-formed?"
             }
         } else {
             return "error: $rdf_loc wasn't successful";
