@@ -29,44 +29,63 @@ my $DNS_CACHE_EXPIRE_TIME = 7*24*60*60;
 my %DNS_CACHE;
 my %DNS_TIME_CACHE;
 
-sub DNS {
-    my $callback=shift;
-    my $in = shift;
-    my $who = shift;
+sub dns_byname {
+    my $name=$_[0];
+    my $result;
 
-    my($match, $x, $y, $result);
+    my $x = join('.',unpack('C4',(gethostbyname($name))[4]));
+    if ($x !~ /^\s*$/) {
+        $result = "$name is $x";
+    } else {
+        $result = "I can\'t find the machine name \"$name\"";
+    }
+    return $result;
+}
+
+sub dns_byaddr {
+    my $addr=$_[0];
+    my $result;
+
+    my $y = pack('C4', split(/\./, $addr));
+    my $x = (gethostbyaddr($y, &AF_INET));
+    if ($x !~ /^\s*$/) {
+        $result = "$addr is $x" unless ($x =~ /^\s*$/);
+    } else {
+        $result = "I can't seem to find $addr in DNS";
+    }
+}
+
+sub dns_getdata {
+    my $in=$_[0];
+    my $result;
 
     if($DNS_CACHE{$in}
         and ((time()-$DNS_TIME_CACHE{$in}) < $DNS_CACHE_EXPIRE_TIME)) {
         return $DNS_CACHE{$in};
     }
 
-    my $pid=fork;
-    return 1 if $pid;  # have it still work on non-forking OSes
     if ($in =~ /(\d+\.\d+\.\d+\.\d+)/) {
-        &::status("DNS query by IP address: $in");
-        $match = $1;
-        $y = pack('C4', split(/\./, $match));
-        $x = (gethostbyaddr($y, &AF_INET));
-        if ($x !~ /^\s*$/) {
-            $result = "$who: $match is $x" unless ($x =~ /^\s*$/);
-        } else {
-            $result = "$who: I can't seem to find $in in DNS";
-        }
+        &::status("DNS: $$: query by IP address: $in");
+        my $match = $1;
+        $result=dns_byaddr($match);
     } else { 
-        &::status("DNS query by name: $in");
-        $x = join('.',unpack('C4',(gethostbyname($in))[4]));
-        if ($x !~ /^\s*$/) {
-            $result = "$who: $in is $x";
-        } else {
-            $result = "$who: I can\'t find the machine name \"$in\"";
-        }
+        &::status("DNS: $$: query by name: $in");
+        $result=dns_byname($in);
     }
     $DNS_TIME_CACHE{$in} = time();
     $DNS_CACHE{$in} = $result;
 
-    $callback->($result);
-    if (defined($pid))			# bye child
+    return $result;
+}
+
+sub get {
+    my($callback, $addr, $who)=@_;
+
+    $SIG{CHLD}=\&REAPER;
+    my $pid=eval { fork(); }; # Don't worry if the OS doesn't fork
+    return 'NOREPLY' if $pid;
+    $callback->("$who: ".&dns_getdata($addr));
+    if (defined($pid))                # child exits, non-forking OS returns
     {
         exit 0 if ($no_posix);
         POSIX::_exit(0);
@@ -77,7 +96,7 @@ sub scan(&$$) {
     my($callback,$message,$who)=@_;
     if ($message =~ /^\s*(?:nslookup|dns)(?: for)?\s+(\S+)$/i) {
         &::status("DNS Lookup: $1");
-        &DNS($callback,$1,$who);
+        &get($callback,$1,$who);
 	return 1;
     }
     return undef;
