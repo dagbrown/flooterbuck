@@ -149,54 +149,87 @@ sub parse_flightdata
 {
     my ($flighttrack_id,$flightdata) = @_;
     my %flightdata;
-    
 
     # make sure that this page contains flight information.
     return "Flight \"$flighttrack_id\" was not found." 
         if ($flightdata =~ /Flight Not Found in Database/);
 
+    # populate the hash with empty lists
+    foreach my $key (qw/depcity deptime arrcity arrtime remtime
+                     alt gs status/) {
+        $flightdata{$key}=[];
+    }
+
     # get the flight identifier.  The only place it's shown is as the
     # default value for one of the form inputs.
     my ($flight_id) = ($flightdata =~ /NAME=\"flight_id\" VALUE=\"([A-Z0-9]*)\"/);
 
-    # loop through each Table Row on the page.  Sometimes two legs of
-    # a flight are shown on the same page.  The final leg will always
-    # "win" in this situation.  Ideally, any currently "in flight" leg
-    # should win, but I suck.
+    # loop through each Table Row on the page.  For each of the Elements
+    # Of A Flight, push the element onto the end of a list.  Then we'll
+    # collate all this at the end.
     my (@rows) = snag_element("tr", $flightdata);
+
+    my $flightnum=0;
     foreach (@rows)
     {
         my @cols = snag_element("td", $_);
-        $flightdata{"depcity"} = $cols[1] if ($cols[0] =~ /Departure City/);
-        $flightdata{"deptime"} = $cols[1] if ($cols[0] =~ /Departure Time/);
-        $flightdata{"arrcity"} = $cols[1] if ($cols[0] =~ /Arrival City/);
-        $flightdata{"arrtime"} = $cols[1] if ($cols[0] =~ /Arrival Time/);
-        $flightdata{"remtime"} = $cols[1] if ($cols[0] =~ /Remaining/);
-        $flightdata{"alt"} = $cols[1] if ($cols[0] =~ /Altitude/);
-        $flightdata{"gs"} = $cols[1] if ($cols[0] =~ /Groundspeed/);
-        $flightdata{"status"} = $cols[1] if ($cols[0] =~ /Status/);
+
+        push @{$flightdata{depcity}},
+              (($cols[1] =~ /.*\(([A-Z0-9]*)\).*/)[0])
+            if ($cols[0] =~ /Departure City/);
+
+        push @{$flightdata{deptime}},
+              to_24_hour(($cols[1] =~ /.*([0-9][0-9]:[0-9][0-9] [AP]M).*/)[0])
+            if ($cols[0] =~ /Departure Time/);
+
+        push @{$flightdata{arrcity}}, 
+              (($cols[1] =~ /.*\(([A-Z0-9]*)\).*/)[0])
+            if ($cols[0] =~ /Arrival City/);
+
+        push @{$flightdata{arrtime}}, 
+              to_24_hour(($cols[1] =~ /.*([0-9][0-9]:[0-9][0-9] [AP]M).*/)[0])
+            if ($cols[0] =~ /Arrival Time/);
+
+        push @{$flightdata{remtime}}, 
+              (snag_element("font", $cols[1]))[0]
+            if ($cols[0] =~ /Remaining/);
+
+        push @{$flightdata{alt}}, 
+              (snag_element("font", $cols[1]))[0]
+            if ($cols[0] =~ /Altitude/);
+
+        push @{$flightdata{gs}}, 
+              (snag_element("font", $cols[1]))[0]
+            if ($cols[0] =~ /Groundspeed/);
+
+        push @{$flightdata{status}}, 
+              (snag_element("font",$cols[1]))[0]
+            if ($cols[0] =~ /Status/);
     }
-
-    # format all of the information we grabbed from the page.
-    ($flightdata{"status"}) = snag_element("font", $flightdata{"status"});
-    ($flightdata{"alt"}) = snag_element("font", $flightdata{"alt"});
-    ($flightdata{"gs"}) = snag_element("font", $flightdata{"gs"});
-    ($flightdata{"remtime"}) = snag_element("font", $flightdata{"remtime"});
-    $flightdata{"depcity"} =~ s/.*\(([A-Z0-9]*)\).*/$1/;
-    $flightdata{"arrcity"} =~ s/.*\(([A-Z0-9]*)\).*/$1/;
-    $flightdata{"deptime"} =~ s/.*([0-9][0-9]:[0-9][0-9] [AP]M).*/$1/;
-    $flightdata{"arrtime"} =~ s/.*([0-9][0-9]:[0-9][0-9] [AP]M).*/$1/;
-
-    # convert 12-hour times to 24-hour.
-    $flightdata{"arrtime"} = &to_24_hour($flightdata{"arrtime"});
-    $flightdata{"deptime"} = &to_24_hour($flightdata{"deptime"});
 
     # return the abbreviated flight information
-    if ($flightdata{"status"} =~ /Arrived|Planned/) {
-        return $flight_id . " " . $flightdata{"depcity"} . "[" . $flightdata{"deptime"} . "]->" . $flightdata{"arrcity"} . "[" . $flightdata{"arrtime"} . "] (" . $flightdata{"status"} . ")";
-    } else {
-        return $flight_id . " " . $flightdata{"depcity"} . "[" . $flightdata{"deptime"} . "]->" . $flightdata{"arrcity"} . "[" . $flightdata{"arrtime"} . "] (" . $flightdata{"status"} . ") " . $flightdata{"alt"} . ", " . $flightdata{"gs"} . ", " . $flightdata{"remtime"} . " remaining";
+    for my $flightsnum(0..$#{$flightdata{status}}) {
+        if ($flightdata{status}->[$flightsnum] =~ /Arrived|Planned/) {
+             $flightdata{summary}->[$flightsnum] = $flight_id . " " . 
+                   $flightdata{depcity}->[$flightsnum] . "[" . 
+                   $flightdata{deptime}->[$flightsnum] . "]->" . 
+                   $flightdata{arrcity}->[$flightsnum] .  "[" . 
+                   $flightdata{arrtime}->[$flightsnum] . "] (" . 
+                   $flightdata{status}->[$flightsnum] . ")";
+        } else {
+            $flightdata{summary}->[$flightsnum] = $flight_id . " " . 
+                   $flightdata{depcity}->[$flightsnum] . "[" . 
+                   $flightdata{deptime}->[$flightsnum] . "]->" . 
+                   $flightdata{arrcity}->[$flightsnum] .  "[" . 
+                   $flightdata{arrtime}->[$flightsnum] . "] (" . 
+                   $flightdata{status}->[$flightsnum] . ") " . 
+                   $flightdata{alt}->[$flightsnum] . ", " . 
+                   $flightdata{gs}->[$flightsnum] . ", " . 
+                   $flightdata{remtime}->[$flightsnum] .  " remaining";
+        }
+        main::status("flight data: ".$flightdata{summary}->[$flightsnum]);
     }
+    return join("; ", @{$flightdata{summary}});
 }
 
 
