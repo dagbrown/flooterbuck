@@ -4,7 +4,7 @@
 #
 # Data gratuitously swiped from fortune-mod-9708, the 'fortune' program.
 #
-# $Id: zippy.pm,v 1.7 2001/12/13 14:14:08 awh Exp $
+# $Id: zippy.pm,v 1.8 2001/12/13 14:16:52 awh Exp $
 #------------------------------------------------------------------------
 
 package zippy;
@@ -14,7 +14,7 @@ my $no_zippy; # Can't think of any situation in which this won't work..
 sub scan(&$$) {
     my ($callback,$message,$who) = @_;
 
-    unless ($message =~ /^yow[!? ]*$/i or $line =~ /^be zippy\?*$/i) { 
+    unless ($message =~ /^yow[!? ]*$/i or $message =~ /^be zippy\?*$/i) { 
         return undef;
     }
 
