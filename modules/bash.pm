@@ -1,4 +1,4 @@
-# $Id: bash.pm,v 1.7 2003/10/10 19:36:25 rharman Exp $
+# $Id: bash.pm,v 1.8 2003/11/21 16:43:03 rharman Exp $
 package bash;
 use strict;
 
@@ -85,12 +85,18 @@ sub bash::get_quote ($) {
     return split ( "\n", $quote );
 }
 
+sub bash::get_random ($) {
+    my $bash         = LWP::Simple::get( 'http://bash.org/?random1');
+    my ($quote_id) = ( $bash =~ m/<p class="quote"><a href="\?(\d+)" title.+/sgi );
+    return get_quote($quote_id);
+}
+
 #------------------------------------------------------------------------
 # bash::get
 #
 # This handles the forking (or not) stuff.
 #------------------------------------------------------------------------
-sub bash::get($$) {
+sub bash::get($) {
     if ($no_bash) {
         &main::status("Sorry, bash.pm requires LWP and couldn't find it");
         return "";
@@ -105,9 +111,17 @@ sub bash::get($$) {
     if ($line =~ m/-force/)
     { $force=1; }
 
-    my ($quote_id) = ($line =~ m/(\d+)/);
+    my $quote_id;
+    my @lines;
+    if ($line =~ m/(\d+)/)
+    {
+      $quote_id = $1;
+      @lines = &get_quote($quote_id);
+    } elsif ($line =~ m/random/) {
+      @lines = &get_random();
+    }
+
     &::status("BASH: line = $line\n");
-    my @lines = &bash_getdata($quote_id);
     if ( !scalar @lines ) {
         $callback->( "Either that quote id does't exist, or bash.org is busted at the moment." );
     }
