@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: ebay.pm,v 1.10 2001/12/04 17:40:27 dagbrown Exp $
+# $Id: ebay.pm,v 1.11 2002/01/05 14:39:17 dagbrown Exp $
 #------------------------------------------------------------------------
 package ebay;
 use strict;
@@ -133,7 +133,9 @@ sub auction_summary($) {
             .$auction_id);
     my $response=$ua->request($request);
 
-    return "I can't seem to reach eBay right now, sorry."
+    return "I can't seem to reach eBay right now, sorry (it said \"".
+            $response->status_line.
+            "\")."
         unless $response->is_success;
 
     my ($title)=snag_element("title",$response->content);
