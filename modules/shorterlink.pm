@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: shorterlink.pm,v 1.4 2002/08/08 13:38:00 dagbrown Exp $
+# $Id: shorterlink.pm,v 1.5 2002/08/09 22:02:54 dagbrown Exp $
 #------------------------------------------------------------------------
 package shorterlink;
 use strict;
@@ -57,6 +57,11 @@ BEGIN {
     $no_shorterlink++ if ($@);
 
     eval qq{
+        use URI::Escape;
+    };
+    $no_shorterlink++ if ($@);
+
+    eval qq{
         use POSIX;
     };
     $no_posix++ if ($@);
@@ -104,7 +109,7 @@ sub shorterlink_create($) {
         POST => "http://makeashorterlink.com/index.php"
     ) or die "oh shit";
     $request->content_type('application/x-www-form-urlencoded');
-    $request->content("url=$longurl");
+    $request->content("url="..uri_escape($longurl));
 
     my $response=$ua->request($request);
 
