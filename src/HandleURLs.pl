@@ -87,29 +87,28 @@ use strict;
                     # lambaste 'em for being so uncool as to paste a URL
                     # that anyone had ever seen before ever
                     if($firsttime == $lasttime) {
-                        ::say("$who: That URL was mentioned here only ".
-                            (get_timediff($lasttime))[0].
-                            " ago by ".
+                        ::say("$who: ".
                             ($lastnick==$who?
-                                "yourself" :
-                                $lastnick)."!")
+                                "You" :
+                                $lastnick).
+                            " mentioned that URL here only ".
+                            (get_timediff($lasttime))[0].
+                            " ago!");
                     } else {
-                        ::say("$who: You out-of-it clod.  That URL was ".
-                              "first mentioned here ".
-                              (get_timediff($firsttime))[0].
-                              " ago by ".
-                              (($firstnick eq $who)?"yourself":$firstnick).
-                              ", and last mentioned ".
-                              (get_timediff($lasttime))[0].
-                              " ago by ".
-                              (($lastnick eq $who)?
-                                  (($firstnick eq $lastnick)?
-                                      "yourself (again)!":
-                                      "yourself")
-                                  :
-                                  (($lastnick eq $firstnick)?
-                                      "$lastnick (again)!":
-                                      "$lastnick.")));
+                        ::say("$who: You out-of-it clod.  " .
+                            (($firstnick eq $who)?"You":$firstnick) .
+                            " first mentioned that URL here " .
+                              (get_timediff($firsttime))[0] .
+                              " ago, and " .
+                              (($lastnick eq $who) ?
+                                  "you" :
+                                  $lastnick).
+                              " last mentioned it " .
+                              (get_timediff($lasttime))[0] .
+                              " ago" .
+                              (($lastnick eq $firstnick) ?
+                                  ", again!":
+                                  "."))
                     }
                 }
             }
