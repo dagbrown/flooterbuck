@@ -1,4 +1,4 @@
-# $Id: bash.pm,v 1.8 2003/11/21 16:43:03 rharman Exp $
+# $Id: bash.pm,v 1.9 2004/03/12 01:53:41 rich_lafferty Exp $
 package bash;
 use strict;
 
@@ -16,7 +16,7 @@ bash
 
 =head1 PUBLIC INTERFACE
 
-purl, playback <bash.org quote id>
+floot, bash <bash.org quote id>
 
 =head1 DESCRIPTION
 
