@@ -1,3 +1,17 @@
+F L O O T E R B U C K !
+
+-- What Flooterbuck does
+
+Flooterbuck is an Infobot.  It goes onto IRC and sits in a channel that you
+pick for it, and learns, remembers, and gives back useful information.
+
+<dagbrown> flooterbuck, convert 3 tonnes to nautical elvis
+<flooterbuck> dagbrown: 3 tonnes is 22.5341 nautical elvis.
+<dagbrown> flooterbuck: My hair is wet
+<flooterbuck> dagbrown: Okay.
+<dagbrown> flooterbuck, what is a Norse?
+<flooterbuck> dagbrown: A Norse is a Norse, of course, of course
+
 -- Note:  Flooterbuck Infobot vs. Infobot
 
 Flooterbuck Infobot (http://flooterbuck.sf.net/) is a rewrite of
