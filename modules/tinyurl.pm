@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: tinyurl.pm,v 1.7 2004/03/14 03:55:09 dagbrown Exp $
+# $Id: tinyurl.pm,v 1.8 2004/09/09 00:51:41 dagbrown Exp $
 #------------------------------------------------------------------------
 package tinyurl;
 use strict;
@@ -97,7 +97,8 @@ sub tinyurl_create($) {
         'http://www.tinyurl.com/create.php?url='
         .$longurl);
 
-    my ($newlongurl,$tinyurl)=snag_element("blockquote",$response);
+    my ($newlongurl,$tinyurl) =
+        snag_element("b",snag_element("blockquote",$response));
 
     return "Your tinyurl is $tinyurl";
 }
