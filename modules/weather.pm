@@ -5,10 +5,10 @@
 # feel free to use, copy, cut up, and modify, but if
 # you do something cool with it, let me know.
 #
-# $Id: weather.pm,v 1.9 2004/03/18 20:02:37 rich_lafferty Exp $
+# $Id: weather.pm,v 1.10 2004/09/12 21:46:10 dagbrown Exp $
 #------------------------------------------------------------------------
 
-package Weather;
+package weather;
 
 my $no_weather;
 my $default = 'KAGC';
@@ -111,7 +111,7 @@ sub scan (&$$) {
 }
 
 
-"Weather";
+"weather";
 
 __END__
 

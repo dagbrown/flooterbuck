@@ -8,11 +8,11 @@
 # Make it psychic enough to figure out what timezone you're in, and have
 # it tell you the right time.  (Ha ha ha)
 #
-# $Id: fuzzyclock.pm,v 1.17 2002/08/06 02:36:53 dagbrown Exp $
+# $Id: fuzzyclock.pm,v 1.18 2004/09/12 21:46:10 dagbrown Exp $
 #------------------------------------------------------------------------
 
 use strict;
-package FuzzyClock;
+package fuzzyclock;
 
 sub fuzzytime {
     my $this=shift;
@@ -115,7 +115,7 @@ sub scan(&$$) {
     undef;
 }
 
-"FuzzyClock";
+"fuzzyclock";
 
 __END__
 =pod

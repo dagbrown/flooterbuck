@@ -20,7 +20,7 @@
 #      to point to our conf/ directory
 #------------------------------------------------------------------------
 
-package Units;
+package units;
 use strict 'vars';
 
 my $DEBUG_d;
@@ -887,4 +887,4 @@ EOM
 	1;
 }
 
-"Units";
+"units";
