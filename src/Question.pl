@@ -58,10 +58,6 @@ sub doQuestion {
 	return 'NOREPLY';
     }
 
-    if (not defined $answer) {
-	$answer = &math($qmsg); # clean up the argument syntax for this later
-    }
-
     if ($questionWord ne "" or $finalQMark) {
 	# if it has not been explicitly marked as a question
 	if ($addressed && (not defined $answer)) {
