@@ -5,13 +5,10 @@ A modularized help system where each module is responsible for
 generating its own help.  Maybe as well as scan() each module can
 also define a help() subroutine or something.  
 
+Get rid of the distinction between 'is' and 'are'. 
 
 Stuff that never got fixed in infobot, and still needs to get fixed
 here:
-
-  - Normalize license. (LICENSE says "Artistic" but also "same 
-    as Perl" which is ARTISTIC || GPL, infobot says X11.) 
-    (2001/06/18 -- Kevin says "Same as Perl".)
 
   - Make replacements work when they look like matching operators:
     "bot, foo =~ s/this /that/" should change "this " to "that",
