@@ -2,6 +2,10 @@
 
 Bug Fixes
 =========
+- Made flighttracker do the Right Thing with multiple planes on an individual
+  flight number.  Handy for, say, Air Canada flight 3, where there always 
+  seems to be two of them; one on the ground, one in the air, and it always
+  reports on the landed one only.
 - Someone said "purl, topten."  I thought, hmm, I suppose that should work.
 - Made RDF try harder to get something useful out of an RSS feed,
   even if the feed itself isn't perfect.
