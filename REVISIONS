@@ -8,6 +8,8 @@ New features
   ever been seen before
 - Added an "earthquake" module which shows where the most recent
   earthquake in the world is.
+- Added Freenode nickserv authentication (thanks to devin++ for
+  that patch)
 
 Bug Fixes
 =========
