@@ -5,7 +5,7 @@
 # feel free to use, copy, cut up, and modify, but if
 # you do something cool with it, let me know.
 #
-# $Id: weather.pm,v 1.6 2002/09/04 21:05:04 awh Exp $
+# $Id: weather.pm,v 1.7 2003/02/16 18:55:30 dagbrown Exp $
 #------------------------------------------------------------------------
 #
 # CHANGES
@@ -59,9 +59,10 @@ sub Weather::NOAA::get {
             return "I can't find that station code (see http://weather.noaa.gov/weather/curcond.html for locations codes)";
         } 
 
-        $content =~ s|.*?current weather conditions.*?</TR>||is;
+        $content =~ s|.*?current weather conditions:<BR>(.*?)</B>.*?</TR>||is;
+        my $place = $1;
 
-        $content =~ s|.*?<TR>(?:\s*<[^>]+>)*\s*([^<]+)\s<.*?</TR>||is;
+        # $content =~ s|.*?<TR>(?:\s*<[^>]+>)*\s*([^<]+)\s<.*?</TR>||is;
         my $place = $1;
         chomp $place;
 
