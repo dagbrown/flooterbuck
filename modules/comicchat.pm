@@ -9,13 +9,13 @@ sub scan(&$$) {
     # Check $message, if it's what you want, then do stuff with it
     if( ::getparam('comicchat') && $message =~ /^comicchat/)
     {
-      $callback->("# Appears as FLOOT-ROBOT2.http://homepage1.nifty.com/iseshima/k-robot.avb");
+      $callback->("# Appears as FLOOTERBUCK.http://village.infoweb.ne.jp/~iorin/aya_lollipop_cat.avb");
       return 1;
     }
 
     if($message =~ /^\# Appears as/)
     {
-      $callback->("# Appears as FLOOT-ROBOT2.http://homepage1.nifty.com/iseshima/k-robot.avb");
+      $callback->("# Appears as FLOOTERBUCK.http://village.infoweb.ne.jp/~iorin/aya_lollipop_cat.avb");
       return 1;
     }
 
