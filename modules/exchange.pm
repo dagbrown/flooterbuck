@@ -373,8 +373,6 @@ sub GetTlds {
     return %Hash;
 }
 
-"That's all folks ;-)";
-
 sub scan(&$$) {
     my ($callback,$message,$who)=@_;
 
