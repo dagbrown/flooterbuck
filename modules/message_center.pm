@@ -3,7 +3,7 @@
 #
 # See the POD for more information
 #
-# $Id: message_center.pm,v 1.3 2003/04/25 02:22:28 dagbrown Exp $
+# $Id: message_center.pm,v 1.4 2003/04/25 02:23:58 dagbrown Exp $
 #------------------------------------------------------------------------
 
 =head1 NAME
@@ -136,4 +136,4 @@ sub scan(&$$) {
     return undef;
 }
 
-return "message_center";
+"message_center";
