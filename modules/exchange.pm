@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------
 # "exchange" command, change currencies
 #
-# $Id: exchange.pm,v 1.7 2001/12/04 17:40:27 dagbrown Exp $
+# $Id: exchange.pm,v 1.8 2001/12/07 12:23:07 dagbrown Exp $
 #------------------------------------------------------------------------
 
 use strict;
@@ -426,7 +426,7 @@ sub scan(&$$) {
         }
 
         # exit the child or it gets weird
-        exit 0 if $pid;
+        exit 0 if defined($pid);
         return 1;
     }				# end exchange
     return undef;
