@@ -29,6 +29,7 @@ Bug Fixes
   officially dead.
 - -dist files for sample configuration means upgrading in-place will
   not clobber your configuration.
+- Fixed the example bans in sane-ignore.txt
 
 Feature Additions and Enhancements
 ==================================
