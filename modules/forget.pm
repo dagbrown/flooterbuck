@@ -37,7 +37,7 @@ sub scan(&$$)
             $::updateCount++;
             return 'NOREPLY';
         } else { 
-            $callback->($who, "I didn't have anything matching $k"); 
+            $callback->("$who, I didn't have anything matching $k"); 
             return 'NOREPLY'; 
         }
     }                           # end forget
