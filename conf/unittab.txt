@@ -411,6 +411,7 @@ hz            Hz
 # Inductance
 Henry         volt s/amp
 henry         Henry
+henrie        Henry       # variant spelling
 H             Henry
 abhenry       1.0e-9 henry
 Henries       Henry       # For plural
