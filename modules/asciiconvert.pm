@@ -2,7 +2,7 @@
 # ASCII conversions
 #
 # Usage: "ascii X" or "ord C"
-# $Id: asciiconvert.pm,v 1.2 2001/12/04 19:26:53 rharman Exp $
+# $Id: asciiconvert.pm,v 1.3 2001/12/04 23:17:00 rharman Exp $
 #------------------------------------------------------------------------
 
 use strict;
@@ -47,3 +47,21 @@ sub scan(&$$) {
 }
 
 "asciiconvert";
+
+__END__
+
+=head1 NAME
+
+asciiconvert.pm - ASCII conversions
+
+=head1 PARAMETERS
+
+ascii [0-255] or ord [character]
+
+=head1 DESCRIPTION
+
+this module will return the numerical ascii representation of [character] or return the character for [number].
+
+=head1 AUTHORS
+
+Unknown
