@@ -3,7 +3,7 @@
 #
 # See the POD documentation (right here!) for more info
 #
-# $Id: babel.pm,v 1.1 2002/08/21 17:58:12 awh Exp $
+# $Id: babel.pm,v 1.2 2003/10/18 21:26:50 dagbrown Exp $
 #------------------------------------------------------------------------
 
 
@@ -58,7 +58,6 @@ and support for babelfish's current screen layout.
 
 =cut
 
-
 package babel;
 use strict;
 
@@ -71,7 +70,9 @@ BEGIN {
 	if ($@) { $no_babel++};    # babelfish request
 	eval "use LWP::UserAgent";
 	if ($@) { $no_babel++};
-
+    eval "use Encode";
+    if ($@) { $no_babel++};
+    
 	eval qq{
 		use Jcode qw();
 	};
@@ -136,14 +137,20 @@ sub translate {
 	my $ua = new LWP::UserAgent;
 	$ua->timeout(20);
 
-	my $req = HTTP::Request->new('POST', 'http://babelfish.altavista.com/tr');
+	my $req = HTTP::Request->new('POST', 'http://babelfish.altavista.com/babelfish/tr');
 	$req->content_type('application/x-www-form-urlencoded');
 
 	# translate Japanese from EUC into UTF-8
 	if ($from_lang eq "ja") {
 		$phrase = Jcode::convert($phrase, 'utf8');
 	}
+    else {
+        # latin-1
+        $phrase = Encode::decode('iso-8859-1', $phrase);
+        $phrase = Encode::encode('utf-8', $phrase);
+    }                           
 
+    $phrase = "<infobot>" . $phrase . "</infobot>";
 	my $urltext = uri_escape($phrase);
 	$req->content("urltext=$urltext&lp=$languagepair");
  
@@ -159,18 +166,23 @@ sub translate {
 		if (($from_lang eq "ja") || ($to_lang eq "ja")) {
 			$html = Jcode::convert($html, 'euc', 'utf8');
 		}
+        else {
+            # latin-1
+            $html = Encode::decode('utf-8', $html);
+            $html = Encode::encode('iso-8859-1', $html);
+        }
 
 		# It's the contents of the first <div> tag after the "Babel Fish
 		# Translation header
-		$html =~ s/.*Babel Fish Translation//s;
-		$html =~ s/<\/div.*//si;
-		$html =~ s/.*<Div[^>]*>//si;
-		$html =~ s/\n/ /g;
-		$html =~ s/\s*$//;
-      
-		return $html;
+        my $translated = "The translation confused me.";
+
+        if ($html =~ m|<infobot>\s*(.*?)\s*</infobot>|)
+        {
+           $translated = $1;
+        }
+		return $translated;
 	} else {
-		return ":("; # failure 
+		return "I tried, but got: " . $res->status_line; # failure 
 	}
 }
 
