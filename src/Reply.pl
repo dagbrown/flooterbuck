@@ -18,19 +18,7 @@ sub getReply {
 
     my $literal = ($locMsg =~ s/^literal //);
 
-    if (getparam('rss') and $message =~ m/^perlfaq\'\s+(.*?)\?*$/) {
-	# specially defined type.  get and process an RSS (RDF Site Summary)
-	eval "use URI::Escape";
-	not ($@) and do {
-	    my $q = uri_escape($1, '\W');
-	    my $result = &get_headlines("http://www.perlfaq.com/cgi-bin/rss/kw?q=$q");
-	    if ($result =~ s/^error: //) {
-		return "$who: couldn't get the perlfaq: $result";
-	    } else {
-		return "$who: $result";
-	    }
-	}
-    } elsif ($result = get("is", $locMsg)) {
+    if ($result = get("is", $locMsg)) {
 #	&status("exact: $message =is=> $result");
 	$theVerb = "is";
 	$X = $message;
