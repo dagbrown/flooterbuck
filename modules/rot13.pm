@@ -3,7 +3,7 @@
 #
 # ROT13s a random bit of text.
 #
-# $Id: rot13.pm,v 1.6 2001/12/04 17:40:27 dagbrown Exp $
+# $Id: rot13.pm,v 1.7 2001/12/13 18:30:51 awh Exp $
 #------------------------------------------------------------------------
 
 use strict;
@@ -17,6 +17,7 @@ sub scan(&$$) {
         my $reply = $1;
         $reply =~ y/A-Za-z/N-ZA-Mn-za-m/;
         $callback->($reply);
+	return "NOREPLY";
     }
     undef;
 }
