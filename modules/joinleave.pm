@@ -3,7 +3,7 @@
 #
 # Lets you tell the bot to leave or join channels
 #
-# $Id: joinleave.pm,v 1.6 2002/02/06 02:48:34 rharman Exp $
+# $Id: joinleave.pm,v 1.7 2003/02/14 22:15:27 dagbrown Exp $
 #------------------------------------------------------------------------
 
 use strict;
@@ -52,7 +52,7 @@ sub scan(&$$) {
             return 'NOREPLY';
         }
 
-    } elsif ($message =~ /^(leave|part) ((\#|\&))$/i) {
+    } elsif ($message =~ /^(leave|part) ([\&\#]\S+)(?:\s+(\S+))?$/i) {
 
         if (&::IsFlag("o") || $::addressed) {
             if (&::IsFlag("c") ne "c") { 
