@@ -1,0 +1,32 @@
+#!/usr/bin/perl -w
+#
+# hysteresis -- restart a program but not necessarily right away
+
+use strict;
+
+my $cycle = shift;
+my $i;
+
+while () 
+{
+    my $start = time;
+    $i++;
+    
+    warn "** ----------------------------------------------------\n";
+    warn "** running:    " . join(',', @ARGV) . "\n";
+    warn "** hysteresis: $cycle s\n";
+    warn "** iteration:  $i\n";
+    warn "** date:       " . scalar localtime() . "\n";
+    
+    my $rv = system(@ARGV);
+    warn "** iteration $i exited with status $rv\n";
+
+    my $elapsed = time - $start;
+    if ($elapsed < $cycle)
+    {
+        my $delay = $cycle - $elapsed;
+        warn "** terminated early -- waiting $delay s\n";
+        sleep ($delay);
+    }
+}
+
