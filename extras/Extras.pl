@@ -33,16 +33,16 @@ sub main::Extras {
     for my $module(@modules) {
         if($::msgType eq 'public') {
             if (eval qq|${module}::scan {::say shift;} "\$::message",\$::who|)
-            { &::status("caught by extras module '$module'"); return 'NOREPLY'}
+            { &::status("caught by $module");return 'NOREPLY'}
             warn "$@" if "$@";
         } else {
             if (eval qq{ ${module}::scan { ::msg("\$::who",shift); } "\$::message","\$::who" })
-            { &::status("caught by extras module '$module'"); return 'NOREPLY'}
+            { &::status("caught by $module");return 'NOREPLY'}
             warn "$@" if "$@";
         }
 
     }
-    return undef;
+    return undef; # To keep stock infobot happy
 }
 
 1;
