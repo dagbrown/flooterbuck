@@ -95,6 +95,9 @@ sub setup {
         &openDBMx('topten');
     }
 
+    if ($param{'seenurls'}) {
+        &openDBMx('seenurls');
+    }
 
     # set up the users and ops
     &status("Parsing User File");

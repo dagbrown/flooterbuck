@@ -302,3 +302,9 @@ havePOSIX true
 # next release or so.
 # 
 # message_center true
+
+# Keep track of whether URLs have been seen before or not
+seenurls $dbname-seenurls
+
+# Mocks people who paste URLs that have been seen before
+seenurls_obnoxious false
