@@ -1,6 +1,6 @@
 # Pager
 #
-# $Id: pager.pm,v 1.1 2004/03/09 04:36:41 rich_lafferty Exp $
+# $Id: pager.pm,v 1.2 2004/03/18 02:28:10 awh Exp $
 
 package pager;
 
@@ -14,12 +14,13 @@ BEGIN {
 sub scan(&$$) {
     my ($callback, $message, $who)=@_;
 
-    if ($no_mail) {
-        &::status("pager requires Mail::Mailer");
-        return undef;
-    }
 
     unless ($message =~ /^page\s+(\S+)\s+(.*)$/) {
+        return undef;
+    }
+    
+    if ($no_mail) {
+        &::status("pager requires Mail::Mailer");
         return undef;
     }
 
