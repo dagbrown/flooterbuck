@@ -5,19 +5,12 @@
 # feel free to use, copy, cut up, and modify, but if
 # you do something cool with it, let me know.
 #
-# $Id: weather.pm,v 1.7 2003/02/16 18:55:30 dagbrown Exp $
-#------------------------------------------------------------------------
-#
-# CHANGES
-#
-# 16-SEP-99 lenzo@cs.cmu.edu switched to LWP::UA and 
-#           put in a timeout.
+# $Id: weather.pm,v 1.8 2003/12/05 21:37:39 rich_lafferty Exp $
 #------------------------------------------------------------------------
 
 package Weather;
 
 my $no_weather;
-my $cache_time = 60 * 40 ; # 40 minute cache time
 my $default = 'KAGC';
 
 BEGIN {
@@ -34,13 +27,6 @@ sub Weather::NOAA::get {
     if ($no_weather) {
         return 0;
     } else {
-
-        if (exists $cache{$station}) {
-            my ($time, $response) = split $; , $cache{$station};
-            if ((time() - $time) < $cache_time) {
-                return $response;
-            }
-        }
 
         my $ua = new LWP::UserAgent;
         if (my $proxy = main::getparam('httpproxy')) { $ua->proxy('http', $proxy) };
@@ -98,7 +84,6 @@ sub Weather::NOAA::get {
                 $result .= "; $_: $feat{$_}";
             }
             my $t = time();
-            $cache{$station} = join $;, $t, $result;
         } else {
             $result = "I can't find that station code (see http://weather.noaa.gov/weather/curcond.html for locations and codes)";
         }
@@ -110,8 +95,8 @@ sub scan (&$$) {
     my ($callback,$message,$who) = @_;
 
     if (::getparam('weather') 
-            and ($message =~ /^\s*weather\s+(?:for\s+)?(.*?)\s*\?*\s*$/)) {
-        my $code = $1;
+            and ($message =~ /^\s*(wx|weather)\s+(?:for\s+)?(.*?)\s*\?*\s*$/)) {
+        my $code = $2;
         my $weath ;
         if ($code =~ /^[a-zA-Z][a-zA-Z0-9]{3,4}$/) {
             $weath = &Weather::NOAA::get($code);
