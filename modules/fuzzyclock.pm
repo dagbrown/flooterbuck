@@ -8,7 +8,7 @@
 # Make it psychic enough to figure out what timezone you're in, and have
 # it tell you the right time.  (Ha ha ha)
 #
-# $Id: fuzzyclock.pm,v 1.15 2002/01/27 18:37:11 rharman Exp $
+# $Id: fuzzyclock.pm,v 1.16 2002/08/06 02:35:02 dagbrown Exp $
 #------------------------------------------------------------------------
 
 use strict;
@@ -16,7 +16,15 @@ package FuzzyClock;
 
 sub fuzzytime {
     my $this=shift;
-    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime;
+    my $time=shift;
+    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst);
+
+    if(defined($time)) {
+        ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime $time;
+    } else {
+        ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime;
+    }
+
     my $timestring;
 
     my $myhour=$hour;
@@ -92,7 +100,7 @@ sub fuzzytime {
 sub scan(&$$) {
     my ($callback, $message, $who) = @_;
     
-    if($message =~ /(?:what time (?:is it|do you have))|(?:fuzzy?(?:clock|time))\??/i) {
+    if($message =~ /(?:what time (?:is (?:it|(\d+))|do you have))|(?:fuzzy?(?:clock|time))\??/i) {
 	if(rand()>0.5) {
 		$callback->("It's ".fuzzytime.", $who.");
 	} else {
