@@ -90,7 +90,7 @@ use strict;
                     # that anyone had ever seen before ever
                     if($firsttime == $lasttime) {
                         ::say("$who: ".
-                            ($lastnick==$who?
+                            ($lastnick eq $who?
                                 "You" :
                                 $lastnick).
                             " mentioned that URL here only ".
