@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: fcol.pm,v 1.17 2004/04/01 04:52:31 dagbrown Exp $
+# $Id: fcol.pm,v 1.18 2004/05/05 14:08:08 dagbrown Exp $
 #------------------------------------------------------------------------
 package fcol;
 use strict;
@@ -63,7 +63,7 @@ BEGIN {
 sub fcol_create($) {
     my $longurl=shift;
 
-    my $fcol=LWP::Simple::get('http://fcol.org/bot?'.uri_escape($longurl));
+    my $fcol=LWP::Simple::get('http://xev.us/bot?'.uri_escape($longurl));
 
     chomp $fcol;
     return "Your fcol is $fcol";
