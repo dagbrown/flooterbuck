@@ -72,9 +72,13 @@ use strict;
 
         # are you COOL enough?!
         if($::param{"seenurls"}) {
-            my $oldurl = ::get(seenurls => "$channel|$url");
             my ($firsttime,$firstnick);
             my ($lasttime,$lastnick);
+
+            $lasttime=$firsttime=time;
+            $lastnick=$firstnick=$who;
+
+            my $oldurl = ::get(seenurls => "$channel|$url");
             if($oldurl) {
                 &status("Found URL again: $url at $oldurl");
                 my @instances=split(/\;/,$oldurl);
@@ -96,22 +100,20 @@ use strict;
                               "first mentioned here ".
                               (get_timediff($firsttime))[0].
                               " ago by ".
-                              ($firstnick==$who?"yourself":$firstnick).
+                              (($firstnick eq $who)?"yourself":$firstnick).
                               ", and last mentioned ".
                               (get_timediff($lasttime))[0].
                               " ago by ".
-                              ($lastnick==$who?
-                                  ($firstnick==$lastnick?
+                              (($lastnick eq $who)?
+                                  (($firstnick eq $lastnick)?
                                       "yourself (again)!":
-                                      "$lastnick")
-                                  :($lastnick==$firstnick?
+                                      "yourself")
+                                  :
+                                  (($lastnick eq $firstnick)?
                                       "$lastnick (again)!":
                                       "$lastnick.")));
                     }
                 }
-            } else {
-                $lasttime=$firsttime=time;
-                $lastnick=$firstnick=$who;
             }
 
             $lasttime=time;
