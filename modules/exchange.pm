@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------
 # "exchange" command, change currencies
 #
-# $Id: exchange.pm,v 1.11 2003/10/18 21:25:01 dagbrown Exp $
+# $Id: exchange.pm,v 1.12 2004/05/10 16:48:42 awh Exp $
 #------------------------------------------------------------------------
 
 use strict;
@@ -42,7 +42,7 @@ sub exchange {
     $ua->timeout(10);
 
     # request the currency conversion from Yahoo
-    my $Converter="http://finance.yahoo.com/m5?a=$Amount&s=$From&t=$To";
+    my $Converter="http://finance.yahoo.com/currency/convert?amt=$Amount&from=$From&to=$To&submit=Convert";
     my $req = GET $Converter;
     my $res = $ua->request($req);                   # Submit request
 
@@ -60,27 +60,21 @@ sub exchange {
 
     # gross screen-scraping.  It would be nice if they gave a nice XML
     # document, but they don't.
-    my ($curnamefrom, $curnameto, $amount) = ($html =~ m/<th align=center>([^<]*)<\/th>.*<th align=center>([^<]*).*<th.*<th.*<th.*<tr.*<b>([^<]*)<\/b>/);
+
+#</b></td><td class="yfnc_tablehead1"><b>Canadian Dollar</b></td><td class="yfnc_tablehead1" colspan="2"><b>Exchange<br>Rate</b></td><td class="yfnc_tablehead1"><b>Japanese Yen</b></td><td class="yfnc_tablehead1"><b>Bid</b></td><td class="yfnc_tablehead1"><b>Ask</b></td></tr><tr align="center"><td class="yfnc_tabledata1"><a href="/q?s=CADJPY=X">CADJPY=X</a></td><td class="yfnc_tabledata1"><b>100</b></td><td class="yfnc_tabledata1">May 10</td><td class="yfnc_tabledata1">81.854</td><td class="yfnc_tabledata1"><b>8,185.408</b></td><td class="yfnc_tabledata1">81.854</td><td class="yfnc_tabledata1">81.897</td></tr></table></td></tr></table><center> 
+    
+    my ($curnamefrom, $curnameto, $amount) = ($html =~ m/head1\"><b>([^<]*)<\/b>.*?head1\"><b>([^<]*)<\/b>.*data1\"><b>([^<]*)<\/b>/);
 
     # yay, it matched!
     if ($curnamefrom and $curnameto and $amount) {
         return "$Amount $curnamefrom makes $amount $curnameto";
     }
 
-    # neither currency name got set at all.  It probably means that Yahoo
-    # has changed its screen format, but it's possible that the user set
-    # both input currency symbols to invalid ones.
-    if ((!$curnamefrom) and (!$curnameto)) {
-        return "Either '$From' and '$To' are both invalid currencies, or Yahoo changed its screen format for the currency exchanger.";
-    }
-
-    # One or the other of the currency names didn't get set.  This almost
-    # certainly means that the user input a wrong currency symbol.
-    if (!$curnamefrom) {
-        return "'$From' probably isn't a real currency.";
-    }
-    if (!$curnameto) {
-        return "'$To' probably isn't a real currency.";
+    # under the old screen format, I could tell which currency symbol
+    # was not entered correctly.  Under the new format, anything incorrect
+    # just dumps you back to the default page.
+    if ((!$curnamefrom) or (!$curnameto) or (!$amount)) {
+        return "Either '$From' or '$To' is an invalid currency symbol, or Yahoo changed its screen format for the currency exchanger.  Check http://finance.yahoo.com/currency for the list of supported symbols.";
     }
 
     # Uh-oh, how did we get here?
