@@ -1,4 +1,4 @@
-# $Id: bash.pm,v 1.9 2004/03/12 01:53:41 rich_lafferty Exp $
+# $Id: bash.pm,v 1.10 2004/04/25 22:04:42 dagbrown Exp $
 package bash;
 use strict;
 
@@ -154,7 +154,7 @@ sub scan(&$$) {
         $BASH_LINES_LIMIT=::getparam('bash_lines_limit')||4;
     }
 
-    if ( ::getparam('bash') and $message =~ /^\s*bash\s+(.+)$/i ) {
+    if ( ::getparam('bash') and $message =~ /^\s*bash\s+([0-9]+)$/i ) {
         &main::status("bash playback");
         &bash::get( $message, $callback );
         return 1;
