@@ -54,3 +54,6 @@ release: tag tarball
 
 tag:
 	cd .. && cvs tag $(TAG) infobot CVSROOT webpage
+
+untag:
+	cd .. && cvs tag -d $(TAG) infobot CVSROOT webpage
