@@ -2,6 +2,7 @@
 
 Bug Fixes
 =========
+- Someone said "purl, topten."  I thought, hmm, I suppose that should work.
 - Made RDF try harder to get something useful out of an RSS feed,
   even if the feed itself isn't perfect.
 - weather.pm: no longer fills in missing data with previous results
