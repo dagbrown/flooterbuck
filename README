@@ -1,8 +1,32 @@
+-- Note:  Flooterbuck Infobot vs. Infobot
+
+Flooterbuck Infobot (http://flooterbuck.sf.net/) is a rewrite of
+Kevin Lenzo's (apparently abandoned) Infobot (http://www.infobot.org/).
+Flooterbuck is meant to be cleaner, more modular, and more hackable than
+the original Infobot.
+
+The authors of Flooterbuck Infobot believe that all of the old Infobot
+functionality has been preserved.  However, it is still recommended that
+you keep your old installations of Infobot around, just in case you find
+that there is something necessary which only exists in the old Infobot
+(and in that case, please contact the authors of Flooterbuck).
+
+Theoretically, you can copy all of the .db files and the conf/*.config 
+files from your old Infobot installations into your Flooterbuck installation
+and it will work.  However, you may not get all of the new features of
+Flooterbuck that way -- you should at least have a look at the sample
+configuration file included with Flooterbuck to see if there's any new
+features that you want to enable.
+
+For more information on the differences between Flooterbuck and
+Infobot, please see the REVISIONS files.
+
+
+
+-- Very minimal setup instructions
 
 You will need to update your infobot.config 
 and infobot.users.  See the example files.
-
---
 
 This requires perl 5.
 
@@ -30,9 +54,11 @@ command line.
 
    infobot 
 
----
 
-A note on forms:  you can prepend the tag <reply>
+
+-- A note on forms
+
+You can prepend the tag <reply>
 to values in the db to just get a reply with no 
 extra info.
 
@@ -43,24 +69,46 @@ e.g.
 then when you ask 'x?' it will just reply 'y' instead
 of something like "i think x is y".
 
----
 
-* extending the bot by adding your own code
 
-try to keep your changes inside src/myRoutines.pl
-so that you can easily just replace this file when 
-there are new revs.  this is called just after some
-of the normalization stuff in urlProcess.pl. take
-a look at the file for details.
 
-basically, if myRoutines returns non-null, it's
-taken to have 'caught' the event.  you can just
-return '' to let the rest of the processing go at
-it.
+-- Extending the bot by adding your own code
 
----
+You can place your module in the modules directory.  It needs to define a
+package with the same name as the file itself (without the .pm extension).  It
+needs to define a subroutine named scan() that takes a callback function, a
+message, and the nick of the person who wrote that message.  
 
-* update_db & dump_db
+The callback function is the function which, when called with an
+argument, will reply to the query in the appropriate way.  That is,
+if the query was originally a private message, the callback function
+will reply via private message.  If the query was a message in a 
+channel, the callback function will send the reply to the correct
+channel.  
+
+If the module does not "catch" a message, then scan() function should
+return undef to allow the message to "fall through" to other modules.
+
+The best way to figure all this out is to look at one of the many modules
+provided as a reference.
+
+Oh, and if the module you added would be of interest to other Flooterbuck
+users, you might want to consider contributing that code to the project.
+Flooterbuck can be found on Sourceforge at http://flooterbuck.sf.net/
+
+
+
+-- Disabling features of the bot
+
+Nearly everything that Flooterbuck does (beside the actual communication
+with the IRC server) is handled by the modules in the modules directory.
+Although some modules can be enabled or disabled by changing the configuration
+files, you can disable any module by simply deleting it or moving it to
+a different directory.
+
+
+
+-- update_db & dump_db
 
 update_db is a little perl script that will take a
 flat ascii file and make an infobot-style db out
@@ -125,22 +173,10 @@ ps - i am just releasing this _now_ instead of waiting
      to fix everything.  If you use this and like it,
      or even if you don't, please mail me!
 
----
 
-thanks to:
 
-You, for getting this and using this.  Especially if
-you mail me and let me put you on the mailing list.
-lenzo@cs.cmu.edu
+-- Thanks to:
 
-special thanks to:
-
-steve orens (sorens) for being a tour-de-force beta bomber
-yo for working with script.  this is a big one!
-amug and everyone there for hosting the undernet url
-#macintosh for dealing with url through his troubled childhood
-tris for being an early guinea pig
-jadin for pointing out the @verb bug... fixed in 0.17b
-chucky burnett for tons of stuff
+Kevin Lenzo and his team for the original Infobot.
 
 
