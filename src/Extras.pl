@@ -65,4 +65,6 @@ sub main::Extras {
     return undef; # To keep stock infobot happy
 }
 
+sub modules { @modules; }
+
 1;
