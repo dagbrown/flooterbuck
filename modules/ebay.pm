@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: ebay.pm,v 1.20 2003/08/24 22:28:54 dagbrown Exp $
+# $Id: ebay.pm,v 1.21 2004/04/21 15:10:38 dagbrown Exp $
 #------------------------------------------------------------------------
 package ebay;
 use strict;
@@ -234,6 +234,21 @@ sub auction_sellerlist($) {
     }
 }
 
+#------------------------------------------------------------------------
+# grab_itemid
+# 
+# Teases the item-ID out of an eBay URL
+#------------------------------------------------------------------------
+
+sub grab_itemid {
+    my $url=shift;
+
+    if($url =~ /http:\/\/[^\/]*ebay\.com\/.*\&item\=(\d+)/) {
+        return $1;
+    } else {
+        return undef;
+    }
+}
 
 #------------------------------------------------------------------------
 # ebay_getdata
@@ -245,7 +260,19 @@ sub ebay_getdata($) {
     my $line=shift;
 
     if($line =~ /ebay\s+(\d+)/i && ($1 gt 0) ) {
-      return auction_summary($1); 
+        return auction_summary($1); 
+    } elsif($line =~ /ebay\s+that/i) {
+        my $auction_id=grab_itemid(::lastURL(::channel()));
+        if($auction_id) {
+            return auction_summary($auction_id);
+        } else {
+            if($::addressed){
+                return "The last URL wasn't eBay";
+            } else {
+                # don't say anything (assume someone saying "ebay that then")
+                return 'NOREPLY'; 
+            }
+        }
     } elsif ($line =~ /ebay\s+(\S+)/i) {
         return auction_sellerlist($1);
     } else {
