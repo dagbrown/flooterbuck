@@ -83,7 +83,9 @@ use strict;
                 ($firsttime,$firstnick)=split(/,/,$instances[0]);
                 ($lasttime,$lastnick)=split(/,/,$instances[-1]);
 
-                if($::param{"seenurls_obnoxious"}) {
+                if( ( $::param{"seenurls_obnoxious"} + 0.0 > 0 &&
+                      rand > $::param{"seenurls_obnoxious"} ) ||
+                    $::param{"seenurls_obnoxious"} eq "true" ) {
                     # lambaste 'em for being so uncool as to paste a URL
                     # that anyone had ever seen before ever
                     if($firsttime == $lasttime) {
