@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: excuse.pm,v 1.1 2003/02/21 03:55:06 dagbrown Exp $
+# $Id: excuse.pm,v 1.2 2003/10/29 22:02:18 dagbrown Exp $
 #
 # Includes the BOFH excuse file grabbed from:
 #       http://www.cs.wisc.edu/~ballard/bofh/excuses
@@ -279,7 +279,7 @@ CPU needs bearings repacked
 Too many little pins on CPU confusing it, bend back and forth until 10-20% are neatly removed. Do _not_ leave metal bits visible!
 _Rosin_ core solder? But...
 Software uses US measurements, but the OS is in metric...
-The computer fleetly, mouse and all.
+The computer fletely, mouse and all.
 Your cat tried to eat the mouse.
 The Borg tried to assimilate your system. Resistance is futile.
 It must have been the lightning storm we had (yesterday) (last week) (last month)
