@@ -2,6 +2,7 @@
 # ASCII conversions
 #
 # Usage: "ascii X" or "ord C"
+# $Id: asciiconvert.pm,v 1.2 2001/12/04 19:26:53 rharman Exp $
 #------------------------------------------------------------------------
 
 use strict;
