@@ -186,6 +186,32 @@ bag     3bu
 
 imperial 1.201          # For `imperial pint,' etc.  
 
+# Wine and Spirits measure
+
+pony                    1 floz
+jigger                  1.5 floz   # Can vary between 1 and 2 floz
+shot                    jigger     # Sometimes 1 floz
+eushot                  25 ml      # EU standard spirits measure
+fifth                   1|5 gallon
+winebottle              750 ml     # US industry standard, 1979
+winesplit               1|4 winebottle
+wineglass               4 floz
+magnum                  1.5 liter  # Standardized in 1979, but given
+                                   # as 2 qt in some references
+metrictenth             375 ml
+metricfifth             750 ml
+metricquart             1 liter
+
+# French champagne bottle sizes
+
+split                   200 ml
+jeroboam                2 magnum
+rehoboam                3 magnum
+methuselah              4 magnum
+salmanazar              6 magnum
+balthazar               8 magnum
+nebuchadnezzar          10 magnum
+
 
 # MASS (also WEIGHT)
 #
