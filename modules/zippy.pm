@@ -1,4 +1,4 @@
-# $Id $
+# $Id: zippy.pm,v 1.5 2001/12/04 15:33:58 rharman Exp $
 
 #------------------------------------------------------------------------
 # zippy -- infobot module for Zippy the Pinhead quotes

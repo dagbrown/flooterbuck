@@ -1,4 +1,4 @@
-# $Id $
+# $Id: ups.pm,v 1.6 2001/12/04 15:33:58 rharman Exp $
 
 package ups;
 use strict;

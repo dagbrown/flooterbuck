@@ -1,4 +1,4 @@
-# $Id $
+# $Id: exchange.pm,v 1.6 2001/12/04 15:33:58 rharman Exp $
 
 #------------------------------------------------------------------------
 # "exchange" command, change currencies

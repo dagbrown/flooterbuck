@@ -1,4 +1,4 @@
-# $Id $
+# $Id: Aviation.pm,v 1.4 2001/12/04 15:33:58 rharman Exp $
 #------------------------------------------------------------------------
 # aviation -- infobot module for various flight-planning bits.
 #             Was originally 'metar' until infobot 44.5.

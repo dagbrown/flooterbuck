@@ -1,4 +1,4 @@
-# $Id $
+# $Id: Example.pm,v 1.5 2001/12/04 15:33:58 rharman Exp $
 
 #------------------------------------------------------------------------
 # A VERY minimal example of how to write a New And Improved Infobot

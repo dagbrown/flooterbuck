@@ -1,4 +1,4 @@
-# $Id $
+# $Id: debug.pm,v 1.3 2001/12/04 15:33:58 rharman Exp $
 
 package debug;
 
