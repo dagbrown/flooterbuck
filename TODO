@@ -1,0 +1,6 @@
+Future ideas:
+
+
+A modularized help system where each module is responsible for
+generating its own help.  Maybe as well as scan() each module can
+also define a help() subroutine or something.  
