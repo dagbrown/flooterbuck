@@ -5,7 +5,7 @@
 # Module.  All it does is say "bar" when someone says "foo".
 #------------------------------------------------------------------------
 
-package foo;
+package Example;
 
 sub scan(&$$) {
     my ($callback,$message,$who) = @_;
@@ -18,4 +18,4 @@ sub scan(&$$) {
     }
 }
 
-"foo";
+"Example";
