@@ -3,6 +3,9 @@
 # hysteresis -- restart a program but not necessarily right away
 
 use strict;
+use File::Basename qw(basename);
+
+usage() unless defined $ARGV[1];
 
 my $cycle = shift;
 my $i;
@@ -28,5 +31,23 @@ while ()
         warn "** terminated early -- waiting $delay s\n";
         sleep ($delay);
     }
+}
+
+sub usage
+{
+    my $me = basename $0;
+    print STDERR <<USAGE;
+$me -- restart a program but not necessarily right away
+
+Usage: $me delay command [arguments]
+
+Continually restarts 'command' (with optional arguments), such that
+'command' will only restart every 'delay' seconds at minimum.
+
+This program is part of the 'flooterbuck' infobot distribution,
+available at http://flooterbuck.sourceforge.net/. 
+USAGE
+  
+    exit 1;
 }
 
