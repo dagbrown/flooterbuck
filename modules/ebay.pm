@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: ebay.pm,v 1.11 2002/01/05 14:39:17 dagbrown Exp $
+# $Id: ebay.pm,v 1.12 2002/01/05 14:41:56 dagbrown Exp $
 #------------------------------------------------------------------------
 package ebay;
 use strict;
@@ -132,11 +132,16 @@ sub auction_summary($) {
             'http://cgi.ebay.com/aw-cgi/eBayISAPI.dll?ViewItem&item='
             .$auction_id);
     my $response=$ua->request($request);
+    
+    unless($response->is_success) {
+        my $status=$response->status_line;
 
-    return "I can't seem to reach eBay right now, sorry (it said \"".
-            $response->status_line.
-            "\")."
-        unless $response->is_success;
+        chomp $status;
+
+        return "I can't seem to reach eBay right now, sorry (it said \"".
+            $status.
+            "\").";
+    }
 
     my ($title)=snag_element("title",$response->content);
 
