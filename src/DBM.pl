@@ -1,4 +1,4 @@
-# $Id: DBM.pl,v 1.5 2004/09/16 17:40:05 dagbrown Exp $
+# $Id: DBM.pl,v 1.6 2004/09/16 18:12:54 dagbrown Exp $
 #
 # infobot :: Kevin Lenzo  (c) 1997
 
@@ -665,21 +665,21 @@ sub showdb {
 # a better top ten which only sorts a small number of things
 # (but does it a lot) instead of sorting a huge number of things
 # once and then throwing most of them away
-sub topofthecharts(&$@) {
+sub topofthecharts(&$@) {  # &$@#!!!
     my $sortfun=shift;
     my $numtoreturn=shift;
     # and the rest of @_ is the values themselves
 
-    if(scalar(@_)<=$numtoreturn) { 
+    if(scalar(@_)<=$numtoreturn) {
         return sort { &$sortfun($a,$b) } (@_) 
     }
 
-    my @b=sort { &$sortfun($a,$b) } @_[0..$numtoreturn-1];
+    my @b=sort { $sortfun->($a,$b) } @_[0..$numtoreturn-1];
 
     for my $x (@_) {
-        if(&$sortfun($x,$b[$numtoreturn-1])==1) {
+        if( $sortfun -> ( $b[$numtoreturn-1],$x ) == 1 ) {
             unshift @b,$x;
-            @b=sort { $b <=> $a } @b[0..$numtoreturn-1];
+            @b=sort { $sortfun->($a,$b) } @b[0..$numtoreturn-1];
         }
     }
     return @b;
