@@ -2,7 +2,7 @@
 # ASCII conversions
 #
 # Usage: "ascii X" or "ord C"
-# $Id: asciiconvert.pm,v 1.4 2001/12/04 23:21:37 dagbrown Exp $
+# $Id: asciiconvert.pm,v 1.5 2001/12/04 23:23:16 dagbrown Exp $
 #------------------------------------------------------------------------
 
 use strict;
@@ -54,7 +54,7 @@ __END__
 
 asciiconvert.pm - ASCII conversions
 
-=head1 SYNPSIS
+=head1 SYNOPSIS
 
 ascii [number] 
 
