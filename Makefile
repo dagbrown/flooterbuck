@@ -23,7 +23,7 @@ SRC_FILES=$(shell for f in $(SOURCES);do echo $(SRCDIR)/$$f;done)
 
 TARBALL=$(RELEASEDIR).tar.gz
 
-default: ../$(TARBALL)
+default: $(TARBALL)
 
 ../$(RELEASEDIR):
 	mkdir -p ../$(RELEASEDIR)
@@ -34,8 +34,11 @@ default: ../$(TARBALL)
 		$(CONFDIR)/*-dist $(CONFDIR)/sane-*.txt | \
 		( cd ../$(RELEASEDIR) && tar xf - )
 
+$(TARBALL): ../$(TARBALL)
+	mv ../$(TARBALL) $(TARBALL)
+
 tarball: ../$(TARBALL)
 
 ../$(TARBALL): ../$(RELEASEDIR)
 	cd .. ; tar cvvf - $(RELEASEDIR) | gzip -9 > $(TARBALL)
-	# cd .. && rm -r $(RELEASEDIR)
+	cd .. && rm -r $(RELEASEDIR)
