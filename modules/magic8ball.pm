@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------
 # Magic 8-ball
 #
-# $Id: magic8ball.pm,v 1.4 2001/12/04 17:40:27 dagbrown Exp $
+# $Id: magic8ball.pm,v 1.5 2002/09/20 14:27:56 rharman Exp $
 #------------------------------------------------------------------------
 
 use strict; 
@@ -22,7 +22,7 @@ sub scan(&$$) {
 
         if (!@m8_answers) {
             my $answer_file  =  ::getparam('magic8_answers') 
-                || "$::param{miscdir}/magic8.txt";
+                || "$::param{confdir}/magic8.txt";
 
             print "reading from $answer_file\n";
 
