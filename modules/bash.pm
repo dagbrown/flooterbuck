@@ -1,4 +1,4 @@
-# $Id: bash.pm,v 1.5 2003/01/23 01:40:33 dagbrown Exp $
+# $Id: bash.pm,v 1.6 2003/01/23 01:42:06 dagbrown Exp $
 package bash;
 use strict;
 
@@ -114,6 +114,8 @@ sub bash::get($$) {
                 $callback->($_);
                 sleep 1;
             }
+        } else {
+            $callback->("Ack!  That one's too long! :(");
         }
     }
     if ( defined($pid) )    # child exits, non-forking OS returns
