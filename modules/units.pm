@@ -539,11 +539,10 @@ sub scan(&$$) {
         my $response = Units::convert($from, $to);
 
         if ($response =~ /Unknown unit `(.*?)'/i) {
-            $message = qq('I checked in unittab, but there's ).
-                          qq(no mention of "$1".');
-            if($from =~ /\d+\s*[A-Z][A-Z][A-Z]/ and
-               $to =~ /[A-Z][A-Z][A-Z]/ ) {
-                $message .= q/  (Perhaps you want "exchange?")/;
+		$result = "I don't know how to convert $from to $to.";
+            if($from =~ /^[A-Za-z][A-Za-z][A-Za-z]$/ and
+               $to =~ /^[A-Za-z][A-Za-z][A-Za-z]$/ ) {
+                $result .= q/  (Perhaps you want "exchange?")/;
             }
         } elsif($response =~ /^(?:[+-]?)(?=\d|\.\d)\d*(?:\.\d*)?(?:[Ee](?:[+-]?\d+))?/
                 && $response !~ /\bis\b/) {
