@@ -388,17 +388,25 @@ sub scan(&$$) {
         my $pid = fork;
         if ($pid) {
             # this takes some time, so fork.
-            return 'NOREPLY';
+            return 1;
         }
 
-        if ($message =~ /^\s*(?:ex)?change\s+([\d\.\,]+)\s+(\S+)\s+(?:into|to|for)\s+(\S+)/i) {
+        if ($message =~ /^\s*(?:ex)?change\s+  # "exchange" 
+                         ([\d\.\,]+)           # some number of $CURRENCY
+                         \s+                   # (whitespace)
+                         (\S+)                 # currency name
+                         \s+                   # (more whitespace)
+                         (?:into|to|for)       # "into" (or "to" or "for")
+                         \s+                   # (more whitespace)
+                         (\S+)                 # Other currency name
+                         /xi) {
             my($Amount,$From,$To) = ($1,$2,$3);
-            $From = uc $From; $To = uc $To;
+            $From = uc $From;
+            $To = uc $To;
             &::status("calling exchange($From, $To, $Amount) ...");
             $response = &exchange($From, $To, $Amount);
             # Change Finland, purl!  No no.  How about 'currency for'.
-            # } elsif( $message =~ /^\s*(?:ex)?change ([\w\s]+)/) {
-        } elsif($message =~ /^\s*currenc(?:ies|y) for\s(?:the\s)?([\w\s]+)/i) {
+        } elsif($message =~ /^\s*currenc(?:ies|y) for\s(?:the\s)?([\w\s]+)/xi) {
             # looking up the currency for a country
             my $Country = $1;
             &::status("calling exchange($Country) ...");
@@ -417,7 +425,8 @@ sub scan(&$$) {
 
         # exit the child or it gets weird
         exit 0 if $pid;
-    }				# end excange
+        return 1;
+    }				# end exchange
     return undef;
 }
 
