@@ -29,7 +29,7 @@
 # 2003/02/22 dagbrown@rogers.com
 #            - Added patch to make it more picky about where words end
 #
-# $Id: aviation.pm,v 1.1 2004/09/12 21:44:06 dagbrown Exp $
+# $Id: aviation.pm,v 1.2 2004/09/12 21:58:50 dagbrown Exp $
 #------------------------------------------------------------------------
 
 package aviation;
@@ -60,7 +60,7 @@ my $taf_multiline = 0;
 #
 # Figure out if we're supposed to do something, and do it if we are
 #
-sub Aviation::scan(&$$) {
+sub aviation::scan(&$$) {
     my($callback,$message,$who) = @_;
 
     if(defined(::getparam('aviation') or defined(::getparam('metar'))) and
@@ -73,7 +73,7 @@ sub Aviation::scan(&$$) {
                       rh                |
                       aviation)\b/xi) 
     {
-        &Aviation::get($message, $callback);
+        &aviation::get($message, $callback);
         return 1;
     }
     return undef;
@@ -82,7 +82,7 @@ sub Aviation::scan(&$$) {
 #
 # Figure out what we're supposed to do, and do it
 #
-sub Aviation::get { 
+sub aviation::get { 
     if ($no_aviation) {
 	&main::status("Aviation module requires LWP::UserAgent.");
 	return '';
