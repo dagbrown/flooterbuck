@@ -157,6 +157,10 @@ VERBOSITY        1
 # the magic hack word to unignore everyone
 unignoreWord     unignore-everyone
 
+# where modules and such live, the default is the
+# modules subdir of the main directory
+moddir          modules
+
 # where configuration and help files and such live, the default is the
 # files subdir of the main directory
 confdir          conf
