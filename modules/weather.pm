@@ -5,7 +5,7 @@
 # feel free to use, copy, cut up, and modify, but if
 # you do something cool with it, let me know.
 #
-# $Id: weather.pm,v 1.5 2001/12/04 17:40:27 dagbrown Exp $
+# $Id: weather.pm,v 1.6 2002/09/04 21:05:04 awh Exp $
 #------------------------------------------------------------------------
 #
 # CHANGES
@@ -46,7 +46,7 @@ sub Weather::NOAA::get {
         if (my $proxy = main::getparam('httpproxy')) { $ua->proxy('http', $proxy) };
 
         $ua->timeout(10);
-        my $request = new HTTP::Request('GET', "http://tgsv22.nws.noaa.gov/weather/current/$station.html");
+        my $request = new HTTP::Request('GET', "http://weather.noaa.gov/weather/current/$station.html");
         my $response = $ua->request($request); 
 
         if (!$response->is_success) {
