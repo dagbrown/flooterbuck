@@ -4,7 +4,7 @@
 # Based on "slashdot" module, but this should be torn apart a bit
 # to make a generid RDF module.
 #
-# $Id: sunhelp.pm,v 1.5 2001/12/04 17:40:27 dagbrown Exp $
+# $Id: sunhelp.pm,v 1.6 2002/01/22 20:01:19 dagbrown Exp $
 #------------------------------------------------------------------------
 
 #####################
@@ -64,7 +64,9 @@ sub getsunhelpheads {
         foreach(@indexhtml) {
             if (/<story>/){$story++;}
             elsif (/<title>(.*?)<\/title>/){
-                $headlines .= " | $1";
+                my $headline = $1;
+                $headline =~ s/([A-Z])([A-Z]+)/${1}.lc($2)/eg;
+                $headlines .= " | $headline";
             }
             elsif (/<url>(.*?)<\/url>/){
                 # do nothing
@@ -95,7 +97,7 @@ sub scan(&$$) {
     }
 }
 
-"sunhelp";
+return "sunhelp";
 
 __END__
 
