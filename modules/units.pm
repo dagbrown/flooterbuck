@@ -538,7 +538,7 @@ sub scan(&$$) {
         my ($from, $to) = ($1, $3);
         my $result;
 
-        my $response = Units::convert($from, $to);
+        my $response = units::convert($from, $to);
 
         if ($response =~ /Unknown unit `(.*?)'/i) {
 		$result = "I don't know how to convert $from to $to.";
