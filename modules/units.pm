@@ -529,7 +529,7 @@ sub token_value {
 	return $token;				# Perl takes care of the others.
 }
 
-sub scan {
+sub scan(&$$) {
     my ($callback,$message,$who) = @_;
 
     if ($message =~ /^convert\s+(.*?)\s+(in)?to\s+(.+?)\s*$/) {
