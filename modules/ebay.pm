@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: ebay.pm,v 1.12 2002/01/05 14:41:56 dagbrown Exp $
+# $Id: ebay.pm,v 1.13 2002/01/17 01:46:40 dagbrown Exp $
 #------------------------------------------------------------------------
 package ebay;
 use strict;
@@ -46,7 +46,7 @@ my $no_ebay;
 
 BEGIN {
     eval qq{
-        use LWP;
+        use LWP::Simple qw();
     };
     $no_ebay++ if ($@);
 }
@@ -91,7 +91,7 @@ sub parse_response($) {
     $response=~s/\r//g;
 
     my ($title)=snag_element("title",$response);
-    chomp $title,"\n";
+    chomp $title;
     $title =~ s/\(Ends .*\)//g;
 
     my %snagged_info;
@@ -125,30 +125,16 @@ sub parse_response($) {
 sub auction_summary($) {
     my $auction_id=shift;
 
-    my $ua=new LWP::UserAgent;
-    $ua->timeout(12);
-    my $request=new HTTP::Request(
-        GET=>
-            'http://cgi.ebay.com/aw-cgi/eBayISAPI.dll?ViewItem&item='
-            .$auction_id);
-    my $response=$ua->request($request);
-    
-    unless($response->is_success) {
-        my $status=$response->status_line;
+    my $response=LWP::Simple::get(
+        'http://cgi.ebay.com/aw-cgi/eBayISAPI.dll?ViewItem&item='
+        .$auction_id);
 
-        chomp $status;
-
-        return "I can't seem to reach eBay right now, sorry (it said \"".
-            $status.
-            "\").";
-    }
-
-    my ($title)=snag_element("title",$response->content);
+    my ($title)=snag_element("title",$response);
 
     if($title eq "eBay '$auction_id' - Invalid Item") {
         return "I'm sorry, I couldn't find that item on eBay.";
     } else {
-        return parse_response($response->content);
+        return parse_response($response);
     }
 }
 
@@ -201,4 +187,4 @@ sub scan(&$$) {
     }
 }
 
-"ebay";
+return "ebay";
