@@ -51,6 +51,7 @@ sub get_headlines {
                 }
 
                 $return =~ s/; $//;
+                $return =~ s/\s+/ /sg;
 
                 return $return;
             } else {
