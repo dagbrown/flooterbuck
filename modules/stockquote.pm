@@ -3,7 +3,7 @@
 #
 # See the POD documentation (right here!) for more info
 #
-# $Id: stockquote.pm,v 1.9 2002/02/04 17:52:24 awh Exp $
+# $Id: stockquote.pm,v 1.10 2002/03/11 17:19:38 rharman Exp $
 #------------------------------------------------------------------------
 
 =head1 NAME
@@ -161,7 +161,7 @@ sub scan(&$$) {
     my ($callback,$message,$who) = @_;
     my ($symbol);
 
-    if ($message =~ /^(?:quote|stock price|index)(?: of| for)? (\^?[A-Z.0-9]{1,8})\?*$/i) {
+    if ($message =~ /^(?:quote|stock price|index)(?: of| for)? (\^?[A-Z.0-9]{1,8})\?*\s*$/i) {
         if($no_quote) {
             &main::status("Sorry, quote requires LWP and couldn't find it");
             return undef;
