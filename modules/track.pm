@@ -3,7 +3,7 @@
 #
 # Richard Harman
 #
-# $Id: track.pm,v 1.2 2002/01/25 21:50:59 rharman Exp $
+# $Id: track.pm,v 1.3 2002/01/26 19:18:48 rharman Exp $
 #------------------------------------------------------------------------
 package track;
 use strict;
@@ -46,8 +46,8 @@ Richard G Harman Jr <flooterbuck+track.pm@richardharman.com>
 my $no_track;
 
 my $pakalert_url = 'http://www.pakalert.com/trackpack.asp?';
-my $pakalert_username = 'CHANGE THIS';
-my $pakalert_password = 'CHANGE THIS';
+my $pakalert_username = 'CHANGE ME';
+my $pakalert_password = 'CHANGE ME';
 
 BEGIN {
     eval qq{
@@ -55,7 +55,6 @@ BEGIN {
 	use XML::Simple qw();
     };
     $no_track++ if ($@);
-    $no_track++ if ($pakalert_username == 'CHANGE THIS');
 }
 
 #------------------------------------------------------------------------
@@ -84,8 +83,7 @@ sub track_getdata($)
   my $track_id=shift;
   my $url = join("",$pakalert_url,"trackno=",escape($track_id),'&login=',escape($pakalert_username),"&password=",escape($pakalert_password));
   my $xs = new XML::Simple();
-  my $XML= LWP::Simple::get($url);
-
+  my $XML = LWP::Simple::get($url);
   my $ref = $xs->XMLin($XML);
   my $hashref = \$ref->{trackinfo}->{objalertinformation}->{colltrackinginformation}->{colltrackinginformation_Item}[0];
   my $string = $$$hashref{dtimeofaction};
@@ -102,9 +100,9 @@ sub track_getdata($)
 sub scan(&$$) {
     my ($callback, $message, $who)=@_;
 
-    if ( ::getparam('track') and $message =~ /^\s*track\s+(\.+)$/i ) {
+    if ( ::getparam('track') and $message =~ /^\s*track\s+(.+)$/i ) {
         &main::status("Pakalert (track) query");
-        &track_get($message,$callback);
+        &track_get($1,$callback);
         return 1;
     }
 }
