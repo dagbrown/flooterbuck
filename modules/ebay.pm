@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: ebay.pm,v 1.19 2003/02/15 18:00:52 dagbrown Exp $
+# $Id: ebay.pm,v 1.20 2003/08/24 22:28:54 dagbrown Exp $
 #------------------------------------------------------------------------
 package ebay;
 use strict;
@@ -85,6 +85,7 @@ sub snag_element($$) {
 sub strip_html($) {
     my $blob=shift;
     chomp $blob;
+    $blob=~s/\<br\>/; /ig;
     $blob=~s/\<[^>]+\>//g;
     $blob=~s/\&[a-z]+\;?//g;
     $blob=~s/\s+/ /g;
@@ -105,30 +106,54 @@ sub parse_response($) {
     my ($title)=snag_element("title",$response);
     chomp $title;
     $title =~ s/\(Ends [^\)]*\)//g;
+    $title =~ s/ +/ /g;
 
     my %snagged_info;
+    my @seller_info;
 
     my @columns=snag_element("td",$response); # all columns, everywhere
     my $color=0;
     my $storedinfo=undef;
 
+    my $sellerinfo_mode=0;
+
     map {
         my $info=strip_html $_;
         $info=~s/^\s*//;$info=~s/\s*$//;$info=~s/\n//g;
+        if($info eq "Seller information") {
+            $sellerinfo_mode++;
+        }
+        if($sellerinfo_mode>0) {
+            push(@seller_info,$info);
+            $sellerinfo_mode++;
+            if($sellerinfo_mode>10) {
+                $sellerinfo_mode=0;
+            }
+        }
         if($storedinfo) {
             $snagged_info{$storedinfo}=$info;
         }
         $storedinfo=$info;
     } @columns;
 
+    @seller_info=grep {/./} @seller_info;
+
     # fix the Buy It Now bug
     $snagged_info{"Currently"} =~ s/Buy.*//;
+    $snagged_info{"Time left:"} =~ s/ *\;.*//;
 
-    my $reply = $title."[".$snagged_info{"Seller (rating)"}."] ".
-        "Qty ".$snagged_info{"Quantity"}." ".
-        $snagged_info{"Current bid"}.
-        " [".$snagged_info{"High bidder"}."] ".
-        $snagged_info{"Time left"};
+    my $reply = $title." [".$seller_info[1]."] ".
+        ($snagged_info{"Current bid:"}
+            || $snagged_info{"Starting bid:"}
+            || $snagged_info{"Winning bid:"}) ." ".
+        ($snagged_info{"Current bid:"} ?
+            " [".$snagged_info{"High bidder:"}."]"
+            : ($snagged_info{"Winning bid:"} ?
+                " [".$snagged_info{"Winning bidder:"}."]"
+                : "[no bids]")) ." ".
+        ($snagged_info{"Time left:"} ?
+            $snagged_info{"Time left:"}. " to go" :
+            "Auction ended ".$snagged_info{"Ended:"});
 }
 
 
@@ -258,7 +283,7 @@ sub ebay::get($$) {
 sub scan(&$$) {
     my ($callback, $message, $who)=@_;
 
-    if ( ::getparam('ebay') and $message =~ /^\s*ebay\s+(\S+)$/i ) {
+    if ( ::getparam('ebay') and $message =~ /^\s*ebay\s+(\S+)\s*$/i ) {
         &main::status("eBay query");
         &ebay::get($message,$callback);
         return 1;
