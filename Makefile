@@ -11,6 +11,7 @@ PROGRAM=infobot
 MODULESDIR=modules
 CONFDIR=conf
 SRCDIR=src
+SCRIPTDIR=scripts
 
 
 CONFS=infobot.channels-dist infobot.config-dist infobot.help-dist \
@@ -22,9 +23,14 @@ SOURCES=ANSI.pl CTCP.pl Channel.pl DBM.pl Extras.pl HandleURLs.pl \
 	Process.pl Question.pl RDF.pl Reply.pl Search.pl Setup.pl Statement.pl \
 	Update.pl User.pl Util.pm
 
+SCRIPTS=README.scripts curl dbmext-test dump_db flock-test \
+	get_entries_from_log hysteresis make_password make_snap \
+	restore_snap run_if_needed.pl track2fact unupdate_dbs update_db
+
 # computed variables
 SRC_FILES=$(shell for f in $(SOURCES);do echo $(SRCDIR)/$$f;done)
 CONF_FILES=$(shell for f in $(CONFS);do echo $(CONFDIR)/$$f;done)
+SCRIPT_FILES=$(shell for f in $(SCRIPTS);do echo $(SCRIPTDIR)/$$f;done)
 RELEASEDIR=flooterbuck-$(shell cat VERSION)
 TAG=release-$(shell sed 's/\./-/g' VERSION)
 
@@ -38,7 +44,8 @@ default: $(TARBALL)
 		$(wildcard $(MODULESDIR)/*.pm) \
 		$(SRC_FILES) \
 		$(DOCS) \
-		$(CONF_FILES) | \
+		$(CONF_FILES) \
+		$(SCRIPT_FILES) | \
 		( cd ../$(RELEASEDIR) && tar xf - )
 
 $(TARBALL): ../$(TARBALL)
