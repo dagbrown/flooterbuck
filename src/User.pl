@@ -96,6 +96,11 @@ sub verifyUser {
     &set('seen', lc $who, $now.$;.channel().$;.$m);
     &postInc('topten', lc $who); # add one to the counter of what this user has said
 
+    # Check for new messages if the message center module is there
+    if($message_center::message_center) {
+        &message_center::have_message(lc($who));
+    }
+
     if ($VerifWho) {
 	$uFlags = $user{$VerifWho."flags"};
 	$uPasswd = $user{$VerifWho."pass"};
@@ -427,4 +432,3 @@ sub userProcessing {
 }
 
 1;
-
