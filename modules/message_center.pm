@@ -3,7 +3,7 @@
 #
 # See the POD for more information
 #
-# $Id: message_center.pm,v 1.2 2003/04/25 02:20:39 dagbrown Exp $
+# $Id: message_center.pm,v 1.3 2003/04/25 02:22:28 dagbrown Exp $
 #------------------------------------------------------------------------
 
 =head1 NAME
@@ -114,6 +114,7 @@ sub scan(&$$) {
     # Check $message, if it's what you want, then do stuff with it
     if($message =~ /^(?:message|msg)\s+help$/i) {
         $callback->("To leave a message, say \"msg <nickname> message\" to me.  To read your messages, msg me with \"messages\".  To erase your messages, msg me with \"messages erase\"");
+        return 1;
     } elsif($message =~ /^(?:message|msg)(?:\s+for)?\s+
                     (\S+)                # recipient
                     (?:\s*(?:\:|;))?\s*  # Optional colon and space
@@ -123,14 +124,16 @@ sub scan(&$$) {
     ) {
         my $reply=leave_message($who,lc($1),$2);
         $callback->($reply);
+        return 1;
     } elsif($message =~ /^(?:messages|msgs)\s*(?:forget|erase)/i 
             && $::msgType =~ /private/) {
         $callback->(message_erase(lc($who)));
+        return 1;
     } elsif($message =~ /^(?:messages|msgs)\s*$/i) {
         $callback->(message_read(lc($who)));
+        return 1;
     }
-
-    return 1;
+    return undef;
 }
 
 return "message_center";
