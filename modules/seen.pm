@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------
 # "seen" bit--have you seen $PERSON recently?
 #
-# $Id: seen.pm,v 1.7 2004/04/01 03:53:10 dagbrown Exp $
+# $Id: seen.pm,v 1.8 2004/04/25 22:10:03 dagbrown Exp $
 #------------------------------------------------------------------------
 # -- from Question
 #
@@ -72,7 +72,7 @@ sub scan(&$$) {
         if ($seen) {
             my ($when,$where,$what) = split /$;/, $seen;
             my ($tstring, $shorttstring) = &get_timediff($when);
-            $callback->("$person was last seen on $where $tstring, ".
+            $callback->("$person was last seen on $where $tstring ago, ".
                         "saying: $what [$when]");
             return 1;
         }
