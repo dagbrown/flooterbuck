@@ -2,9 +2,8 @@
 # shorten url-shortener
 #
 # Dave Brown
-# Paul Blair
 #
-# $Id: shorten.pm,v 1.1 2004/04/01 08:08:55 dagbrown Exp $
+# $Id: shorten.pm,v 1.2 2004/05/25 19:05:10 dagbrown Exp $
 #------------------------------------------------------------------------
 package shorten;
 use strict;
@@ -63,23 +62,19 @@ BEGIN {
 #------------------------------------------------------------------------
 sub shorten_create($) {
     my $longurl=shift;
-
+    
     my $shorten=LWP::Simple::get('http://metamark.net/api/rest/simple?long_url='
-        . uri_escape($longurl));
+            . uri_escape($longurl));
     chomp $shorten;
 
     unless ($shorten =~ /^ERROR:/) {
-        (my $best_guess) = $longurl =~ m!^\w+://www[0-9]*\.([a-z0-9.-]+)/!;
-        ($best_guess) = $longurl =~ m!^\w+://(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/! unless $best_guess;
+      (my $best_guess) = $longurl =~ m!^\w+://(?:www[0-9]*\.)?([a-z0-9.-]+)(?:/|$)!;
+      ($best_guess) = $longurl =~ m!^\w+://(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/! unless $best_guess;
 
-        $shorten .= " [$best_guess]" if $best_guess;
-        return "That URL is at $shorten";
+      $shorten .= " [$best_guess]" if $best_guess;
+      return "That URL is at $shorten";
     } else {
-        if(rand>0.95) {
-            return "That URL is at--oh, whoops, it said $shorten, sorry";
-        } else {
-            return $shorten;
-        }
+      return $shorten;
     }
 }
 
@@ -142,3 +137,4 @@ sub scan(&$$) {
 }
 
 "shorten";
+
