@@ -213,4 +213,4 @@ sub scan(&$$) {
     }
 }
 
-"flighttracker";
+return "flighttracker";
