@@ -27,10 +27,16 @@ dump_db [-m <module>] <dbname>
        dump_db infobot-is
        dump_db -m DB_File infobot-is.db
 
-run_infobots.pl
+run_if_needed.pl
 
     you'll need to edit this script to give the right home
     directory, but this is for crontabbing the infobot.  it
     will run it if it's not already running.  this is not
     highly tested!  YMMV.
 
+hysteresis [time] [command]
+
+    for keeping an infobot running without cron. will immediately
+    restart a bot if it last ran for longer than <time> seconds,
+    otherwise will wait until <time> seconds have passed since 
+    last start to start again.
