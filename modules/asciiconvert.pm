@@ -2,7 +2,7 @@
 # ASCII conversions
 #
 # Usage: "ascii X" or "ord C"
-# $Id: asciiconvert.pm,v 1.3 2001/12/04 23:17:00 rharman Exp $
+# $Id: asciiconvert.pm,v 1.4 2001/12/04 23:21:37 dagbrown Exp $
 #------------------------------------------------------------------------
 
 use strict;
@@ -54,14 +54,26 @@ __END__
 
 asciiconvert.pm - ASCII conversions
 
-=head1 PARAMETERS
+=head1 SYNPSIS
 
-ascii [0-255] or ord [character]
+ascii [number] 
+
+ord [character]
 
 =head1 DESCRIPTION
 
-this module will return the numerical ascii representation of [character] or return the character for [number].
+This module can be invoked in two different ways.
+
+    ascii [number]
+
+Will return the character that corresponds to the ASCII code, from
+0 to 127.
+
+    ord [character]
+
+Will return the ASCII code for the character you asked for.
 
 =head1 AUTHORS
 
-Unknown
+Kevin Lenzo (presumably)
+Dave Brown (Flooterbuck-ized the module)
