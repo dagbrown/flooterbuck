@@ -3,7 +3,7 @@
 #
 # See the POD documentation (right here!) for more info
 #
-# $Id: combinatorics.pm,v 1.1 2002/08/19 15:19:05 awh Exp $
+# $Id: combinatorics.pm,v 1.2 2003/03/10 15:38:22 awh Exp $
 #------------------------------------------------------------------------
 
 
@@ -60,6 +60,10 @@ sub scan(&$$) {
     my ($callback,$message,$who) = @_;
 
     if ($message =~ /^\s*(\d*)\s*(\s+factorial|\!)\s*$/i) {
+	if ($1 > 200) {
+		$callback->("I don't like big numbers like that.");
+		return "NOREPLY";
+	}
         my $reply = &fact($1);
         $callback->($reply);
 	return "NOREPLY";
@@ -67,6 +71,10 @@ sub scan(&$$) {
    
 # x C y == x! / y! * (x-y)! 
     if ($message =~ /^\s*(\d*)\s+(?:choose|combin(?:e|ation)|c)\s+(\d*)\s*$/i) {
+	if (($1 > 200) || ($2 > 200)) {
+		$callback->("I don't like big numbers like that.");
+		return "NOREPLY";
+	}
         my $reply = &fact($1)/(&fact($2)*&fact($1-$2));
         $callback->($reply);
 	return "NOREPLY";
@@ -74,6 +82,10 @@ sub scan(&$$) {
    
 # x P y == x! / (x-y)! 
     if ($message =~ /^\s*(\d*)\s+(?:permut(?:e|ation)|p)\s+(\d*)\s*$/i) {
+	if (($1 > 200) || ($2 > 200)) {
+		$callback->("I don't like big numbers like that.");
+		return "NOREPLY";
+	}
         my $reply = &fact($1)/&fact($1-$2);
         $callback->($reply);
 	return "NOREPLY";
@@ -93,6 +105,11 @@ sub fact($)
 {
 	my $i;
 	my $fact = shift();
+
+	if ($fact > 400) {
+		return 1;
+	}
+
 	my $resp = 1;
 	for ($i = 1; $i <= $fact; $i++) {
 		$resp *= $i;
