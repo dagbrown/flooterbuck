@@ -1,4 +1,4 @@
-# $Id: DBM.pl,v 1.4 2004/08/10 20:31:01 dagbrown Exp $
+# $Id: DBM.pl,v 1.5 2004/09/16 17:40:05 dagbrown Exp $
 #
 # infobot :: Kevin Lenzo  (c) 1997
 
@@ -696,9 +696,9 @@ sub showtop {
     my @result;
 
     if (!$dbname) {
-	status "no db given";
-	status "try showtop <db> <num_to_show>";
-	return();
+        status "no db given";
+        status "try showtop <db> <num_to_show>";
+        return();
     }
 
     # default to "top 10"
@@ -707,7 +707,7 @@ sub showtop {
     my $rdb = $DBMS{$dbname};
     if (!$rdb) {
         status "the database $dbname is not open.  try showtop <db> <num_to_show>";
-	return();
+        return();
     }
 
     lock $rdb, LOCK_SH;
@@ -725,7 +725,8 @@ sub showtop {
     }
     lock $rdb, LOCK_UN;
 
-    return @result;
+    my @results = map { $_." => ".$rhash->{$_} } @result;
+    return @results;
 }
 
 sub forget {
