@@ -25,7 +25,7 @@
 # 2001/11/27 dagbrown@rogers.com
 #            - rearranged code to work with Hacked-Up Reloadable Modules
 #
-# $Id: Aviation.pm,v 1.5 2001/12/04 17:40:27 dagbrown Exp $
+# $Id: Aviation.pm,v 1.6 2001/12/18 02:13:33 dagbrown Exp $
 #------------------------------------------------------------------------
 
 package Aviation;
@@ -239,7 +239,7 @@ sub greatcircle {
 	$dest_apt = "C" . $dest_apt if length($dest_apt) == 3 && $dest_apt =~ /^Y/;
 	$dest_apt = "K" . $dest_apt if length($dest_apt) == 3;
 
-	my $gc_url = "http://www6.landings.com/cgi-bin/nph-dist_apt?airport1=$orig_apt&airport2=$dest_apt";
+	my $gc_url = "http://www8.landings.com/cgi-bin/nph-dist_apt?airport1=$orig_apt&airport2=$dest_apt";
 
 	# Grab great-circle data
 	my $agent = new LWP::UserAgent;
@@ -340,7 +340,7 @@ sub airport {
 	    return "That doesn't look like a valid ICAO airport identifier. (Perhaps you mean 'airport code for $query'?)" 
 	    unless length($query) == 4;
 	
-	    my $apt_url = "http://www6.landings.com/cgi-bin/nph-search_apt?1=$query&max_ret=1";
+	    my $apt_url = "http://www8.landings.com/cgi-bin/nph-search_apt?1=$query&max_ret=1";
 
 	    # Grab airport data from Web.   
 
@@ -392,7 +392,7 @@ sub airport {
 	elsif ($function eq 'code' or $function eq 'id') {
 	    $query =~ s/[.?!]$//;
 	    $query =~ s/\s+$//;
-	    my $apt_url = "http://www6.landings.com/cgi-bin/nph-search_apt?5=$query&max_ret=100";
+	    my $apt_url = "http://www8.landings.com/cgi-bin/nph-search_apt?5=$query&max_ret=100";
 
 	    # Grab airport data from Web.   
 
