@@ -1,4 +1,4 @@
-# $Id: bash.pm,v 1.2 2003/01/22 21:26:13 rharman Exp $
+# $Id: bash.pm,v 1.3 2003/01/22 21:37:06 rharman Exp $
 package bash;
 use strict;
 
@@ -75,8 +75,6 @@ sub bash_getdata($) {
 
     if($line =~ /bash\s+(\d+)/i && ($1 gt 0) ) {
       return &get_quote($1); 
-    } else {
-        return "That doesn't look like a bash.org quote ID.\n";
     }
 }
 
@@ -98,7 +96,7 @@ sub bash::get_quote ($)
 #------------------------------------------------------------------------
 sub bash::get($$) {
     if($no_bash) {
-        &main::status("Sorry, eBay.pl requires LWP and couldn't find it");
+        &main::status("Sorry, bash.pm requires LWP and couldn't find it");
         return "";
     }
 
@@ -108,8 +106,9 @@ sub bash::get($$) {
     return 'NOREPLY' if $pid;
     my @lines = &bash_getdata($line);
     if (! scalar @lines)
-    { $callback->("Either that quote id does't exist, or bash.org is busted at the moment."); }
-    else {
+    {
+      $callback->("Either that quote id does't exist, or bash.org is busted at the moment.");
+    } else {
       foreach (@lines)
       {
 	$callback->($_);
