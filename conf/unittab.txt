@@ -113,6 +113,7 @@ barn    (1.0E-12 centimeter)2 # Particle physics
 board   144 in3/ft     # Implies `board feet'
 tatami  (1.82405 m*m)  # Japanese apartment sizes!
 mat	tatami
+tsubo (tatami*2)
 
 # VOLUME
 cc      cm3
