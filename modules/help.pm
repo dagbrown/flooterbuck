@@ -65,7 +65,7 @@ sub help_scan {
     my $message = shift;
 
     if ($message =~ /help\s+(index|modules)\s*$/) {
-        return "Help topics: ".sort( join(", ",Extras::modules()) );
+        return "Help topics: ", join(", ", sort(Extras::modules()) ) ;
     }
 }
 
