@@ -1,4 +1,4 @@
-# $Id: bash.pm,v 1.4 2003/01/23 01:37:59 dagbrown Exp $
+# $Id: bash.pm,v 1.5 2003/01/23 01:40:33 dagbrown Exp $
 package bash;
 use strict;
 
@@ -34,7 +34,7 @@ Richard Harman <flooterbuck+bash.pm@richardharman.com>
 # Check that LWP is available, so we don't waste our time
 # generating error messages later on.
 #------------------------------------------------------------------------
-my ( $no_bash, $no_posix );
+my ( $no_bash, $no_posix, $BASH_LINES_LIMIT );
 
 BEGIN {
     eval qq{
@@ -109,9 +109,11 @@ sub bash::get($$) {
         );
     }
     else {
-        foreach (@lines) {
-            $callback->($_);
-            sleep 1;
+        if(scalar(@lines)<=$BASH_LINES_LIMIT) {
+            foreach (@lines) {
+                $callback->($_);
+                sleep 1;
+            }
         }
     }
     if ( defined($pid) )    # child exits, non-forking OS returns
@@ -127,6 +129,10 @@ sub bash::get($$) {
 
 sub scan(&$$) {
     my ( $callback, $message, $who ) = @_;
+
+    unless($BASH_LINES_LIMIT) {
+        $BASH_LINES_LIMIT=::getparam('bash_lines_limit')||4;
+    }
 
     if ( ::getparam('bash') and $message =~ /^\s*bash\s+(\d+)$/i ) {
         &main::status("bash playback");
