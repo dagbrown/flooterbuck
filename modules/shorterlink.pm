@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: shorterlink.pm,v 1.3 2002/08/02 00:17:17 dagbrown Exp $
+# $Id: shorterlink.pm,v 1.4 2002/08/08 13:38:00 dagbrown Exp $
 #------------------------------------------------------------------------
 package shorterlink;
 use strict;
@@ -28,9 +28,6 @@ sigsegv, shorterlink <url>
 =head1 DESCRIPTION
 
 This allows you to generate a "shorterlink" from a great big long one.
-
-When called with a seller nickname, fetches abbreviated statuses for
-each of his first 10 auctions.
 
 =head1 AUTHOR
 
@@ -93,14 +90,6 @@ sub strip_html($) {
     return $blob;
 }
 
-sub snag_file($) {
-    my $file=shift;
-    open(FILE,"<$file");
-    my @lines=<FILE>;
-    close(FILE);
-    return join("",@lines);
-}
-
 #------------------------------------------------------------------------
 # shorterlink_create
 #
@@ -159,7 +148,9 @@ sub shorterlink::get($$) {
     $SIG{CHLD}="IGNORE";
     my $pid=eval { fork(); };         # Don't worry if OS isn't forking
     return 'NOREPLY' if $pid;
-    $callback->(&shorterlink_getdata($line));
+    eval {
+        $callback->(&shorterlink_getdata($line));
+    };
     if (defined($pid))                # child exits, non-forking OS returns
     {
         exit 0 if ($no_posix);

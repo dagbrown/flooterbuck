@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: tinyurl.pm,v 1.2 2002/07/14 14:56:22 dagbrown Exp $
+# $Id: tinyurl.pm,v 1.3 2002/08/08 13:38:00 dagbrown Exp $
 #------------------------------------------------------------------------
 package tinyurl;
 use strict;
@@ -29,9 +29,6 @@ sigsegv, tinyurl <url>
 
 This allows you to generate a "tinyurl" from a great big long one.
 
-When called with a seller nickname, fetches abbreviated statuses for
-each of his first 10 auctions.
-
 =head1 AUTHOR
 
 Dave Brown <dagbrown@csclub.uwaterloo.ca>
@@ -43,8 +40,8 @@ Nickname interface added by Drew Hamilton <awh@awh.org>
 #------------------------------------------------------------------------
 # Startup
 #
-# Check that LWP is available, so we don't waste our time
-# generating error messages later on.
+# Check that LWP and POSIX are available, so we don't waste our
+# time generating error messages later on.
 #------------------------------------------------------------------------
 my ($no_tinyurl, $no_posix);
 
@@ -86,14 +83,6 @@ sub strip_html($) {
     $blob=~s/\&[a-z]+\;?//g;
     $blob=~s/\s+/ /g;
     return $blob;
-}
-
-sub snag_file($) {
-    my $file=shift;
-    open(FILE,"<$file");
-    my @lines=<FILE>;
-    close(FILE);
-    return join("",@lines);
 }
 
 #------------------------------------------------------------------------
