@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: tinyurl.pm,v 1.5 2003/04/20 00:38:41 dagbrown Exp $
+# $Id: tinyurl.pm,v 1.6 2003/09/10 05:40:39 dagbrown Exp $
 #------------------------------------------------------------------------
 package tinyurl;
 use strict;
@@ -148,12 +148,12 @@ sub tinyurl::get($$) {
 sub scan(&$$) {
     my ($callback, $message, $who)=@_;
 
-    if ( ::getparam('tinyurl') and $message =~ /^\s*(tinyurl|fcol|shrivel)\s+(\w+:\S+)/i ) {
+    if ( ::getparam('tinyurl') and $message =~ /^\s*(tinyurl|shrivel)\s+(\w+:\S+)/i ) {
         &main::status("TinyURL creation");
         &tinyurl::get($message,$callback);
         return 1;
     }
-    if ( ::getparam('tinyurl') and $message =~ /^\s*(tinyurl|fcol|shrivel)\s+(?:that|please)/i ) {
+    if ( ::getparam('tinyurl') and $message =~ /^\s*(tinyurl|shrivel)\s+(?:that|please)/i ) {
         &main::status("auto-TinyURL last URL creation");
         &tinyurl::get($message,$callback);
         return 1;
