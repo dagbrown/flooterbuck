@@ -11,13 +11,14 @@ sub scan(&$$) {
     my ($callback,$message,$who) = @_;
 
     # Check $message, if it's what you want, then do stuff with it
-    if($message =~ /^\s*help\s+(\w+)/) {
+
+    if($message =~ /^\s*help(?:\s+(\w+)|)(\W*)?/) {
         my $mod=$1;
         my $reply="NULL";
         my @modules=Extras::modules();
         ::status("Module $mod");
         ::status(join(" ; ",@modules));
-        if(grep { /$mod/ } @modules) {
+        if($mod ne "" and grep { /$mod/ } @modules) {
             &::status("Eval'ing $mod\:\:help()");
             $reply=$who.": ".eval "$mod\:\:help()";
             if($@) {
@@ -63,6 +64,9 @@ sub help_scan {
 
     if ($message =~ /help\s+(index|modules)?\s*$/) {
         return "Help topics: ", join(", ", sort(Extras::modules()) ) ;
+    }
+    if ($message =~ /help\W*$/) {
+        return q{Hi, I'm an infobot. I learn mainly by observing declarative statements such as "x is at http://www.xxx.com", and then reply when people ask things like "Where can I find x?".};
     }
 }
 
