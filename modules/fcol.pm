@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: fcol.pm,v 1.11 2003/04/20 00:38:41 dagbrown Exp $
+# $Id: fcol.pm,v 1.12 2003/04/20 00:47:58 dagbrown Exp $
 #------------------------------------------------------------------------
 package fcol;
 use strict;
@@ -115,6 +115,7 @@ sub fcol::get($$) {
 sub scan(&$$) {
     my ($callback, $message, $who)=@_;
 
+    $callback->("Use tinyurl instead of fcol: fcol's out of order");
     return 0;  # fcol is out of order, so this is now officially stubbed out.
 
     if ( $message =~ /^\s*(?:fcol|shrivel)\s+(\w+:\S+)\??/i ) {
