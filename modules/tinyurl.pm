@@ -1,9 +1,9 @@
 #------------------------------------------------------------------------
-# eBay auction status request
+# URL shriveller
 #
 # Dave Brown
 #
-# $Id: tinyurl.pm,v 1.6 2003/09/10 05:40:39 dagbrown Exp $
+# $Id: tinyurl.pm,v 1.7 2004/03/14 03:55:09 dagbrown Exp $
 #------------------------------------------------------------------------
 package tinyurl;
 use strict;
