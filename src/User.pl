@@ -70,6 +70,7 @@ sub IsFlag {
 }
 
 sub verifyUser {
+	
     my $lnuh = $_[0];
     my ($u, $m);
     my $VerifWho;
@@ -93,6 +94,7 @@ sub verifyUser {
 	$m = "<private message>";
     }
     &set('seen', lc $who, $now.$;.channel().$;.$m);
+    &postInc('topten', lc $who); # add one to the counter of what this user has said
 
     if ($VerifWho) {
 	$uFlags = $user{$VerifWho."flags"};
