@@ -19,10 +19,6 @@ here:
   - make "botnick, no, factoid is foo" equivalent to "no, botnick,
     factoid is foo". Requested by Sean "TorgoX" Burke.
 
-  - Make 'seen' less precise when absences are long. (Does it matter if
-    it's been a year and three seconds, or a year and eight?) (From
-    Sean "TorgoX" Burke")
-
 Fix this:
   
   <mendel> charlotte, is this broken?

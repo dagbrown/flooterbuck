@@ -5,7 +5,9 @@ Bug Fixes
 - Made RDF try harder to get something useful out of an RSS feed,
   even if the feed itself isn't perfect.
 - weather.pm: no longer fills in missing data with previous results
-
+- Made 'seen' less precise when absences are long. (Does it matter if
+  it's been a year and three seconds, or a year and eight?) (Requested by
+  Sean "TorgoX" Burke")
 
 1.2.1 - March 13, 2004
 
