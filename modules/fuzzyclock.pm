@@ -8,7 +8,7 @@
 # Make it psychic enough to figure out what timezone you're in, and have
 # it tell you the right time.  (Ha ha ha)
 #
-# $Id: fuzzyclock.pm,v 1.7 2001/12/13 17:05:09 awh Exp $
+# $Id: fuzzyclock.pm,v 1.8 2001/12/13 17:15:55 awh Exp $
 #------------------------------------------------------------------------
 
 use strict;
@@ -64,27 +64,26 @@ sub fuzzytime {
         $timestring=~s/ o'clock//;
         $timestring=sprintf($timestring,"midnight");
     } else {
-        $timestring .= " ";
         if($myhour >= 1 and $myhour <= 4) {
-            $timestring .= "in the middle of the night";
+            $timestring .= " in the middle of the night";
         } elsif($myhour >= 5 and $myhour <= 11) {
-            $timestring .= "in the morning";
+            $timestring .= " in the morning";
 	} elsif($myhour = 12 ) {
 	    $timestring .= "noon";
         } elsif($myhour >= 13 and $myhour <= 17 ) {
-            $timestring .= "in the afternoon";
+            $timestring .= " in the afternoon";
         } elsif($myhour >= 18 and $myhour <= 20 ) {
-            $timestring .= "in the evening";
+            $timestring .= " in the evening";
         } elsif($myhour >= 21 and $myhour <= 23 ) {
-            $timestring .= "at night";
+            $timestring .= " at night";
         }
     }
 
     $myhour-=12 if $myhour>=12;
 
     my @hours=(
-            "twelve", "one", "two", "three", "four", "five", "six",
-            "seven", "eight", "nine", "ten", "eleven", "twelve"
+            "", "one", "two", "three", "four", "five", "six",
+            "seven", "eight", "nine", "ten", "eleven", ""
             );
 
     return sprintf($timestring,$hours[$myhour]);
