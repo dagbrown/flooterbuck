@@ -5,7 +5,7 @@
 # feel free to use, copy, cut up, and modify, but if
 # you do something cool with it, let me know.
 #
-# $Id: weather.pm,v 1.8 2003/12/05 21:37:39 rich_lafferty Exp $
+# $Id: weather.pm,v 1.9 2004/03/18 20:02:37 rich_lafferty Exp $
 #------------------------------------------------------------------------
 
 package Weather;
@@ -66,6 +66,7 @@ sub Weather::NOAA::get {
         $content =~ s|\s(.*?)<TD COLSPAN=2>||s;
         my $features = $1;
 
+        my %feat;
         while ($features =~ s|.*?<TD ALIGN[^>]*>(?:\s*<[^>]+>)*\s+([^<]+?)\s+<.*?<TD>(?:\s*<[^>]+>)*\s+([^<]+?)\s<.*?/TD>||s) {
             my ($f,$v) = ($1, $2);
             chomp $f; chomp $v;
