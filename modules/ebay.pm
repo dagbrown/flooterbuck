@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: ebay.pm,v 1.17 2002/05/21 23:08:54 rharman Exp $
+# $Id: ebay.pm,v 1.18 2002/05/21 23:11:12 rharman Exp $
 #------------------------------------------------------------------------
 package ebay;
 use strict;
@@ -219,10 +219,8 @@ sub auction_sellerlist($) {
 sub ebay_getdata($) {
     my $line=shift;
 
-    if($line =~ /ebay\s+(\d+)/i) {
-        # make sure the number is sane
-        if ($1 gt 0)
-        { return auction_summary($1); }
+    if($line =~ /ebay\s+(\d+)/i && ($1 gt 0) ) {
+      return auction_summary($1); 
     } elsif ($line =~ /ebay\s+(\S+)/i) {
         return auction_sellerlist($1);
     } else {
