@@ -1,3 +1,10 @@
+1.?.? - ?     ? , ?
+
+Bug Fixes
+=========
+- weather.pm: no longer fills in missing data with previous results
+
+
 1.2.1 - March 13, 2004
 
 Release early, release often, release all of the files.
