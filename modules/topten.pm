@@ -3,7 +3,7 @@
 #
 # See the POD documentation (right here!) for more info
 #
-# $Id: topten.pm,v 1.5 2003/10/10 19:36:25 rharman Exp $
+# $Id: topten.pm,v 1.6 2004/05/19 02:31:38 dagbrown Exp $
 #------------------------------------------------------------------------
 
 
@@ -53,7 +53,7 @@ sub scan(&$$) {
     my ($callback,$message,$who) = @_;
 
     # Now with INTENSE CASE INSENSITIVITY!  SUNDAY SUNDAY SUNDAY!
-    if ($message =~ /^(?:topten|bottomten)(?:\s+karma)?\s*$/i) {
+    if ($message =~ /^(?:topten|bottomten)(?:\s+karma)?\s*[?!.]?$/i) {
 	my @showtop;
 	my $reply;
 	if ($message =~ /karma/i) {
