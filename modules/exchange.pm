@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------
 # "exchange" command, change currencies
 #
-# $Id: exchange.pm,v 1.8 2001/12/07 12:23:07 dagbrown Exp $
+# $Id: exchange.pm,v 1.9 2002/02/04 16:59:59 awh Exp $
 #------------------------------------------------------------------------
 
 use strict;
@@ -12,7 +12,8 @@ package exchange;
 # Last update: 990818 08:30:10, bobby@bofh.dk
 #
 
-my $no_exchange;
+my $no_exchange; 
+my $no_posix;
 
 BEGIN {
     eval qq{
@@ -21,6 +22,12 @@ BEGIN {
     };
 
     $no_exchange++ if($@);
+
+    eval qq{
+        use POSIX;
+    };
+
+    $no_posix++ if ($@);
 }
 
 sub exchange {
@@ -425,9 +432,14 @@ sub scan(&$$) {
             $callback->("$who: $response");
         }
 
-        # exit the child or it gets weird
-        exit 0 if defined($pid);
-        return 1;
+        # close the child process if we fork()ed before.  Prefer 
+        # POSIX::_exit(), but if the person doesn't have POSIX.pm,
+        # use perl's built-in exit.
+        if (defined($pid))
+        {
+            exit 0 if ($no_posix);
+            POSIX::_exit(0);
+        }
     }				# end exchange
     return undef;
 }
