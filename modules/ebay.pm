@@ -170,13 +170,10 @@ sub ebay::get($$) {
     }
 
     my($line,$callback)=@_;
-    ::status("And here I am, over in the ebay::get function!");
     $SIG{CHLD}="IGNORE";
     my $pid=eval { fork(); };         # Don't worry if OS isn't forking
-    ::status("Look!  I forked!  Aren't I cool!");
     return 'NOREPLY' if $pid;
     $callback->(&ebay_getdata($line));
-    ::status("Here I am AFTER HAVING GOTTEN THE AUCTION!");
     exit 0 if defined($pid);          # child exits, non-forking OS returns
 }
 
@@ -185,12 +182,9 @@ sub ebay::get($$) {
 #------------------------------------------------------------------------
 
 sub scan(&$$) {
-    my ($callback, $message, $who) = @_;
-    ::status("Look!  Here I am in the ebay module!");
-    ::status("Ooh, and my message is $message!  See!");
-    ::status("And it came from $who!  Yay!");
+    my ($callback, $message, $who)=@_;
 
-    if ( ::getparam('ebay') and $message =~ /^\s*ebay\s+\d+$/i ) {
+    if ( ::getparam('ebay') and $message =~ /^\s*ebay\s+(\d+)$/i ) {
         &main::status("eBay query");
         &ebay::get($message,$callback);
         return 1;
