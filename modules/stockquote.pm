@@ -3,7 +3,7 @@
 #
 # See the POD documentation (right here!) for more info
 #
-# $Id: stockquote.pm,v 1.6 2001/12/04 17:40:27 dagbrown Exp $
+# $Id: stockquote.pm,v 1.7 2002/01/10 19:09:23 dagbrown Exp $
 #------------------------------------------------------------------------
 
 =head1 NAME
@@ -125,7 +125,7 @@ sub quote_summary($) {
 sub scan(&$$) {
     my ($callback,$message,$who) = @_;
 
-    if ($message =~ /^(?:quote|stock price)(?: of| for)? (\^?[A-Z.]{1,8})\?*$/) {
+    if ($message =~ /^(?:quote|stock price)(?: of| for)? (\^?[A-Z.]{1,8})\?*$/i) {
         if($no_quote) {
             &main::status("Sorry, quote requires LWP and couldn't find it");
             return undef;
@@ -133,7 +133,7 @@ sub scan(&$$) {
         $SIG{CHLD}="IGNORE";
         my $pid=eval { fork(); };         # Don't worry if OS isn't forking
         return 'NOREPLY' if $pid;
-        $callback->(quote_summary($1));
+        $callback->(quote_summary(uc($1)));
         exit 0 if defined($pid);          # child exits, non-forking OS returns
         return 1;
     } else {
@@ -142,4 +142,4 @@ sub scan(&$$) {
 }
 
 
-"stockquote";
+return "stockquote";
