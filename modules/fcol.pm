@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: fcol.pm,v 1.14 2003/09/10 05:20:53 rharman Exp $
+# $Id: fcol.pm,v 1.15 2003/10/10 19:36:25 rharman Exp $
 #------------------------------------------------------------------------
 package fcol;
 use strict;
@@ -45,9 +45,9 @@ my $no_fcol;
 my $no_posix;
 
 BEGIN {
-    foreach my $lib qw(LWP::Simple URI::Escape) {
+    foreach (qw(LWP::Simple URI::Escape)) {
         eval qq{
-            use $lib;
+            use $_;
         };
         $no_fcol++ if ($@);
     }

@@ -1,4 +1,4 @@
-# $Id: bash.pm,v 1.6 2003/01/23 01:42:06 dagbrown Exp $
+# $Id: bash.pm,v 1.7 2003/10/10 19:36:25 rharman Exp $
 package bash;
 use strict;
 
@@ -70,11 +70,9 @@ sub strip_html($) {
 # and feed the auction ID number into the maw of auction_summary.
 #------------------------------------------------------------------------
 sub bash_getdata($) {
-    my $line = shift;
+    my $quote_id = shift;
 
-    if ( $line =~ /bash\s+(\d+)/i && ( $1 gt 0 ) ) {
-        return &get_quote($1);
-    }
+    return &get_quote($quote_id);
 }
 
 sub bash::get_quote ($) {
@@ -102,14 +100,20 @@ sub bash::get($$) {
     $SIG{CHLD} = "IGNORE";
     my $pid = eval { fork(); };    # Don't worry if OS isn't forking
     return 'NOREPLY' if $pid;
-    my @lines = &bash_getdata($line);
+    my $force = 0;
+
+    if ($line =~ m/-force/)
+    { $force=1; }
+
+    my ($quote_id) = ($line =~ m/(\d+)/);
+    &::status("BASH: line = $line\n");
+    my @lines = &bash_getdata($quote_id);
     if ( !scalar @lines ) {
-        $callback->(
-"Either that quote id does't exist, or bash.org is busted at the moment."
-        );
+        $callback->( "Either that quote id does't exist, or bash.org is busted at the moment." );
     }
     else {
-        if(scalar(@lines)<=$BASH_LINES_LIMIT) {
+        &::status("BASH: force = $force\n");
+        if( $force == 1 || scalar(@lines) <= $BASH_LINES_LIMIT ) {
             foreach (@lines) {
                 $callback->($_);
                 sleep 1;
@@ -136,7 +140,7 @@ sub scan(&$$) {
         $BASH_LINES_LIMIT=::getparam('bash_lines_limit')||4;
     }
 
-    if ( ::getparam('bash') and $message =~ /^\s*bash\s+(\d+)$/i ) {
+    if ( ::getparam('bash') and $message =~ /^\s*bash\s+(.+)$/i ) {
         &main::status("bash playback");
         &bash::get( $message, $callback );
         return 1;

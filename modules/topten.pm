@@ -3,7 +3,7 @@
 #
 # See the POD documentation (right here!) for more info
 #
-# $Id: topten.pm,v 1.4 2002/08/13 19:07:18 dagbrown Exp $
+# $Id: topten.pm,v 1.5 2003/10/10 19:36:25 rharman Exp $
 #------------------------------------------------------------------------
 
 
@@ -65,8 +65,13 @@ sub scan(&$$) {
 			$reply = "Top 10 karma is: ";
 		}
 	} else {
+                if ($message =~ /topten/i) {
 		@showtop = &::showtop("topten", 10, "top");
 		$reply = "Top 10 are: ";
+                } else {
+		@showtop = &::showtop("topten", 10, "bottom");
+		$reply = "Bottom 10 are: ";
+                }
 	}
 	my $counter = 1;
 	foreach (@showtop)
