@@ -10,7 +10,7 @@ require 5.6.0;
 
 BEGIN {
   $VER_MAJ = 1;
-  $VER_MIN = 0;
+  $VER_MIN = 2;
   $VER_MOD = 0;
 
   $version = "Flooterbuck infobot $VER_MAJ\.$VER_MIN\.$VER_MOD [dagbrown]";
