@@ -29,7 +29,7 @@ UserEntry dagbrown {
     name "Dave Brown";
     title "God";
     flags +trmcs;
-    mask *!*@*;
+    mask *!dagbrown@*.ca;
 }
 
 UserEntry oznoid {
