@@ -1,4 +1,4 @@
-# $Id: stockquote.pm,v 1.4 2001/12/04 15:33:58 rharman Exp $
+# $Id: stockquote.pm,v 1.5 2001/12/04 17:11:38 dagbrown Exp $
 
 #------------------------------------------------------------------------
 # Yahoo module
@@ -125,7 +125,7 @@ sub quote_summary($) {
 sub scan(&$$) {
     my ($callback,$message,$who) = @_;
 
-    if ($message =~ /^(?:quote|stock price)(?: of| for)? ([A-Z]{1,7})\?*$/) {
+    if ($message =~ /^(?:quote|stock price)(?: of| for)? (\^?[A-Z.]{1,8})\?*$/) {
         if($no_quote) {
             &main::status("Sorry, quote requires LWP and couldn't find it");
             return undef;
