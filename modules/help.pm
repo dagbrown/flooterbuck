@@ -14,9 +14,10 @@ sub scan(&$$) {
     if($message =~ /^\s*help\s+(\w+)/) {
         my $mod=$1;
         my $reply="NULL";
+        my @modules=Extras::modules();
         ::status("Module $mod");
-        ::status(join(" ; ",Extras::modules()));
-        if(grep { /$mod/ } Extras::modules()) {
+        ::status(join(" ; ",@modules));
+        if(grep { /$mod/ } @modules) {
             &::status("Eval'ing $mod\:\:help()");
             $reply=$who.": ".eval "$mod\:\:help()";
             if($@) {
@@ -35,9 +36,21 @@ sub scan(&$$) {
                 }
             }
         } else {
-            $reply = "Whoops!  That's not the name of a module.";
+            scanmodules: {
+                for my $module (@modules) {
+                    my $tmpreply=eval "$module\:\:help_scan(\$message)";
+                    if($tmpreply) {
+                        $reply="$who: $tmpreply";
+                        last scanmodules;
+                    }
+                }
+                $reply = "Whoops!  That's not the name of a module.";
+            }
         }
         $callback->($reply);
+        return 1;
+    } elsif($message =~ /\s*help\s*$/) {
+        $callback->("Help topics: ".join(", ",Extras::modules()));
         return 1;
     }
 
@@ -46,6 +59,14 @@ sub scan(&$$) {
 
 sub help {
     return "If you say help <modulename>, it will explain what the module does, and briefly tell you how to use it.";
+}
+
+sub help_scan {
+    my $message = shift;
+
+    if ($message =~ /help\s+(index|modules)\s*$/) {
+        return "Help topics: ".join(", ",Extras::modules());
+    }
 }
 
 "help";
