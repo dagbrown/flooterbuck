@@ -5,4 +5,5 @@ where => <reply>
 why => <reply>
 it => <reply>
 how => <reply>
-infobot guide => http://www.cs.cmu.edu/~infobot/infobot_guide.html
+infobot guide => http://www.cs.cmu.edu/~infobot/infobot_guide.html, but you really want http://flooterbuck.sourceforge.net/
+flooterbuckbot guide => http://flooterbuck.sourceforge.net/
