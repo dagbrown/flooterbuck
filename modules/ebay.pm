@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: ebay.pm,v 1.15 2002/02/04 20:14:44 awh Exp $
+# $Id: ebay.pm,v 1.16 2002/02/04 20:49:01 awh Exp $
 #------------------------------------------------------------------------
 package ebay;
 use strict;
@@ -24,6 +24,7 @@ ebay
 =head1 PUBLIC INTERFACE
 
 purl, ebay <eBay auction ID>
+
 purl, ebay <eBay seller nickname>
 
 =head1 DESCRIPTION
@@ -103,7 +104,7 @@ sub parse_response($) {
 
     my ($title)=snag_element("title",$response);
     chomp $title;
-    $title =~ s/\(Ends .*\)//g;
+    $title =~ s/\(Ends [^\)]*\)//g;
 
     my %snagged_info;
 
@@ -119,6 +120,9 @@ sub parse_response($) {
         }
         $storedinfo=$info;
     } @columns;
+
+    # fix the Buy It Now bug
+    $snagged_info{"Currently"} =~ s/Buy.*//;
 
     my $reply = $title."[".$snagged_info{"Seller (Rating)"}."] ".
         "Qty ".$snagged_info{"Quantity"}." ".
