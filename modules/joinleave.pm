@@ -3,7 +3,7 @@
 #
 # Lets you tell the bot to leave or join channels
 #
-# $Id: joinleave.pm,v 1.4 2001/12/04 17:40:27 dagbrown Exp $
+# $Id: joinleave.pm,v 1.5 2002/01/26 00:56:01 rharman Exp $
 #------------------------------------------------------------------------
 
 use strict;
@@ -12,7 +12,7 @@ package joinleave;
 sub scan(&$$) {
     my ($callback,$message,$who) = @_;
 
-    if ($message =~ /join ([\&\#]\S+)(?:\s+(\S+))?/i 
+    if ($message =~ /^join ([\&\#]\S+)(?:\s+(\S+))?$/i 
             and $::msgType !~ /public/) {
 
         my($which, $key) = ($1, $2);
@@ -54,7 +54,7 @@ sub scan(&$$) {
 
         }
 
-    } elsif ($message =~ /(leave|part) ((\#|\&)\S+)/i) {
+    } elsif ($message =~ /^(leave|part) ((\#|\&))$/i) {
 
         if (&::IsFlag("o") || $::addressed) {
             if (&::IsFlag("c") ne "c") { 
