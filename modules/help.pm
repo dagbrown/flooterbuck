@@ -49,9 +49,6 @@ sub scan(&$$) {
         }
         $callback->($reply);
         return 1;
-    } elsif($message =~ /\s*help\s*$/) {
-        $callback->("Help topics: ".join(", ",Extras::modules()));
-        return 1;
     }
 
     return undef;
@@ -64,7 +61,7 @@ sub help {
 sub help_scan {
     my $message = shift;
 
-    if ($message =~ /help\s+(index|modules)\s*$/) {
+    if ($message =~ /help\s+(index|modules)?\s*$/) {
         return "Help topics: ", join(", ", sort(Extras::modules()) ) ;
     }
 }
