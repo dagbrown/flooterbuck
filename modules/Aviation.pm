@@ -24,8 +24,10 @@
 #            - added airport name/code lookups, fixed minor bugs in other parts
 # 2001/11/27 dagbrown@rogers.com
 #            - rearranged code to work with Hacked-Up Reloadable Modules
+# 2002/06/13 joant@ieee.org
+#            - added relative humidity function
 #
-# $Id: Aviation.pm,v 1.7 2002/02/04 17:52:22 awh Exp $
+# $Id: Aviation.pm,v 1.8 2002/06/13 02:48:55 dagbrown Exp $
 #------------------------------------------------------------------------
 
 package Aviation;
@@ -61,6 +63,7 @@ sub Aviation::scan(&$$) {
 		      zulutime  |
 		      tsd       |
 		      airport   |
+		      rh        |
                       aviation)/xi) 
     {
         &Aviation::get($message, $callback);
@@ -88,6 +91,7 @@ sub Aviation::get {
     elsif ($line =~ /^tsd/i)           { $callback->(tsd($line))         }
     elsif ($line =~ /^zulutime/i)      { $callback->(zulutime($line))    }
     elsif ($line =~ /^airport/i)       { $callback->(airport($line))     }
+    elsif ($line =~ /^rh/i)            { $callback->(rh($line))          }
     elsif ($line =~ /^aviation/i)      { $callback->(aviation($line))    }
     else  { $callback->("I think we just lost a wing!") }  # reach here -> Extras.pl problem
 
@@ -102,7 +106,7 @@ sub Aviation::get {
 # aviation - list available aviation functions
 #
 sub aviation {
-    return "My aviation-related functions are metar, taf, great-circle, tsd, zulutime, and airport. For help with any, ask me about '<function name> help'.";
+    return "My aviation-related functions are metar, taf, great-circle, tsd, zulutime, rh, and airport. For help with any, ask me about '<function name> help'.";
 }
 
 #
@@ -312,6 +316,40 @@ sub tsd {
     }
     
     return "Your time/speed/distance problem looks incorrect. For help, try 'tsd help'.";
+
+}
+
+
+#
+# rh -- calculate relative humidity from dry bulb, wet bulb, pressure (inHg)
+# Borrowed from the Government of Australia, thanks mates.
+#
+sub rh {
+    my $line = shift;
+    return "To calculate relative humidity, provide the dry bulb, wet bulb, " .
+	"and pressure in inches of mercury (inHg) in 'rh db wb press' " .
+	"format. For example, 'rh 15 14 29.83' gives the relative humidity " .
+	"when the air temperature is 15 C, the wet bulb temperature is 14  " .
+	"C, and the atmospheric pressure is 29.83 in Hg." if $line =~ /help/i;
+
+    my ($db, $wb, $press) = ($line =~ /^rh\s+(\S+)\s+(\S+)\s+(\S+)$/);
+
+    my $error;
+    $error++ unless $db && $wb && $press;
+
+    my $p = exp(21.40 - (5351/($db+273.15)));
+    my $q = exp(21.40 - (5351/($wb+273.15)));
+    my $r = $press * 33.8639;
+
+    # Calculate the vapor pressure
+    my $s = $q - ($r * ($db-$wb) / 1555);
+    
+    # Calculate the dewpoint and rh
+    my $dp = (5351 / (21.40 - log($s))) - 273.15;
+    my $rh = 100 * $s / $p;
+
+    return sprintf('Relative Humidity = %2.02f%%, Dew Point = %3.1f C',
+	$rh, $dp);
 
 }
 	
