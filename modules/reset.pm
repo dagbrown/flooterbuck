@@ -4,7 +4,7 @@
 # Allows on-the-fly rescanning of the modules directory
 #------------------------------------------------------------------------
 
-package foo;
+package reset;
 
 sub scan(&$$) {
     my $callback=shift;
@@ -20,4 +20,4 @@ sub scan(&$$) {
     }
 }
 
-"foo";
+"reset";
