@@ -3,7 +3,7 @@
 #
 # See the POD documentation (right here!) for more info
 #
-# $Id: stockquote.pm,v 1.10 2002/03/11 17:19:38 rharman Exp $
+# $Id: stockquote.pm,v 1.11 2002/08/13 17:12:20 awh Exp $
 #------------------------------------------------------------------------
 
 =head1 NAME
@@ -96,11 +96,15 @@ sub parse_response($$) {
     my ($name, $current, $date, $time, $change, 
         $open, $min, $max, $volume )=split /,/,$response;
 
+    #awh@awh.org -- calculate net percentage change.  
+    my $pct = ($change / ($current - $change)) * 100;
+    $pct = sprintf("%0.02f",$pct);
+
     return "No such ticker symbol $symbol"
         if $min eq "N/A" and $max eq "N/A" and $change eq "N/A"
            and $date eq "N/A";
 
-    return "$name last $date $time: $current $change ($min - $max) ".
+    return "$name last $date $time: $current $change [$pct%] ($min - $max) ".
         "[Open $open] Vol ".commify($volume);
 }
 
