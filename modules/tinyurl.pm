@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: tinyurl.pm,v 1.1 2002/07/14 14:53:21 dagbrown Exp $
+# $Id: tinyurl.pm,v 1.2 2002/07/14 14:56:22 dagbrown Exp $
 #------------------------------------------------------------------------
 package tinyurl;
 use strict;
@@ -164,4 +164,4 @@ sub scan(&$$) {
     }
 }
 
-"ebay";
+"tinyurl";
