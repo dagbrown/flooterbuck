@@ -41,7 +41,7 @@ sub scan(&$$) {
                         $callback->("That's too long, $who");
                         return 'NOREPLY';
                     }
-                    set($d, $X, $r);
+                    &::set($d, $X, $r);
                     &::status("update: '$X =$d=> $r'; was '$old'");
                     $subst++;
                 }
