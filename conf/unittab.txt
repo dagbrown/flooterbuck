@@ -104,8 +104,6 @@ cicero   12dd  # TeX likes to abbreviate this to cc, but cc is cubic centimeter
 scaledpoint 1|65536 pt # Internal to TeX
 sp       scaledpoint
 
-
-
 # AREA
 are     (10 m)2        # Implies `hectare'
 acre    chain furlong  # Now you know why an acre is the size it is
@@ -266,6 +264,7 @@ millennium      1000 years
 millennia       millennium
 centuries       century
 beat		1|1000 day	     # Swatch Internet Time (``Fuck the Sun'')
+
 # Velocity
 knot            1 nautical mi/hour
 mph             1 mi/hr
@@ -538,80 +537,11 @@ Mbit		mbit
 baud            bit/sec      # Not strictly correct
 
 # MONEY
-#
-# Conversions accurate only as of 25 November 1996.
-#
-$		dollar
-usdollar        $
-usd             $
-us$             $
-$us             $
-US$             $
-$US             $
-cent            1|100 $
-Australia.dollar		0.8123$
-AUS$			Australia.dollar
-Austria.schilling		0.09438$
-Belgium.franc		0.03223$
-Brazil.real		0.9709$
-British.pound		1.681$
-pound.sterling		British.pound
-sterling		British.pound
-Canada.dollar		0.7468$
-Can$			Canada.dollar
-Cayman.currency		1.22$
-Denmark.krone		0.173$
-krone			Denmark.krone
-EuropeanCommunityUnit.ECU	1.278$
-ECU			EuropeanCommunityUnit.ECU
-ecu			ECU
-Finland.markka		0.2203$
-markka			Finland.markka
-France.franc		0.1963$
-franc			France.franc
-Germany.mark		0.6647$
-DM			Germany.mark
-Deutschmark		DM
-mark			DM
-Greece.drachma		0.004216$
-drachma			Greece.drachma
-HongKong.dollar		0.1294$
-HK$			HongKong.dollar
-India.rupee		0.02797$
-rupee			India.rupee
-Ireland.punt		1.684$
-punt			Ireland.punt
-Israel.shekel		0.3623$
-shekel			Israel.shekel
-Italy.lira		0.0006655$
-Japan.yen		0.008976$
-yen			Japan.yen
-Kenya.shilling		0.02376$
-Malaysia.dollar		0.397$
-Mexico.peso		0.1269$
-peso			Mexico.peso
-Morocco.dirham		0.1248$
-dirham			Morocco.dirham
-Netherlands.guilder	0.5924$
-guilder			Netherlands.guilder
-NewZealand.dollar	0.7153$
-NZ$			NewZealand.dollar
-Norway.krone		0.1576$
-krone			Norway.krone
-Portugal.escudo		0.006577$
-escudo			Portugal.escudo
-Senegal.CFAfranc	0.002019$
-SouthAfrica.rand	0.2169$
-rand			SouthAfrica.rand
-Spain.peseta		0.007896$
-peseta			Spain.peseta
-Sweden.krona		0.1513$
-krona			Sweden.krona
-Switzerland.franc	0.788$
-swissfranc		Switzerland.franc
-Swissfranc		Switzerland.franc
-Turkey.lira		1.3e-05$
-# Old-style Brit money.  Did I omit anything interesting?
+# all this crap removed by awh@awh.org since we have a proper exchange
+# module now.
+
+
+#old-stylew brit money
 sovereign               sterling
 shilling             1|20 sterling
 penny                1|12 shilling
