@@ -50,36 +50,41 @@ sub track_it($) {
 
     my $ua=new LWP::UserAgent;
     my $request=new HTTP::Request(
-        GET=>
-	"http://wwwapps.ups.com/etracking/tracking.cgi?tracknums_displayed=1&TypeOfInquiryNumber=T&HTMLVersion=4.0&InquiryNumber1=$track_num&track=Track"
+        GET=> "http://wwwapps.ups.com/etracking/tracking.cgi?".
+            "tracknums_displayed=1&TypeOfInquiryNumber=T".
+            "&HTMLVersion=4.0&InquiryNumber1=$track_num&track=Track"
     );
     my $response=$ua->request($request);
 
-    return "I can't seem to reach UPS right now, sorry." unless $response->is_success;
+    return "I can't seem to reach UPS right now, sorry." 
+        unless $response->is_success;
     
     my $stripped = strip_html($response->content);
 
-    return ("Sorry, I can't find any information on that tracking number.") if ($stripped =~ /One or more of the numbers you entered are not valid UPS Tracking Numbers/);
+    return ("Sorry, I can't find any information on that tracking number.") 
+        if ($stripped =~ /One\sor\smore\sof\sthe\snumbers\s
+                          you\sentered\sare\snot\svalid\s
+                          UPS\sTracking\sNumbers/x);
 
-# delete up to the point of usable data (we don't need the header stuff)
-# the '1.' we search for is actually the itemized tracking list.
+    # delete up to the point of usable data (we don't need the header stuff)
+    # the '1.' we search for is actually the itemized tracking list.
     $stripped =~ s/^.*1\.//;
 
-# delete from the end of usable data to EOL.  We don't need the notice or
-# anything else past it.
+    # delete from the end of usable data to EOL.  We don't need the notice or
+    # anything else past it.
     $stripped =~ s/NOTICE:.*$//;
 
-# rewrite the timestamp to make it more succinct.
+    # rewrite the timestamp to make it more succinct.
     $stripped =~ s/Tracking results provided by UPS:/. Results as of/;
 
-# get rid of spaces followed by periods.
+    # get rid of spaces followed by periods.
     $stripped =~ s/\s+\./\./g;
 
-# OK, this next block is because the tracking # in the response
-# is returned as "1Z 828 747 7277 1 ......" and it takes up a
-# lot of space (plus is redundant).  I start removing spaces
-# from the beginning until we've got a full tracking # with
-# no internal spaces ("1Z82874772771 ....", then I just get rid of it.
+    # OK, this next block is because the tracking # in the response
+    # is returned as "1Z 828 747 7277 1 ......" and it takes up a
+    # lot of space (plus is redundant).  I start removing spaces
+    # from the beginning until we've got a full tracking # with
+    # no internal spaces ("1Z82874772771 ....", then I just get rid of it.
 
     while (!($stripped =~ /^$track_num/)) {
       $stripped =~ s/ // ;
@@ -87,7 +92,7 @@ sub track_it($) {
 
     $stripped =~ s/^$track_num//;
 
-# get rid of multiple spaces
+    # get rid of multiple spaces
     $stripped =~ s/\s+/ /g;
 
     return $stripped;
@@ -102,7 +107,7 @@ sub track_it($) {
 sub ups_getdata($) {
     my $line=shift;
 
-    if($line =~ /ups\s+(.+)/i) {
+    if($line =~ /ups\s+(.+)\??/i) {
         return track_it($1);
     } else {
         return "That doesn't look like a UPS tracking number ($1).";
@@ -112,16 +117,15 @@ sub ups_getdata($) {
 #------------------------------------------------------------------------
 # ups::get
 #
-# This is the main interface to infobot.  It handles the forking
-# (or not) stuff.
+# This handles the forking (or not) stuff.
 #------------------------------------------------------------------------
-sub ups::get($$) {
+sub get(&$) {
     if($no_ups) {
         &main::status("Sorry, UPS.pl requires LWP and couldn't find it");
         return "";
     }
 
-    my($line,$callback)=@_;
+    my($callback,$line)=@_;
     $SIG{CHLD}="IGNORE";
     my $pid=eval { fork(); };         # Don't worry if OS isn't forking
     return 'NOREPLY' if $pid;
@@ -129,7 +133,23 @@ sub ups::get($$) {
     exit 0 if defined($pid);          # child exits, non-forking OS returns
 }
 
-1;
+#------------------------------------------------------------------------
+# ups::scan
+#
+# This is the main interface to interface.  It handles checking to see
+# whether a string delivered to it is a valid ups sequence.
+#------------------------------------------------------------------------
+
+sub scan(&$$) {
+    my ($callback,$message,$who) = @_;
+
+    if($message=~/ups [0-9A-Z]+\??$/) {
+        return get($callback,$message);
+    }
+    return undef;
+}
+
+"ups";
 
 __END__
 
