@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: ebay.pm,v 1.22 2004/04/29 04:01:53 dagbrown Exp $
+# $Id: ebay.pm,v 1.23 2004/09/17 01:46:48 dagbrown Exp $
 #------------------------------------------------------------------------
 package ebay;
 use strict;
@@ -310,6 +310,14 @@ sub scan(&$$) {
         &ebay::get($message,$callback);
         return 1;
     }
+}
+
+#------------------------------------------------------------------------
+# And the help text
+#------------------------------------------------------------------------
+
+sub help {
+    q(Say "ebay" and then a number, and I'll summarize that auction for you.  If someone pasted an eBay URL recently, you can say "ebay that" and I'll summarize.);
 }
 
 "ebay";
