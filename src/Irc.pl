@@ -198,17 +198,6 @@ sub entryEvt {
         $chan=~s/\r//;
         if ($chan=~/^([\d\w\_\-\/]+\.[\.\d\w\_\-\/]+)\s([\d\w\_\-\/]+\.[\.\d\w\_\-\/]+)$/) {
             $i=0;
-            while (0 and ($i < $netsplit || !$netsplit)) {
-                $i++;
-                if (($prevsplit1{$i} ne $2) && ($prevsplit2{$i} ne $1)) {
-                    &status("Netsplit: $2 split from $1");
-                    $netsplit++;
-                    $prevsplit1{$netsplit} = $2;
-                    $prevsplit2{$netsplit} = $1;
-                    $snick{"$2 $1"}=$nick;
-                    $schan{"$2 $1"}=$chan;
-                }
-            }
         } else {
             if ($param{ansi_control}) {
                 &status(">>> $b$nick$ob has signed off IRC ($b$chan$ob)");
