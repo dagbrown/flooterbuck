@@ -34,39 +34,32 @@ sub DNS {
         return $DNS_CACHE{$in};
     }
 
-    my $pid;
-    if (!defined($pid = fork)) {
-        return "no luck, $who";
-    } elsif ($pid) {
-        # parent
-        return "NOREPLY";  # tend to your knitting
-    } else {
-        # child
-        if ($in =~ /(\d+\.\d+\.\d+\.\d+)/) {
-            &::status("DNS query by IP address: $in");
-            $match = $1;
-            $y = pack('C4', split(/\./, $match));
-            $x = (gethostbyaddr($y, &AF_INET));
-            if ($x !~ /^\s*$/) {
-                $result = $match." is ".$x unless ($x =~ /^\s*$/);
-            } else {
-                $result = "I can't seem to find that address in DNS";
-            }
-        } else { 
-            &status("DNS query by name: $in");
-            $x = join('.',unpack('C4',(gethostbyname($in))[4]));
-            if ($x !~ /^\s*$/) {
-                $result = $in." is ".$x;
-            } else {
-                $result = "I can\'t find that machine name";
-            }
+    my $pid=fork;
+    return 1 if $pid;  # have it still work on non-forking OSes
+    if ($in =~ /(\d+\.\d+\.\d+\.\d+)/) {
+        &::status("DNS query by IP address: $in");
+        $match = $1;
+        $y = pack('C4', split(/\./, $match));
+        $x = (gethostbyaddr($y, &AF_INET));
+        if ($x !~ /^\s*$/) {
+            $result = $match." is ".$x unless ($x =~ /^\s*$/);
+        } else {
+            $result = "I can't seem to find that address in DNS";
         }
-        $DNS_TIME_CACHE{$in} = time();
-        $DNS_CACHE{$in} = $result;
-
-        $callback->($result);
-        exit;			# bye child
+    } else { 
+        &status("DNS query by name: $in");
+        $x = join('.',unpack('C4',(gethostbyname($in))[4]));
+        if ($x !~ /^\s*$/) {
+            $result = $in." is ".$x;
+        } else {
+            $result = "I can\'t find that machine name";
+        }
     }
+    $DNS_TIME_CACHE{$in} = time();
+    $DNS_CACHE{$in} = $result;
+
+    $callback->($result);
+    exit if defined($pid);			# bye child
 }
 
 sub scan(&$$) {
