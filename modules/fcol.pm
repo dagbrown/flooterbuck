@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: fcol.pm,v 1.7 2002/12/05 17:12:51 rharman Exp $
+# $Id: fcol.pm,v 1.8 2002/12/05 17:14:54 rharman Exp $
 #------------------------------------------------------------------------
 package fcol;
 use strict;
@@ -78,12 +78,10 @@ sub fcol_create($) {
 sub fcol_getdata($) {
     my $line=shift;
 
-    #if($line =~ /fcol\s+(\w+:\S+)/i) {
-    if($line =~ /fcol\s+(.+)/i) {
-        return fcol_create($1);
-    }
     if($line =~ /fcol\s+(that|please)?\s*$/) {
         return fcol_create(::lastURL(::channel()));
+    } elsif ($line =~ /fcol\s+(.+)/i) {
+        return fcol_create($1);
     }
 }
 
