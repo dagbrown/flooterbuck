@@ -119,11 +119,11 @@ sub flighttrack_getdata($)
                  action => "select_advanced"
             ]);
         if (!($res->is_success)) {
-            return "Can't get flight info";
+            return "Can't get flight info for $flighttrack_id";
         }
         $flightdata = $res->as_string;
     }
-    &parse_flightdata($flightdata);
+    &parse_flightdata($flighttrack_id,$flightdata);
 }
 
 #------------------------------------------------------------------------
@@ -145,14 +145,15 @@ sub to_24_hour($)
 # Given the text of the HTML page that Flytecomm returns, parse out the
 # flight information and return a one-line status report for the flight
 #------------------------------------------------------------------------
-sub parse_flightdata($)
+sub parse_flightdata
 {
-    my $flightdata = shift;
+    my ($flighttrack_id,$flightdata) = @_;
     my %flightdata;
     
 
     # make sure that this page contains flight information.
-    return "That flight was not found." if ($flightdata =~ /Flight Not Found in Database/);
+    return "Flight \"$flighttrack_id\" was not found." 
+        if ($flightdata =~ /Flight Not Found in Database/);
 
     # get the flight identifier.  The only place it's shown is as the
     # default value for one of the form inputs.
