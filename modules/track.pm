@@ -1,9 +1,9 @@
 #------------------------------------------------------------------------
 # tracking report
 #
-# Richard Harman
+# Richard Harman <flooterbuck+track.pm@richardharman.com>
 #
-# $Id: track.pm,v 1.4 2002/02/04 17:52:24 awh Exp $
+# $Id: track.pm,v 1.5 2002/02/06 02:48:34 rharman Exp $
 #------------------------------------------------------------------------
 package track;
 use strict;
@@ -46,8 +46,8 @@ Richard G Harman Jr <flooterbuck+track.pm@richardharman.com>
 my ($no_track, $no_posix);
 
 my $pakalert_url = 'http://www.pakalert.com/trackpack.asp?';
-my $pakalert_username = 'CHANGE ME';
-my $pakalert_password = 'CHANGE ME';
+my $pakalert_username = 'flooterbuck@richardharman.com';
+my $pakalert_password = 'flooterbuck';
 
 BEGIN {
     eval qq{
@@ -95,10 +95,15 @@ sub track_getdata($)
   my $XML = LWP::Simple::get($url);
   my $ref = $xs->XMLin($XML);
   my $hashref = \$ref->{trackinfo}->{objalertinformation}->{colltrackinginformation}->{colltrackinginformation_Item}[0];
+  if ($$$hashref{dtimeofaction})
+  {
   my $string = $$$hashref{dtimeofaction};
   $string =~ s/T/ /; # they separate date/time with a T.
   $string .= ": $$$hashref{taction} $$$hashref{tlocationcity}, $$$hashref{tlocationstate}";
   return $string;
+  }
+  else
+  { return "That doesn't look like a tracking number..." };
 }
 
 

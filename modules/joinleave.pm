@@ -3,7 +3,7 @@
 #
 # Lets you tell the bot to leave or join channels
 #
-# $Id: joinleave.pm,v 1.5 2002/01/26 00:56:01 rharman Exp $
+# $Id: joinleave.pm,v 1.6 2002/02/06 02:48:34 rharman Exp $
 #------------------------------------------------------------------------
 
 use strict;
@@ -41,29 +41,27 @@ sub scan(&$$) {
 
             &::joinChan($ok_to_join);
             &::status("JOIN $ok_to_join <$who>");
-            &::msg($who, "joining $ok_to_join") 
+            $callback->($who, "joining $ok_to_join") 
                 unless ($::channel eq &::channel());
 
             sleep(1); # FIXME why is this here? 
             return 'NOREPLY'; # handled
 
         } else {
-
-            &::msg($who,"I am not allowed to join that channel.");
+            $callback->($who,"I am not allowed to join that channel.");
             return 'NOREPLY';
-
         }
 
     } elsif ($message =~ /^(leave|part) ((\#|\&))$/i) {
 
         if (&::IsFlag("o") || $::addressed) {
             if (&::IsFlag("c") ne "c") { 
-                &::performReply("you don't have the channel flag"); 
+                $callback->("you don't have the channel flag"); 
                 return 'NOREPLY'; 
             }
         }
         &::channel($2);
-        &::performSay("goodbye, $who.");
+        $callback->("goodbye, $who.");
         &::part($2);
         return 'NOREPLY';
     } else {

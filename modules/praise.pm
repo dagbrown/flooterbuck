@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------
 # Random praise: "Good bot"
 #
-# $Id: praise.pm,v 1.5 2001/12/04 17:40:27 dagbrown Exp $
+# $Id: praise.pm,v 1.6 2002/02/06 02:48:34 rharman Exp $
 #------------------------------------------------------------------------
 
 use strict;
@@ -33,7 +33,7 @@ sub scan(&$$) {
     }
 
     if ($::addressed) {
-        if ($message =~ /you (rock|rocks|rewl|rule|are so+ co+l)/) {
+        if ($message =~ /you (rock|rocks|rewl|rule|are so+ co+l|rock my socks)/) {
             if (rand()  < .5)  {
                 $callback->("thanks $who :)");
             } else {
