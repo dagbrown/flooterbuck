@@ -29,7 +29,7 @@
 # 2003/02/22 dagbrown@rogers.com
 #            - Added patch to make it more picky about where words end
 #
-# $Id: Aviation.pm,v 1.13 2003/04/20 00:39:24 dagbrown Exp $
+# $Id: Aviation.pm,v 1.14 2003/07/22 03:19:44 awh Exp $
 #------------------------------------------------------------------------
 
 package Aviation;
@@ -51,6 +51,11 @@ BEGIN {
 # section of the TAF -- the equivalent, for example, of the "from 10 to 2"
 # in "Sunny tomorrow; from 10 to 2, chance of showers".
 my $taf_highlight_bold = 1;
+
+# set the following if you want each seperator to begin on a new line.
+# multiline responses really aren't The Infobot Way [tm], but I find
+# this much more readable.
+my $taf_multiline = 0;
 
 #
 # Figure out if we're supposed to do something, and do it if we are
@@ -212,7 +217,9 @@ sub taf {
 	
 	# Optionally highlight beginnings of parts of the forecast. Some
 	# find it useful, some find it obnoxious, so it's configurable. :-)
-	$taf =~ s/(FM\d+Z?|TEMPO \d+|BECMG \d+|PROB\d+)/\cB$1\cB/g if $taf_highlight_bold;
+	my $taf_nl_char = "";
+	$taf_nl_char = "\n" if ($taf_multiline);
+	$taf =~ s/(FM\d+Z?|TEMPO \d+|BECMG \d+|PROB\d+)/$taf_nl_char\cB$1\cB/g if $taf_highlight_bold;
 	
 	# Sane?
 	return "I can't find any forecast for $site_id." if length($taf) < 10;
@@ -271,7 +278,7 @@ sub greatcircle {
 	my $webdata = $reply->as_string;
 	my $gcd;
 	if ($webdata =~ m/circle: ([.\d]+).*?, ([.\d]+).*?, ([.\d]+).*?heading: ([.\d]+)/s) {
-	    $gcd = "Great-circle distance: $1 mi, $2 nm, $3 km, heading $4 degrees true";	
+	    $gcd = "Great-circle distance: $1 mi, $2 nm, $3 km, initial heading $4 degrees true";	
 	}
 	else {
 	    $webdata =~ m/(No airport.*?database)/;
