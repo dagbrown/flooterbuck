@@ -448,6 +448,8 @@ sub sparse {
         serverNotice($1, $2);
     } elsif (/^:NickServ!s\@NickServ NOTICE \S+ :(.*)/i) {
         &nickServ($1);		# added by the xk.
+    } elsif (/^:NickServ!NickServ\@services\. NOTICE \S+ :(.*)/i) {
+        &nickServ($1);      # freenode style
     } elsif (/^:ChanServ!s\@ChanServ NOTICE \S+ :(.*)/i) {
         &chanServ($1);		# added by the xk.
     } elsif (/^:(\S+)!(\S+)@(\S+)\s(PRIVMSG|NOTICE)\s([\#\&]?\S+)\s:(.*)/) {
