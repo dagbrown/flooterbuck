@@ -9,6 +9,7 @@ sub process {
     my ($result, $caughtBy);
 
     $origMessage = $message; # intentionally global
+    study $message;
 
     return 'SELF' if (lc($who) eq lc($param{'nick'}));
 
@@ -43,7 +44,7 @@ sub process {
         and $message =~ /((?:http|ftp|mailto|telnet|file|https):\S+)/) {
         $url=$1;
         status("Stashing URL $url");
-        mentionURL(channel(),$url);
+        mentionURL(channel(),$url,$who);
     }
 
     return 'INTERBOT' if $message =~ /^...but/;
@@ -201,6 +202,7 @@ sub process {
 
         if ($' !~ /^\s*is/i) {
             $message = $';
+            study $message;
             $addressed = 1;
             $blocked = 0;   
         }
