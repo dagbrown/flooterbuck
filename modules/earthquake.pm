@@ -166,7 +166,7 @@ sub parse_quakedata
 sub scan(&$$) {
     my ($callback, $message, $who)=@_;
 
-    if ( ::getparam('earthquake') and $message =~ /^\s*earthquake/i ) {
+    if ( $message =~ /^\s*earthquake/i ) {
         &main::status("Earthquake query");
         &earthquake_get($callback);
         return 1;
