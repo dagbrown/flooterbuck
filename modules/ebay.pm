@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: ebay.pm,v 1.21 2004/04/21 15:10:38 dagbrown Exp $
+# $Id: ebay.pm,v 1.22 2004/04/29 04:01:53 dagbrown Exp $
 #------------------------------------------------------------------------
 package ebay;
 use strict;
@@ -197,12 +197,19 @@ sub parse_seller_response($) {
 # Given an eBay auction ID number, grab the page and return a
 # quick summary
 #------------------------------------------------------------------------
-sub auction_summary($) {
+sub auction_summary {
     my $auction_id=shift;
 
-    my $response=LWP::Simple::get(
-        'http://cgi.ebay.com/aw-cgi/eBayISAPI.dll?ViewItem&item='
-        .$auction_id);
+    my $response;
+    if($auction_id =~ /^[0-9]+$/) {
+        $response=LWP::Simple::get(
+            'http://cgi.ebay.com/aw-cgi/eBayISAPI.dll?ViewItem&item='
+            .$auction_id);
+    }
+
+    if($auction_id =~ /http:\/\/.*ebay.com\/.*item=\d+/) {
+        $response=LWP::Simple::get($auction_id);
+    }
 
     my ($title)=snag_element("title",$response);
 
@@ -235,22 +242,6 @@ sub auction_sellerlist($) {
 }
 
 #------------------------------------------------------------------------
-# grab_itemid
-# 
-# Teases the item-ID out of an eBay URL
-#------------------------------------------------------------------------
-
-sub grab_itemid {
-    my $url=shift;
-
-    if($url =~ /http:\/\/[^\/]*ebay\.com\/.*\&item\=(\d+)/) {
-        return $1;
-    } else {
-        return undef;
-    }
-}
-
-#------------------------------------------------------------------------
 # ebay_getdata
 #
 # Tear apart the line fed to the infobot, check its syntax,
@@ -259,12 +250,16 @@ sub grab_itemid {
 sub ebay_getdata($) {
     my $line=shift;
 
-    if($line =~ /ebay\s+(\d+)/i && ($1 gt 0) ) {
+    if(
+        ($line =~ /ebay\s+(\d+)/i && ($1 > 0)) 
+            or
+        ($line =~ /ebay\s+(http:\/\/.*ebay.com\/\S*item=\d+\S*)/)
+    ) {
         return auction_summary($1); 
     } elsif($line =~ /ebay\s+that/i) {
-        my $auction_id=grab_itemid(::lastURL(::channel()));
-        if($auction_id) {
-            return auction_summary($auction_id);
+        my $auction_url=::lastURL(::channel());
+        if($auction_url =~ /http:\/\/.*ebay.com\/\S*item=\d+\S*/) {
+            return auction_summary($auction_url);
         } else {
             if($::addressed){
                 return "The last URL wasn't eBay";
