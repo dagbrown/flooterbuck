@@ -539,9 +539,12 @@ sub scan(&$$) {
         my $response = Units::convert($from, $to);
 
         if ($response =~ /Unknown unit `(.*?)'/i) {
-            my $message = 'I checked in unittab, but there\'s'.
-                          'no mention of "%s".';
-            $result = sprintf "$message\n", $1;
+            $message = qq('I checked in unittab, but there's ).
+                          qq(no mention of "$1".');
+            if($from =~ /\d+\s*[A-Z][A-Z][A-Z]/ and
+               $to =~ /[A-Z][A-Z][A-Z]/ ) {
+                $message .= q/  (Perhaps you want "exchange?")/;
+            }
         } elsif($response =~ /^(?:[+-]?)(?=\d|\.\d)\d*(?:\.\d*)?(?:[Ee](?:[+-]?\d+))?/
                 && $response !~ /\bis\b/) {
             $result = "$from is $response $to.\n";
