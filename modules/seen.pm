@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------
 # "seen" bit--have you seen $PERSON recently?
 #
-# $Id: seen.pm,v 1.6 2002/02/06 03:27:46 awh Exp $
+# $Id: seen.pm,v 1.7 2004/04/01 03:53:10 dagbrown Exp $
 #------------------------------------------------------------------------
 # -- from Question
 #
@@ -15,8 +15,7 @@ package seen;
 # ----------------------------------------------------------------------
 # Returns the time difference between the current time and the passed
 # time in both long and short string formats.  Long format is like
-# "2 days, 4 hours, 37 minutes, and 2 seconds".  Short format is like
-# "2d, 4:37:02".
+# "2 days and 4 hours".  Short format is like "2d, 4:37:02".
 # ----------------------------------------------------------------------
 sub get_timediff($) {
     my $when = shift;
@@ -24,34 +23,41 @@ sub get_timediff($) {
     my $howlong = time() - $when;
     $when = localtime $when;
 
-    my $tstring = ($howlong % 60). " seconds ago";
+
+    my @tstring = (($howlong % 60). " second".(($howlong%60>1)&&"s"));
     my $shorttstring = sprintf("%02d", ($howlong % 60));
     $howlong = int($howlong / 60);
 
     $shorttstring = sprintf("%02d", ($howlong % 60)). ":$shorttstring";
-    if ($howlong % 60) {
-        $tstring = ($howlong % 60). " minutes and $tstring";
+    if ($howlong % 60 > 0) {
+        unshift @tstring, ($howlong % 60). " minute".(($howlong%60>1)&&"s");
     }
     $howlong = int($howlong / 60);
 
     $shorttstring = ($howlong % 24). ":$shorttstring";
-    if ($howlong % 24) {
-        $tstring = ($howlong % 24). " hours, $tstring";
+    if ($howlong % 24 > 0) {
+        unshift @tstring, ($howlong % 24). " hour".(($howlong%24>1)&&"s");
     }
     $howlong = int($howlong / 24);
 
-    if ($howlong % 365) {
-        $tstring = ($howlong % 365). " days, $tstring";
+    if ($howlong % 365 > 0) {
         $shorttstring = ($howlong % 365). "d, $shorttstring";
+        unshift @tstring, ($howlong % 365). " day".(($howlong%365>1)&&"s");
     }
     $howlong = int($howlong / 365);
 
     if ($howlong > 0) {
-        $tstring = "$howlong years, $tstring";
+        unshift @tstring, "$howlong years";
         $shorttstring = $howlong."y, $shorttstring";
     }
 
-    ($tstring, $shorttstring);
+    my $tstring;
+    if(scalar(@tstring)==1) {
+        $tstring=$tstring[0];
+    } else {
+        $tstring="$tstring[0] and $tstring[1]"
+    }
+    return ($tstring, $shorttstring);
 }
 
 
