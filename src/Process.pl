@@ -342,9 +342,7 @@ sub process {
         if ($continuity or $addressed or 
                 (getparam('addressing') ne "REQUIRE")) {
 
-            if (defined ($result = &myRoutines())) {
-                $caughtBy = "myRoutines";
-            } elsif (defined($result = &Extras())) {
+            if (defined($result = &Extras())) {
                 $caughtBy = "Extras";
     # BEEP BEEP - TODO ALERT: Change the karma lookup to do a doQuestion
     # before returning a karma query to catch factoids that should return
