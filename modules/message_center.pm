@@ -3,7 +3,7 @@
 #
 # See the POD for more information
 #
-# $Id: message_center.pm,v 1.6 2003/04/25 02:52:50 dagbrown Exp $
+# $Id: message_center.pm,v 1.7 2003/04/25 03:11:19 dagbrown Exp $
 #------------------------------------------------------------------------
 
 =head1 NAME
@@ -45,8 +45,9 @@ package message_center;
 my $message_center;
 
 BEGIN {
-    $message_center=1;  # used by User.pl to see if it should run have_message
-    ::openDBMx('messages');
+    if(::getparam("message_center")) {
+        $message_center=1;  # used by User.pl to see if it should run have_message
+    }
 }
 
 END {

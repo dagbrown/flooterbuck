@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/opt/perl-5.6.1/bin/perl
 
 # infobot -- copyright kevin lenzo (c) 1997-infinity
 # Flooterbuck Infobot -- copyright (C) Dave Brown, 2001
