@@ -572,6 +572,7 @@ BEGIN {
 			 milli => -3,
 			 centi => -2,
 			 deci => -1,
+             penta => 0.698970004336019,
 			 deca => 1,
 			 deka => 1,
 			 hecto => 2,
