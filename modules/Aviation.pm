@@ -29,7 +29,7 @@
 # 2003/02/22 dagbrown@rogers.com
 #            - Added patch to make it more picky about where words end
 #
-# $Id: Aviation.pm,v 1.14 2003/07/22 03:19:44 awh Exp $
+# $Id: Aviation.pm,v 1.15 2004/03/12 01:21:10 rich_lafferty Exp $
 #------------------------------------------------------------------------
 
 package Aviation;
@@ -71,7 +71,7 @@ sub Aviation::scan(&$$) {
                       tsd               |
                       airport           |
                       rh                |
-                      aviation)\s+/xi) 
+                      aviation)\b/xi) 
     {
         &Aviation::get($message, $callback);
         return 1;
@@ -96,7 +96,7 @@ sub Aviation::get {
     elsif ($line =~ /^taf\s+/i)           { $callback->(taf($line))         }
     elsif ($line =~ /^great[-\s]?circle\s+/i) { $callback->(greatcircle($line)) }
     elsif ($line =~ /^tsd\s+/i)           { $callback->(tsd($line))         }
-    elsif ($line =~ /^zulutime\s+/i)      { $callback->(zulutime($line))    }
+    elsif ($line =~ /^zulutime\b/i)      { $callback->(zulutime($line))    }
     elsif ($line =~ /^airport\s+/i)       { $callback->(airport($line))     }
     elsif ($line =~ /^rh\s+/i)            { $callback->(rh($line))          }
     elsif ($line =~ /^aviation\s+/i)      { $callback->(aviation($line))    }
