@@ -187,6 +187,8 @@ sub ebay::get($$) {
 sub scan(&$$) {
     my ($callback, $message, $who) = @_;
     ::status("Look!  Here I am in the ebay module!");
+    ::status("Ooh, and my message is $message!  See!");
+    ::status("And it came from $who!  Yay!");
 
     if ( ::getparam('ebay') and $message =~ /^\s*ebay\s+\d+$/i ) {
         &main::status("eBay query");
