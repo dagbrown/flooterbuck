@@ -52,7 +52,9 @@ sub setup {
         &openDBMx('ignore');
     }
 
-    &openDBMx('messages');
+    if ($param{message_center}) {
+        &openDBMx('messages');
+    }
 
     if ($param{sanePrefix}) {
         for $d (qw/is are/) {
