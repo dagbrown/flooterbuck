@@ -3,7 +3,7 @@
 #
 # See the POD documentation (right here!) for more info
 #
-# $Id: stockquote.pm,v 1.7 2002/01/10 19:09:23 dagbrown Exp $
+# $Id: stockquote.pm,v 1.8 2002/01/26 17:32:35 awh Exp $
 #------------------------------------------------------------------------
 
 =head1 NAME
@@ -22,11 +22,16 @@ quote
 
 purl, quote <ticker symbol>
 sigio, stock price for <ticker symbol>
+sigsegv, index <popular index name>
 
 =head1 DESCRIPTION
 
 This allows you to fetch the current value of a stock, subject to
 Yahoo!'s 20-minute delay (15 minutes for NASDAQ).
+
+index <mnemonic> will fetch index values from the same server, but
+without the user having to remember stupid index ticker symbols that
+bear no resemblance whatsoever to the actual index name.
 
 =head1 AUTHOR
 
@@ -34,6 +39,8 @@ Dave Brown <dagbrown@csclub.uwaterloo.ca>
 
 Yahoo! URL from the original stockquote.pl by LotR <martijn@earthling.net>
 which was based on quote.pl from Xachbot (http://www.xach.com/xachbot/quote.pl)
+
+index added by Drew Hamilton <awh@awh.org>
 
 =head1 NOTE
 
@@ -115,6 +122,29 @@ sub quote_summary($) {
 }
 
 #------------------------------------------------------------------------
+# get_index_symbol
+#
+# Given an index mnemonic, retreive the actual ticker symbol for that
+# index.  Based on the indexes that Drew Hamilton <awh@awh.org> feels
+# are popular on January 26, 2002.  So obviously it's a complete list.
+#------------------------------------------------------------------------
+sub get_index_symbol($)
+{
+    my $index_name=shift;
+
+    $index_name =~ tr/A-Z/a-z/;
+
+    return "^DJI" if ($index_name eq "djia");
+    return "^IXIC" if ($index_name eq "nasdaq");
+    return "^GSPC" if ($index_name eq "sp500");
+    return "^TSE" if ($index_name eq "tse300");
+    return "^FTSE" if ($index_name eq "ftse");
+    return "^n225" if ($index_name eq "nikkei");
+
+    return "notfound:djia, nasdaq, sp500, tse300, ftse, nikkei";
+}
+
+#------------------------------------------------------------------------
 # stockquote::scan
 #
 # This is the main interface to infobot.  It checks to see whether
@@ -124,8 +154,9 @@ sub quote_summary($) {
 
 sub scan(&$$) {
     my ($callback,$message,$who) = @_;
+    my ($symbol);
 
-    if ($message =~ /^(?:quote|stock price)(?: of| for)? (\^?[A-Z.]{1,8})\?*$/i) {
+    if ($message =~ /^(?:quote|stock price|index)(?: of| for)? (\^?[A-Z.0-9]{1,8})\?*$/i) {
         if($no_quote) {
             &main::status("Sorry, quote requires LWP and couldn't find it");
             return undef;
@@ -133,7 +164,18 @@ sub scan(&$$) {
         $SIG{CHLD}="IGNORE";
         my $pid=eval { fork(); };         # Don't worry if OS isn't forking
         return 'NOREPLY' if $pid;
-        $callback->(quote_summary(uc($1)));
+
+	$symbol = $1;
+	if ($message =~ /index/)
+	{
+	    $symbol = &get_index_symbol($symbol);
+	    if ($symbol =~ s/^notfound://) {
+	        $callback->("I don't know that index name!  I know $symbol");
+	        exit 0 if defined($pid);
+	        return 1;
+	    }
+	}
+        $callback->(quote_summary(uc($symbol)));
         exit 0 if defined($pid);          # child exits, non-forking OS returns
         return 1;
     } else {
