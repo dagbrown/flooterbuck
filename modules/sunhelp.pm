@@ -4,7 +4,7 @@
 # Based on "slashdot" module, but this should be torn apart a bit
 # to make a generid RDF module.
 #
-# $Id: sunhelp.pm,v 1.6 2002/01/22 20:01:19 dagbrown Exp $
+# $Id: sunhelp.pm,v 1.7 2003/03/11 19:03:05 rharman Exp $
 #------------------------------------------------------------------------
 
 #####################
@@ -34,6 +34,8 @@ my $no_slashlines;
 BEGIN {
     $no_slashlines = 0;
     eval "use LWP::UserAgent";
+    $no_slashlines++ if $@;
+    eval "use HTML::Entities;";
     $no_slashlines++ if $@;
 }
 
@@ -89,7 +91,7 @@ sub scan(&$$) {
 
     if (defined(::getparam('slash')) 
             and $message =~ /^\s*sunhelp( headlines)?\W*\s*$/) {
-        my $headlines = &getsunhelpheads();
+        my $headlines = decode_entities(&getsunhelpheads());
         $callback->($headlines);
         return 1;
     } else {
