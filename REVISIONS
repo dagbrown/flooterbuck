@@ -1,4 +1,13 @@
-1.2.2 - ????
+1.2.2 - 
+
+New features
+============
+
+- Added a URL Police feature, that keeps track of whether a URL has been
+  mentioned in a channel, and flames people for pasting URLs that have 
+  ever been seen before
+- Added an "earthquake" module which shows where the most recent
+  earthquake in the world is.
 
 Bug Fixes
 =========
