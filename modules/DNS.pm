@@ -47,7 +47,7 @@ sub DNS {
             $result = "I can't seem to find that address in DNS";
         }
     } else { 
-        &status("DNS query by name: $in");
+        &::status("DNS query by name: $in");
         $x = join('.',unpack('C4',(gethostbyname($in))[4]));
         if ($x !~ /^\s*$/) {
             $result = $in." is ".$x;
@@ -65,8 +65,9 @@ sub DNS {
 sub scan(&$$) {
     my($callback,$message,$who)=@_;
     if ($message =~ /^\s*(?:nslookup|dns)(?: for)?\s+(\S+)$/i) {
-        ::status("DNS Lookup: $1");
-        return DNS($callback,$1,$who);
+        &::status("DNS Lookup: $1");
+        &DNS($callback,$1,$who);
+	return 1;
     }
     return undef;
 }
