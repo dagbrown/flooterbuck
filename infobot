@@ -10,10 +10,10 @@
 
 BEGIN {
   $VER_MAJ = 0;
-  $VER_MIN = 45;
-  $VER_MOD = 3;
+  $VER_MIN = 5;
+  $VER_MOD = 0;
 
-  $version = "infobot $VER_MAJ\.$VER_MIN\.$VER_MOD [Wurm]";
+  $version = "Flooterbuck infobot $VER_MAJ\.$VER_MIN\.$VER_MOD [dagbrown]";
 }
 
 BEGIN {
