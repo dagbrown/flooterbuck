@@ -119,13 +119,13 @@ sub ups_getdata($) {
 #
 # This handles the forking (or not) stuff.
 #------------------------------------------------------------------------
-sub get(&$) {
+sub get($$) {
     if($no_ups) {
         &main::status("Sorry, UPS.pl requires LWP and couldn't find it");
         return "";
     }
 
-    my($callback,$line)=@_;
+    my($line,$callback)=@_;
     $SIG{CHLD}="IGNORE";
     my $pid=eval { fork(); };         # Don't worry if OS isn't forking
     return 'NOREPLY' if $pid;
@@ -144,7 +144,7 @@ sub scan(&$$) {
     my ($callback,$message,$who) = @_;
 
     if($message=~/ups [0-9A-Z]+\??$/) {
-        return get($callback,$message);
+        return get($message,$callback);
     }
     return undef;
 }
