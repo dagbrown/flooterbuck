@@ -3,7 +3,7 @@
 #
 # Lets you tell the bot to leave or join channels
 #
-# $Id: joinleave.pm,v 1.7 2003/02/14 22:15:27 dagbrown Exp $
+# $Id: joinleave.pm,v 1.8 2004/09/03 00:24:38 dagbrown Exp $
 #------------------------------------------------------------------------
 
 use strict;
@@ -41,7 +41,7 @@ sub scan(&$$) {
 
             &::joinChan($ok_to_join);
             &::status("JOIN $ok_to_join <$who>");
-            $callback->($who, "joining $ok_to_join") 
+            $callback->("joining $ok_to_join") 
                 unless ($::channel eq &::channel());
 
             sleep(1); # FIXME why is this here? 

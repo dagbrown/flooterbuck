@@ -2,6 +2,7 @@
 
 Bug Fixes
 =========
+- Fixed the broken join message
 - Made flighttracker do the Right Thing with multiple planes on an individual
   flight number.  Handy for, say, Air Canada flight 3, where there always 
   seems to be two of them; one on the ground, one in the air, and it always
