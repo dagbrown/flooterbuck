@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: fcol.pm,v 1.5 2002/08/03 13:31:24 dagbrown Exp $
+# $Id: fcol.pm,v 1.6 2002/12/03 17:06:28 dagbrown Exp $
 #------------------------------------------------------------------------
 package fcol;
 use strict;
@@ -81,6 +81,9 @@ sub fcol_getdata($) {
     if($line =~ /fcol\s+(\w+:\S+)/i) {
         return fcol_create($1);
     }
+    if($line =~ /fcol\s+(that|please)?\s*$/) {
+        return fcol_create(::lastURL(::channel()));
+    }
 }
 
 #------------------------------------------------------------------------
@@ -117,6 +120,10 @@ sub scan(&$$) {
         &main::status("fcol small-URL creation");
         fcol::get($message,$callback);
         return 1;
+    }
+    if ( $message =~ /\s*(?:fcol|tinyurl|shrivel)\s+(?:that|please)/i) {
+        &main::status("auto-fcol last-url creation");
+        fcol::get($message,$callback);
     }
 }
 
