@@ -258,7 +258,7 @@ ispell true
 zippy true
 
 # the magic 8ball (divine)
-magic8_answers $miscdir/magic8.txt
+magic8_answers $confdir/magic8.txt
 
 # exchange rates (exchange 233 DEM to USD)
 exchange true
