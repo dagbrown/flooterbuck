@@ -1,13 +1,10 @@
-README.modules: required and optional Perl modules for Infobot.
----------------------------------------------------------------
-(for Infobot version 0.45.3)
+README.modules: required and optional Perl modules for flooterbuck.
+-------------------------------------------------------------------
 
 While mostly everything you need to run Infobot is already on your
-system (providing, of course, that you have version 5 of Perl
-installed), there are a number of Infobot functions in the extras/
-subdirectory which require modules that do not come with Perl, and one
-instance in which infobot itself requires a module which is not
-distributed with Perl.
+system (providing, of course, that you have Perl 5.6 or newer 
+installed), there are a number of flooterbuck features which require
+modules that do not come with Perl.
 
 There are a handful of ways to install modules. Ranging from most
 straightforward to least straightforward:
@@ -37,12 +34,9 @@ straightforward to least straightforward:
 THE MODULES
 -----------
 
-The following modules are required for core Infobot functionality:
+The following modules are used by components of INfobot:
 
    URI::Escape  (install URI from CPAN; required for <rss> factoids)
-   
-The following modules are required for non-core ("extras") functions:
-
    HTML::Entities (install HTML::Parser from CPAN)
    LWP (install Bundle::LWP from CPAN)
    Net::Telnet
