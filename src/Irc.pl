@@ -2,6 +2,16 @@
 
 use Socket;
 
+# checks if Japanese messages should be converted to EUC upon
+# receipt.  This should only happen if a) Jcode is available, 
+# and b) the user has requested this feature.  This *should*
+# work; contact me at aww@awh.org if it doesn't.
+my $no_japanese = 0;
+eval qq{
+    use Jcode qw();
+};
+$no_japanese++ if ($@);
+
 sub srvConnect {
     my ($server, $port) = @_;
     my ($iaddr, $paddr, $proto);
@@ -219,6 +229,14 @@ sub entryEvt {
 
 sub procevent {
     my ($nick, $user, $host, $type, $chan, $msg) = @_;
+
+    # anonymous submitter++.
+    # stuck in here by awh@awh.org -- if this causes a problem for
+    # anyone, please let me know.
+    if (($no_japanese == 0) && (::getparam('japanese')) && (Jcode::getcode($msg) eq 'jis'))
+    {
+        $msg = Jcode::convert($msg,'euc'); 
+    }	
 
     # support global $nuh, $who
     $nuh = "$nick!$user\@$host";
