@@ -51,7 +51,7 @@ sub getsunhelpheads {
     if($response->is_success) {
         $response->content =~ /<time>(.*?)<\/time>/;
         my $lastupdate=$1;
-        my $headlines = "Slashdot - Updated ".$lastupdate;
+        my $headlines = "Sunhelp - Updated ".$lastupdate;
         my @indexhtml = split(/\n/,$response->content);
 
         # gonna read in this xml stuff.
