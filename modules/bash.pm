@@ -1,4 +1,4 @@
-# $Id: bash.pm,v 1.10 2004/04/25 22:04:42 dagbrown Exp $
+# $Id: bash.pm,v 1.11 2004/10/06 21:28:28 rharman Exp $
 package bash;
 use strict;
 
@@ -117,7 +117,7 @@ sub bash::get($) {
     {
       $quote_id = $1;
       @lines = &get_quote($quote_id);
-    } elsif ($line =~ m/random/) {
+    } elsif ($line =~ m/-random/) {
       @lines = &get_random();
     }
 
@@ -154,7 +154,7 @@ sub scan(&$$) {
         $BASH_LINES_LIMIT=::getparam('bash_lines_limit')||4;
     }
 
-    if ( ::getparam('bash') and $message =~ /^\s*bash\s+([0-9]+)$/i ) {
+    if ( ::getparam('bash') and $message =~ /^\s*bash\s+(?:-force|-random)?(?:\s*(\d+))?\s*/ix) {
         &main::status("bash playback");
         &bash::get( $message, $callback );
         return 1;
