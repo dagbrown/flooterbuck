@@ -131,15 +131,26 @@ sub paramSetup {
     my $initdebug = 1;
     $param{'DEBUG'} = $initdebug;
 
-    if (!@paramfiles) {
+    my $defaultfile; 
+    unless ($paramfile) {
 	# if there is no list of param files, just go for the default
 	# (usually ./files/infobot.config)
 
-	@paramfiles = ("$param{confdir}/infobot.config");
+	$paramfile = "$param{confdir}/infobot.config";
+        $defaultfile++;
     }
 
+    if (! -e $paramfile) {
+        if ($defaultfile) {
+            die "Hey, this looks you're running this for the first time!\nPerhaps you should rename the -dist files in the conf/ subdirectory and\nedit them to your liking.\n"
+        }
+        else {
+            die "Can't find specified configuration file $paramfile.\n"
+        }
+    }
+    
     # now read in the parameter files
-    &loadParamFiles(@paramfiles);
+    &loadParamFiles($paramfile);
 }
 
 

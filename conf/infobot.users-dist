@@ -25,18 +25,25 @@ UserEntry default {
 
 # here's an example entry
 
+UserEntry dagbrown {
+    name "Dave Brown";
+    title "God";
+    flags +trmcs;
+    mask *!*@*;
+}
+
 UserEntry oznoid {
 	name  "Kevin A. Lenzo";
 	title "that guy";
-	flags +ftrmcsSope;
-	pass  rrmrxB6U4ryRk;
+	flags +trmcs;
 	mask  *!lenzo@*.speech.cs.cmu.edu;
 }
 
 UserEntry plonk {
 	name  "Eep Malloy"
 	title "that guy II";
-	flags +trmcspo;
-	pass  rrmrxB6U4ryRk;
+	flags +trmcs;
 	mask  *!*@*.static.telerama.com
 }
+
+

@@ -1,3 +1,0 @@
-oznoid => at mailto:lenzo@cs.cmu.edu or at http://www.cs.cmu.edu/~lenzo
-infobot => at http://www.cs.cmu.edu/~infobot
-flooterbuck => at http://flooterbuck.sourceforge.net/

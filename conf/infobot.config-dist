@@ -98,14 +98,14 @@ acceptUrl        OPTIONAL
 # IRC-related params
 ircuser          $ident
 realname         $ident
-server           irc.bsdunix.net
+server           irc.example.com
 port             6667
-allowed_channels #flooterbuck #infobot #$ident #test
+allowed_channels #infobot #$ident
 
 # channels to join
 # use #channel,key (thanks to tile++) for keyed channels
 
-join_channels    #flooterbuck #infobot #$ident
+join_channels    #infobot #$ident
 
 # server password, if needed
 # server_pass    myserverpassword
@@ -192,7 +192,7 @@ repeatIgnoreInterval 8
 
 allowLeave       public
 
-# our user list default file (in miscdir)
+# our user list default file (in conf)
 # you may want to change this to $ident.users
 
 userList         infobot.users
@@ -277,7 +277,13 @@ ebay true
 # pakalert tracking, ups, fedex, airborne express, and posten.
 track true
 
-# whether to be comic-chat firendly (should not affect any operations
+# tinyurl module to shorten URLs
+track true
+
+# bash module to replay bash.org IRC quotes
+bash true
+
+# whether to be comic-chat friendly (should not affect any operations
 # on normal non-comicchat servers -- won't make the bot start spewing
 # out comic chat crap unless it's specifically told to)
 comicchat true
@@ -292,3 +298,7 @@ comicchat true
 # do have POSIX.pm
 havePOSIX true
 
+# message center lets you leave messages for other users; should work
+# next release or so.
+# 
+# message_center true

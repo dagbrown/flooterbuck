@@ -64,34 +64,24 @@ exit 0;  # just so you don't look farther down in this file :)
 
 sub usage {
     print "\n";
-    print "  usage: $0 [-h] [<paramfile1> [<pf2> ...]]\n";
+    print "  usage: $0 [-h] [<config file>]\n";
     print "\n";
     print "		 -h   this message\n";
     print "\n";
 }
 
 sub getArgs {
-    if (@ARGV) {
-	while (@ARGV) {
-	    my $arg = shift @ARGV;
-	    if ($arg =~ s/^-//) {
-		# switchies
-		if ($arg eq 'i') {
-		    # go into irc mode despite db setting
-		    $overrideMode = 'IRC';
-		} else {
-		    # -h is in here by default
-		    &usage;
-		    exit(1);
-		}
-	    } else {
-		# no switchie.  currently assumed to be
-		# a paramfile by default
-		push @paramfiles, $arg;
-	    }
-	}
-    } else {
-	@paramfiles = ();
+    if ($ARGV[0]) {
+        if ($ARGV[0] =~ /^-[hi\?]/) {
+            &usage;
+            exit 1;
+        }
+        else {
+            $paramfile = $ARGV[0]
+        }
+    }
+    else {
+        $paramfile = '';
     }
 }
 
