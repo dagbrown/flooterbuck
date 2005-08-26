@@ -1,4 +1,4 @@
-# $Id: bash.pm,v 1.11 2004/10/06 21:28:28 rharman Exp $
+# $Id: bash.pm,v 1.12 2005/08/26 14:01:26 rich_lafferty Exp $
 package bash;
 use strict;
 
@@ -133,7 +133,7 @@ sub bash::get($) {
                 sleep 1;
             }
         } else {
-            $callback->("Ack!  That one's too long! :(");
+            $callback->("Ack!  That one's too long! Look for yourself at http://bash.org/?$quote_id");
         }
     }
     if ( defined($pid) )    # child exits, non-forking OS returns
