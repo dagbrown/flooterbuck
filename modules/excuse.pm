@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: excuse.pm,v 1.3 2004/02/02 22:05:54 dagbrown Exp $
+# $Id: excuse.pm,v 1.4 2005/08/31 13:37:44 rich_lafferty Exp $
 #
 # Includes the BOFH excuse file grabbed from:
 #       http://www.cs.wisc.edu/~ballard/bofh/excuses
@@ -19,7 +19,7 @@ my @excuses;
 sub scan(&$$) {
     my ($callback, $message, $who)=@_;
 
-    unless($message=~/excuse\??$/) {
+    unless($message=~/\bexcuse\b/) {
         return undef;
     }
 
