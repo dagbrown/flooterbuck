@@ -34,7 +34,7 @@
 #            - Initial heading is now calculated internally with standard
 #              algorithm from http://williams.best.vwh.net/avform.htm.
 #
-# $Id: aviation.pm,v 1.4 2005/08/31 13:37:44 rich_lafferty Exp $
+# $Id: aviation.pm,v 1.5 2005/08/31 13:39:08 rich_lafferty Exp $
 #------------------------------------------------------------------------
 
 package aviation;
@@ -79,7 +79,7 @@ sub aviation::scan(&$$) {
                       tsd               |
                       airport           |
                       rh                |
-                      aviation)\s/xi) 
+                      aviation)\b/xi) 
     {
         &aviation::get($message, $callback);
         return 1;
