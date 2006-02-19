@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------
 # "exchange" command, change currencies
 #
-# $Id: exchange.pm,v 1.12 2004/05/10 16:48:42 awh Exp $
+# $Id: exchange.pm,v 1.13 2006/02/19 01:02:42 rich_lafferty Exp $
 #------------------------------------------------------------------------
 
 use strict;
@@ -51,34 +51,49 @@ sub exchange {
        return "EXCHANGE: ". $res->status_line;
     }
       
-    my $html = $res->as_string;
-    
-    # trim it down so it's a bit easier for me to see when I print it
-    # out for debugging. 
-    $html =~ s/.*Symbol//s; 
-    $html =~ s/<img.*//s; 
+# 2006-02-18:
+# <tr align="center">
+# <td class="yfnc_tabledata1"><a href="/q?s=USDCAD=X">USDCAD=X</a></td>
+#
+# <td class="yfnc_tabledata1"><b>2</b></td>
+# <td class="yfnc_tabledata1">Feb 17</td>
+# <td class="yfnc_tabledata1">1.1508</td>
+# <td class="yfnc_tabledata1"><b>2.3016</b></td>
+# <td class="yfnc_tabledata1">1.1508</td>
+# <td class="yfnc_tabledata1">1.1511</td>
+# </tr> 
 
-    # gross screen-scraping.  It would be nice if they gave a nice XML
-    # document, but they don't.
-
-#</b></td><td class="yfnc_tablehead1"><b>Canadian Dollar</b></td><td class="yfnc_tablehead1" colspan="2"><b>Exchange<br>Rate</b></td><td class="yfnc_tablehead1"><b>Japanese Yen</b></td><td class="yfnc_tablehead1"><b>Bid</b></td><td class="yfnc_tablehead1"><b>Ask</b></td></tr><tr align="center"><td class="yfnc_tabledata1"><a href="/q?s=CADJPY=X">CADJPY=X</a></td><td class="yfnc_tabledata1"><b>100</b></td><td class="yfnc_tabledata1">May 10</td><td class="yfnc_tabledata1">81.854</td><td class="yfnc_tabledata1"><b>8,185.408</b></td><td class="yfnc_tabledata1">81.854</td><td class="yfnc_tabledata1">81.897</td></tr></table></td></tr></table><center> 
-    
-    my ($curnamefrom, $curnameto, $amount) = ($html =~ m/head1\"><b>([^<]*)<\/b>.*?head1\"><b>([^<]*)<\/b>.*data1\"><b>([^<]*)<\/b>/);
-
+    my @html = split(/\n/, $res->as_string);
+    my @curnames; my @tabledata;
+    for (@html)
+    {
+        last if scalar @tabledata and m|</tr>|; 
+ 
+        # find currency names
+        if (m|<option selected value.*?>(.*?)<|)
+        {
+            push @curnames, $1;
+        }
+        # get exchange results
+        elsif (m|<td class="yfnc_tabledata1">(.*?)</td>|)
+        {
+            push @tabledata, $1;
+        }
+    }
+   
     # yay, it matched!
-    if ($curnamefrom and $curnameto and $amount) {
-        return "$Amount $curnamefrom makes $amount $curnameto";
+    if (@curnames == 2 and $tabledata[4] =~ m|^<b>(.*?)</b>$|)
+    {
+        return "$Amount $curnames[0] makes $1 $curnames[1]";
     }
 
     # under the old screen format, I could tell which currency symbol
     # was not entered correctly.  Under the new format, anything incorrect
     # just dumps you back to the default page.
-    if ((!$curnamefrom) or (!$curnameto) or (!$amount)) {
+    else 
+    {
         return "Either '$From' or '$To' is an invalid currency symbol, or Yahoo changed its screen format for the currency exchanger.  Check http://finance.yahoo.com/currency for the list of supported symbols.";
     }
-
-    # Uh-oh, how did we get here?
-    return "Um, something bad has happened.";
 }
 
 sub scan(&$$) {
