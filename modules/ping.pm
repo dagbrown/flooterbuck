@@ -25,12 +25,21 @@ sub ping {
     my $inetaddr = gethostbyname($host);
     return "I can't find $host in the DNS." unless $inetaddr;
     my $addr = inet_ntoa(scalar gethostbyname($host));
-   
-    my $cmd = "/bin/ping -q -c 10 -w 15 $addr";
+    my $ping;
+    my %opts = ('/bin/ping'  => '-q -c 10 -w 15',
+		'/sbin/ping' => '-q -c 10 -t 15');
+    for my $try (sort keys %opts) {
+	if (-x $try) {
+	    $ping = $try;
+	    last;
+	}
+    }
+    return "can't find a ping command." unless defined $ping;
+    my $cmd = "$ping $opts{$ping} $addr";
     # http://www.amazon.com/exec/obidos/tg/detail/-/0140502416/
     unless ( open (DUCK, "$cmd |") ) {
         &main::status("$cmd returned $!");
-        return "/bin/ping returned an error."
+        return "$ping returned an error."
     }
 
     my @out;
@@ -49,7 +58,7 @@ sub ping {
     else {
         # leave this to the admin to debug.
         &main::status("$cmd returned something odd");
-        return "/bin/ping returned something I can't understand.";
+        return "$ping returned something I can't understand.";
     }
      
 }
