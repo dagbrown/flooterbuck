@@ -1,9 +1,7 @@
 #------------------------------------------------------------------------
-# Lastlog module
+# Lastlog module - anyone around?
 #
-# See the POD documentation (right here!) for more info
-#
-# $Id: lastlog.pm,v 1.1 2006/10/02 23:56:44 rich_lafferty Exp $
+# $Id: lastlog.pm,v 1.2 2006/10/03 00:00:59 rich_lafferty Exp $
 #------------------------------------------------------------------------
 
 use strict;
