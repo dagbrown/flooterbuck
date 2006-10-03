@@ -1,4 +1,4 @@
-# $Id: DBM.pl,v 1.6 2004/09/16 18:12:54 dagbrown Exp $
+# $Id: DBM.pl,v 1.7 2006/10/03 03:06:50 rich_lafferty Exp $
 #
 # infobot :: Kevin Lenzo  (c) 1997
 
@@ -674,8 +674,7 @@ sub topofthecharts(&$@) {  # &$@#!!!
         return sort { &$sortfun($a,$b) } (@_) 
     }
 
-    my @b=sort { $sortfun->($a,$b) } @_[0..$numtoreturn-1];
-
+    my @b;
     for my $x (@_) {
         if( $sortfun -> ( $b[$numtoreturn-1],$x ) == 1 ) {
             unshift @b,$x;
