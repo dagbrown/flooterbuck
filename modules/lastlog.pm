@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------
 # Lastlog module - anyone around?
 #
-# $Id: lastlog.pm,v 1.2 2006/10/03 00:00:59 rich_lafferty Exp $
+# $Id: lastlog.pm,v 1.3 2006/10/03 02:05:37 rich_lafferty Exp $
 #------------------------------------------------------------------------
 
 use strict;
@@ -28,7 +28,7 @@ sub scan(&$$) {
 			$reply .= "$nick (" . 
 			          ($hours ? "${hours} hrs, " : "") .
 					  ($minutes ? "${minutes} min " : "") .
-					  ($elapsed ? "ago" : "just now") . "), ";
+					  ($elapsed > 60 ? "ago" : "just now") . "), ";
 			$counter++;
     	}
 		$reply =~ s/, $//;
