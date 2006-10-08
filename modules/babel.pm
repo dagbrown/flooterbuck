@@ -3,7 +3,7 @@
 #
 # See the POD documentation (right here!) for more info
 #
-# $Id: babel.pm,v 1.6 2006/10/08 04:05:10 rich_lafferty Exp $
+# $Id: babel.pm,v 1.7 2006/10/08 04:18:37 rich_lafferty Exp $
 #------------------------------------------------------------------------
 
 
@@ -150,7 +150,7 @@ sub translate {
         $phrase = Encode::encode('utf-8', $phrase);
     }                           
 
-    $phrase = "XINFOBOTX: " . $phrase . " :XINFOBOTX";
+    $phrase = "### " . $phrase . " ###";
 	my $urltext = uri_escape($phrase);
 	$req->content("urltext=$urltext&lp=$languagepair");
  
@@ -176,7 +176,7 @@ sub translate {
 		# Translation header
         my $translated = "The translation confused me.";
 
-        if ($html =~ m|XINFOBOTX\s*:\s*(.*?)\s*:\s*XINFOBOTX|)
+        if ($html =~ m|###\s*(.*?)\s*###|)
         {
            $translated = $1;
         }
