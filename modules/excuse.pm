@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: excuse.pm,v 1.4 2005/08/31 13:37:44 rich_lafferty Exp $
+# $Id: excuse.pm,v 1.5 2006/10/08 01:30:28 rich_lafferty Exp $
 #
 # Includes the BOFH excuse file grabbed from:
 #       http://www.cs.wisc.edu/~ballard/bofh/excuses
@@ -30,7 +30,7 @@ sub scan(&$$) {
 
     my $excuse=$excuses[rand(@excuses)];
 
-    $callback->("Your excuse is: $excuse");
+    $callback->($excuse);
     return 1;
 }
 
