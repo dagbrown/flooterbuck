@@ -3,7 +3,7 @@
 #
 # See the POD documentation (right here!) for more info
 #
-# $Id: babel.pm,v 1.4 2006/10/08 01:29:33 rich_lafferty Exp $
+# $Id: babel.pm,v 1.5 2006/10/08 01:35:09 rich_lafferty Exp $
 #------------------------------------------------------------------------
 
 
@@ -159,10 +159,6 @@ sub translate {
 	if ($res->is_success) {
 	
 		my $html = $res->content;
-
-		open(F, "> /tmp/xlate.txt") or die;
-		print F $html;
-		close F;
 
 		# even translating from Japanese to English convert the 
 		# result because it probably has some characters that didn't
