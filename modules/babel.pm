@@ -3,7 +3,7 @@
 #
 # See the POD documentation (right here!) for more info
 #
-# $Id: babel.pm,v 1.7 2006/10/08 04:18:37 rich_lafferty Exp $
+# $Id: babel.pm,v 1.8 2006/10/08 04:30:06 rich_lafferty Exp $
 #------------------------------------------------------------------------
 
 
@@ -150,7 +150,7 @@ sub translate {
         $phrase = Encode::encode('utf-8', $phrase);
     }                           
 
-    $phrase = "### " . $phrase . " ###";
+	#$phrase = "### " . $phrase . " ###";
 	my $urltext = uri_escape($phrase);
 	$req->content("urltext=$urltext&lp=$languagepair");
  
@@ -176,9 +176,11 @@ sub translate {
 		# Translation header
         my $translated = "The translation confused me.";
 
-        if ($html =~ m|###\s*(.*?)\s*###|)
+        if ($html =~ m|<td bgcolor=white class=s>(.*?)</td>|s)
         {
            $translated = $1;
+		   $translated =~ s/<.*?>//g;
+		   $translated =~ s/\n/ /mg;
         }
 		return $translated;
 	} else {
