@@ -3,7 +3,7 @@
 #
 # See the POD documentation (right here!) for more info
 #
-# $Id: babel.pm,v 1.3 2004/03/09 04:54:45 dagbrown Exp $
+# $Id: babel.pm,v 1.4 2006/10/08 01:29:33 rich_lafferty Exp $
 #------------------------------------------------------------------------
 
 
@@ -150,7 +150,7 @@ sub translate {
         $phrase = Encode::encode('utf-8', $phrase);
     }                           
 
-    $phrase = "<infobot>" . $phrase . "</infobot>";
+    $phrase = "XINFOBOTX: " . $phrase . " :XINFOBOTX";
 	my $urltext = uri_escape($phrase);
 	$req->content("urltext=$urltext&lp=$languagepair");
  
@@ -159,6 +159,10 @@ sub translate {
 	if ($res->is_success) {
 	
 		my $html = $res->content;
+
+		open(F, "> /tmp/xlate.txt") or die;
+		print F $html;
+		close F;
 
 		# even translating from Japanese to English convert the 
 		# result because it probably has some characters that didn't
@@ -176,7 +180,7 @@ sub translate {
 		# Translation header
         my $translated = "The translation confused me.";
 
-        if ($html =~ m|<infobot>\s*(.*?)\s*</infobot>|)
+        if ($html =~ m|XINFOBOTX\s*:\s*(.*?)\s*:\s*XINFOBOTX|)
         {
            $translated = $1;
         }
@@ -189,6 +193,12 @@ sub translate {
 sub scan(&$$)
 {
 	my ($callback, $message, $who) = @_;
+
+	# compatibility with old infobot syntax
+	if (::getparam('babel_compat') && ($message =~
+			/^x\s+(to|from|through)\s+(\w+)\s+(.*)$/)) {
+        $message = "translate $3 $1 $2";
+    }
 
 	if (::getparam('babel') && ($message =~ /^translate/)) {
 		if ($no_babel) {

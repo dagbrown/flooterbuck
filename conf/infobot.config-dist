@@ -227,6 +227,9 @@ metar   true
 
 # babelfish translator.  jdf++. requires LWP, not included.
 babel   true
+# babel_compat permits old "x to fr I would like to buy a hamburger"
+# syntax
+# babel_compat true
 
 # slashdot headlines. requires LWP, not included. get it from CPAN.
 slash   true
