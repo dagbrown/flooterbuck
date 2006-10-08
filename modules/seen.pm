@@ -1,13 +1,14 @@
 #------------------------------------------------------------------------
 # "seen" bit--have you seen $PERSON recently?
 #
-# $Id: seen.pm,v 1.8 2004/04/25 22:10:03 dagbrown Exp $
+# $Id: seen.pm,v 1.9 2006/10/08 01:31:30 rich_lafferty Exp $
 #------------------------------------------------------------------------
 # -- from Question
 #
 # 2002/02/05 - Added "close match" searches.  Drew Hamilton <awh@awh.org>
 
 use strict;
+use POSIX;
 
 package seen;
 
@@ -73,7 +74,7 @@ sub scan(&$$) {
             my ($when,$where,$what) = split /$;/, $seen;
             my ($tstring, $shorttstring) = &get_timediff($when);
             $callback->("$person was last seen on $where $tstring ago, ".
-                        "saying: $what [$when]");
+                        "saying: $what " . POSIX::strftime('[%c]', localtime($when)));
             return 1;
         }
 
