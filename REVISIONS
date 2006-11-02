@@ -3,13 +3,15 @@
 New features
 ============
 
+- Fixed the currency exchange module after Yahoo changed their screen
+  format again.
 - Added a URL Police feature, that keeps track of whether a URL has been
   mentioned in a channel, and flames people for pasting URLs that have 
-  ever been seen before
+  ever been seen before.
 - Added an "earthquake" module which shows where the most recent
   earthquake in the world is.
 - Added Freenode nickserv authentication (thanks to devin++ for
-  that patch)
+  that patch).
 
 Bug Fixes
 =========
