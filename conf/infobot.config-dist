@@ -38,6 +38,9 @@ topten           $dbname-topten
 # do we have an ignore database? uncomment this if not.
 ignore           $dbname-ignore
 
+# timezones db for world clock in "fuzzyclock"
+timezones        $dbname-timezones
+
 # should we ALWAYS close and reopen dbm on update?
 # some systems don't do commitment until quit.
 #

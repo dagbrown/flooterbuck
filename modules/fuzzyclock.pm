@@ -8,21 +8,31 @@
 # Make it psychic enough to figure out what timezone you're in, and have
 # it tell you the right time.  (Ha ha ha)
 #
-# $Id: fuzzyclock.pm,v 1.19 2006/11/03 02:08:19 rich_lafferty Exp $
+# $Id: fuzzyclock.pm,v 1.20 2006/11/03 04:13:42 rich_lafferty Exp $
 #------------------------------------------------------------------------
 
 use strict;
 package fuzzyclock;
 
-sub fuzzytime {
-    my $time=shift;
-    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst);
+my ($no_datetime, %timezones);
 
-    if(defined($time)) {
-        ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime $time;
-    } else {
-        ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime;
+BEGIN {
+    eval "use DateTime; use DateTime::TimeZone;";
+    if ($@) { 
+        $no_datetime++; 
     }
+    else {
+        for my $tz (DateTime::TimeZone->all_names) {
+            $tz =~ m|(.*)/(.*)|;
+            $timezones{lc $2} = $&;
+        }
+    }
+}
+
+&::openDBMx('timezones');
+
+sub fuzzytime {
+    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = @_;
 
     my $timestring;
 
@@ -96,14 +106,91 @@ sub fuzzytime {
     return sprintf($timestring,$hours[$myhour]);
 }
 
+sub place2tz {
+    my $placename = shift;
+    $placename =~ s/\p{IsPunct}//g;
+    $placename =~ s/ /_/g;
+    &::status("worldclock: $placename");
+
+    if (exists $timezones{lc $placename}) {
+        return $timezones{lc $placename};
+    }
+    elsif (my $tz = &::get("timezones", lc $placename)) {
+        return $tz;
+    }
+    else {
+        return undef;
+    }
+}
+
+sub tztime {
+    my $tz = shift;
+    my $dt = DateTime->now;
+    $dt->set_time_zone($tz);
+
+    return ($dt->sec, $dt->min, $dt->hour, $dt->day_of_month_0, $dt->month_0, $dt->year - 1900, '', '', 0);
+}
+
+sub tzday {
+    my $tz = shift;
+    my $dt = DateTime->now;
+    $dt->set_time_zone($tz);
+
+    return $dt->day_name;
+}
+
 sub scan(&$$) {
     my ($callback, $message, $who) = @_;
-    
-    if($message =~ /(?:what time (?:is it|do you have))|(?:fuzzy?(?:clock|time))\??/i) {
-        if(rand()>0.5) {
-            $callback->("It's ".fuzzytime().", $who.");
+   
+    if ($message =~ /^\s*what time is it in (.*\w)/i or
+        $message =~ /^\s*worldclock\s+(.*\w)/i )
+    {
+        if ($no_datetime) {
+            $callback->("Sorry, $who, I don't know about timezones.");
+            &::status("worldclock requires DateTime::TimeZone");
+        }
+        else
+        {
+            my $placename = $1;
+            my $timezone = place2tz($placename);
+  
+            if ($timezone) {
+                &::status("worldclock: $placename -> $timezone");
+                $callback->("It's ".fuzzytime( tztime($timezone) )." on ".tzday($timezone)." in $placename, $who.");
+            }
+            else {
+                &::status("worldclock: no timezone for $placename");
+                $callback->("I don't know about $placename, $who.");
+            }
+        }
+        return "NOREPLY"; 
+    }
+    elsif ($message =~ /^\s*what time (?:is it|do you have)/i or
+           $message =~ /^\s*fuzzy(?:clock|time)/i) {
+        if (rand() > 0.5) {
+            $callback->("It's ".fuzzytime( localtime() ).", $who.");
         } else {
-            $callback->("$who: It's ".fuzzytime()." where I am.");
+            $callback->("$who: It's ".fuzzytime( localtime() )." where I am.");
+        }
+        return "NOREPLY";
+    }
+    elsif ($message =~ m|^\s*new timezone\s+(\S+)\s+(\S+)|i) {
+        my $alias = $1;
+        my $placename = $2;
+
+        if ($no_datetime) {
+            $callback->("Sorry, $who, I don't know about timezones.");
+            &::status("worldclock requires DateTime::TimeZone");
+        }
+
+        my $timezone = place2tz($placename);
+        if ($timezone) {
+            &::status("worldclock: $alias is an alias for $timezone");
+            &::set("timezones", lc($alias), $timezone);
+            $callback->("$who: So it's ".fuzzytime( tztime($timezone) )." on ".tzday($timezone)." in $alias. Gotcha.");
+        } 
+        else {
+            $callback->("$who: I don't know about $placename.");
         }
         return "NOREPLY";
     }
