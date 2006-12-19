@@ -3,7 +3,7 @@
 #
 # See the POD documentation (right here!) for more info
 #
-# $Id: stockquote.pm,v 1.11 2002/08/13 17:12:20 awh Exp $
+# $Id: stockquote.pm,v 1.12 2006/12/19 16:47:32 rich_lafferty Exp $
 #------------------------------------------------------------------------
 
 =head1 NAME
@@ -96,13 +96,14 @@ sub parse_response($$) {
     my ($name, $current, $date, $time, $change, 
         $open, $min, $max, $volume )=split /,/,$response;
 
-    #awh@awh.org -- calculate net percentage change.  
-    my $pct = ($change / ($current - $change)) * 100;
-    $pct = sprintf("%0.02f",$pct);
-
+    &::status("quote: $min $max $change $date");
     return "No such ticker symbol $symbol"
         if $min eq "N/A" and $max eq "N/A" and $change eq "N/A"
            and $date eq "N/A";
+
+    #awh@awh.org -- calculate net percentage change.  
+    my $pct = ($change / ($current - $change)) * 100;
+    $pct = sprintf("%0.02f",$pct);
 
     return "$name last $date $time: $current $change [$pct%] ($min - $max) ".
         "[Open $open] Vol ".commify($volume);
@@ -165,7 +166,7 @@ sub scan(&$$) {
     my ($callback,$message,$who) = @_;
     my ($symbol);
 
-    if ($message =~ /^(?:quote|stock price|index)(?: of| for)? (\^?[A-Z.0-9]{1,8})\?*\s*$/i) {
+    if ($message =~ /^(?:quote|stock price|index)(?: of| for)? (\^?[A-Z.0-9-]{1,8})\?*\s*$/i) {
         if($no_quote) {
             &main::status("Sorry, quote requires LWP and couldn't find it");
             return undef;
