@@ -60,6 +60,7 @@ micron  micrometer
 inch    2.54 cm        # This is the official definition and is exact
 in      inch
 inches  inch           # plural
+mil     0.001 inch
 foot    12 inch
 ft      foot
 feet    foot
