@@ -3,7 +3,7 @@
 #
 # Dave Brown
 #
-# $Id: excuse.pm,v 1.5 2006/10/08 01:30:28 rich_lafferty Exp $
+# $Id: excuse.pm,v 1.6 2007/02/16 19:57:05 rich_lafferty Exp $
 #
 # Includes the BOFH excuse file grabbed from:
 #       http://www.cs.wisc.edu/~ballard/bofh/excuses
@@ -490,4 +490,3 @@ Terrorists crashed an airplane into the server room, have to remove /bin/laden. 
 astropneumatic oscillations in the water-cooling
 Somebody ran the operating system through a spelling checker.
 Rhythmic variations in the voltage reaching the power supply.
-Wardrobe malfunction during the halftime performance.
