@@ -46,7 +46,7 @@ sub ping {
     while (<DUCK>) {
         chomp;
         if (/^\d+ packets transmitted/ or /^rtt/) {
-            push (@out, $_);
+            push (@out, "$host: $_");
         }
     }
  
