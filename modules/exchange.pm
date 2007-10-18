@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------
 # "exchange" command, change currencies
 #
-# $Id: exchange.pm,v 1.14 2006/10/03 02:05:37 rich_lafferty Exp $
+# $Id: exchange.pm,v 1.15 2007/10/18 22:24:46 rharman Exp $
 #------------------------------------------------------------------------
 
 use strict;
@@ -30,6 +30,29 @@ BEGIN {
     $no_posix++ if ($@);
 }
 
+sub getrate {
+    my($From, $To) = @_;
+
+    # set up the HTTP connection
+    my $ua = new LWP::UserAgent;
+    $ua->agent("Mozilla/4.5 " . $ua->agent);        # Let's pretend
+    if (my $proxy = main::getparam('httpproxy')) { $ua->proxy('http', $proxy) };
+    $ua->timeout(10);
+
+    # request the currency conversion from Yahoo
+    my $Converter="http://download.finance.yahoo.com/d/quotes.csv?s=$From$To=X&f=sl1";
+    my $req = GET $Converter;
+    my $res = $ua->request($req);                   # Submit request
+
+    if (!$res->is_success) {
+       return "EXCHANGE: ". $res->status_line;
+    }
+
+    my ($symfrom,$symto,$mult) = ($res->as_string =~ m/"(\w{3})(\w{3})=X",([\d.]+)/);
+
+    return wantarray ? ($symfrom,$symto,$mult) : $mult;
+}
+
 sub exchange {
     my($From, $To, $Amount) = @_;
 
@@ -41,29 +64,10 @@ sub exchange {
     if (my $proxy = main::getparam('httpproxy')) { $ua->proxy('http', $proxy) };
     $ua->timeout(10);
 
-    # request the currency conversion from Yahoo
-    my $Converter="http://finance.yahoo.com/currency/convert?amt=$Amount&from=$From&to=$To&submit=Convert";
-    my $req = GET $Converter;
-    my $res = $ua->request($req);                   # Submit request
+    my ($curnamefrom, $curnameto, $mult) = getrate($From,$To);
+    &::status("$curnamefrom, $curnameto, $mult");
 
-    # make sure it worked.
-    if (!$res->is_success) {
-       return "EXCHANGE: ". $res->status_line;
-    }
-      
-    my $html = $res->as_string;
-    
-    # trim it down so it's a bit easier for me to see when I print it
-    # out for debugging. 
-    $html =~ s/.*Symbol//s; 
-    $html =~ s/<img.*//s; 
-
-    # gross screen-scraping.  It would be nice if they gave a nice XML
-    # document, but they don't.
-
-#</b></td><td class="yfnc_tablehead1"><b>Canadian Dollar</b></td><td class="yfnc_tablehead1" colspan="2"><b>Exchange<br>Rate</b></td><td class="yfnc_tablehead1"><b>Japanese Yen</b></td><td class="yfnc_tablehead1"><b>Bid</b></td><td class="yfnc_tablehead1"><b>Ask</b></td></tr><tr align="center"><td class="yfnc_tabledata1"><a href="/q?s=CADJPY=X">CADJPY=X</a></td><td class="yfnc_tabledata1"><b>100</b></td><td class="yfnc_tabledata1">May 10</td><td class="yfnc_tabledata1">81.854</td><td class="yfnc_tabledata1"><b>8,185.408</b></td><td class="yfnc_tabledata1">81.854</td><td class="yfnc_tabledata1">81.897</td></tr></table></td></tr></table><center> 
-    
-    my ($curnamefrom, $curnameto, $amount) = ($html =~ m/head1\"><b>([^<]*)<\/b>.*?head1\"><b>([^<]*)<\/b>.*data1\"><b>([^<]*)<\/b>/);
+    my $amount = $Amount * $mult;
 
     # yay, it matched!
     if ($curnamefrom and $curnameto and $amount) {
