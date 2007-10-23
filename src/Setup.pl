@@ -89,6 +89,10 @@ sub setup {
     if ($param{'seen'}) {
         &openDBMx('seen');
     }
+
+    if ($param{'message'}) {
+        &openDBMx('message');                  
+    }
     
     if ($param{'topten'}) {
         &openDBMx('topten');

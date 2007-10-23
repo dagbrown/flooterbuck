@@ -3,7 +3,7 @@
 #
 # See the POD for more information
 #
-# $Id: message_center.pm,v 1.7 2003/04/25 03:11:19 dagbrown Exp $
+# $Id: message_center.pm,v 1.8 2007/10/23 06:34:45 rharman Exp $
 #------------------------------------------------------------------------
 
 =head1 NAME
@@ -44,63 +44,57 @@ package message_center;
 
 my $message_center;
 
-BEGIN {
-    if(::getparam("message_center")) {
-        $message_center=1;  # used by User.pl to see if it should run have_message
-    }
-}
-
 END {
-    ::closeDBM('messages');
+    ::closeDBM('message');
 }
 
 sub leave_message {
     my ($from, $to, $msg)=@_;
+    $to =~ s/:$//; ### Remove when TODO below regarding colon greediness fixed
 
-    unless( &::get(seen=>$to) ) {
+    unless( &::get(seen=>lc($to)) ) {
         return "Sorry, I've never seen $to before.";
     }
 
-    my $msgs=::get(messages => $to);
+    my $msgs=::get(message => lc($to));
     my $new_message;
     if (length($msgs)==0) {
-        $new_message="0\0";   # "knows about messages" flag
+        $msgs="0";   # "knows about messages" flag
     } else {
-        $new_message=$msgs;
-        substr($new_message,0,1)='0';
+        substr($msgs,0,1)='0';
     }
 
-    $new_message="$from [".scalar localtime()."] said: $msg\0";
-    ::set("messages",$to,$new_message);
-    return "Message for $to logged.";
+    $new_message = $msgs . "\0$from [".scalar localtime()."] said: $msg";
+    ::set("message",lc($to),$new_message);
+    return "Message for $to stored.";
 }
 
 sub have_message {
     my $who=shift;
 
-    my $msgs=::get(messages => $who);
-    return 0 unless defined $msgs;
+    my $msgs=::get(message => lc($who));
+    return unless defined $msgs;
 
     my @msgs=split "\0",$msgs;
     my $knows=shift @msgs;
 
-    return 0 if $knows==1;
-    
-    ::msg($who,"You have ".scalar @msgs." messages waiting.");
+    return undef if $knows==1;
+    ::msg($who,"You have ".scalar @msgs." message".(scalar @msgs == 1 ? "" : "s") . " (\"messages\" to read).");
     substr($msgs,0,1)=1;
-    ::set("messages",$who,$msgs);
+    ::set("message",lc($who),$msgs);
+    return;
 }
 
 sub message_erase {
     my $who=shift;
-    ::forget(messages => $who);
+    ::forget(message => $who);
     return "Messages erased";
 }
 
 sub message_read {
     my $who=shift;
 
-    my $msgs=::get(messages => $who);
+    my $msgs=::get(message => lc($who));
     if($msgs) {
         my @msgs=split "\0",$msgs;
         shift @msgs;
@@ -111,7 +105,8 @@ sub message_read {
         }
         return "";
     } else {
-        return "You have no messages waiting."
+        ::msg($who, "You have no messages waiting.");
+        return "";
     }
 }
 
@@ -139,8 +134,10 @@ sub scan(&$$) {
     } elsif($message =~ /^(?:messages|msgs)\s*$/i) {
         $callback->(message_read(lc($who)));
         return 1;
+    } else {
+        $callback->(have_message($who));
+        return undef;
     }
-    return undef;
 }
 
 "message_center";

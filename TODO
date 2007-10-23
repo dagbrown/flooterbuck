@@ -6,8 +6,6 @@ also define a help() subroutine or something.
 
 Get rid of the distinction between 'is' and 'are'. 
 
-Make message_center work.
-
 Stuff that never got fixed in infobot, and still needs to get fixed
 here:
 
