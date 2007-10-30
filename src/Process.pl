@@ -79,6 +79,10 @@ sub process {
         $infobots{$nuh} = $who;
     }
 
+    if ($msgType =~ /public/) {
+        Modules_Preprocess(channel(),$message,$who);
+    }
+
     if ($infobots{$nuh}) {
         if ($msgType =~ /private/) {
             if ($message =~ /^QUERY (<.*?>) (.*)/) {
@@ -340,6 +344,7 @@ sub process {
 
         $message  = $tell_obj if $tell_obj;
 
+        
         if ($continuity or $addressed or 
                 (getparam('addressing') ne "REQUIRE")) {
 

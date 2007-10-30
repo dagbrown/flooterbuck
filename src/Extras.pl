@@ -13,6 +13,8 @@ package Extras;
 
 my @modules;
 
+my %nopreprocess_modules;
+
 sub loadmodules() {
     @modules=();
     opendir(MODS,$::param{'moddir'});
@@ -26,12 +28,39 @@ sub loadmodules() {
         die "$@" if $@;
     }
     closedir MODS;
+    %nopreprocess_modules=();
     &::status(sprintf("Modules loaded: %s.\n",join(", ",@modules)));
 }
 
+sub main::Modules_Preprocess {
+    my ($channel, $message, $who) = @_;
+
+    loadmodules unless @modules;
+
+    for my $module(@modules) {
+        if($::msgType eq 'public') {
+            unless($nopreprocess_modules{$module}) {
+                if(eval qq{${module}::preprocess(\$channel,
+                        "\$message",\$who)}) {
+                    &::status("preprocess caught by $module");
+                }
+
+                if($@) {
+                    if("$@" =~ /^Undefined subroutine.*preprocess/) {
+                        $nopreprocess_modules{$module}++;
+                    } else {
+                        warn "$@" 
+                    }
+                }
+            }
+        }
+    }
+
+    return undef;
+}
 
 sub main::Extras {
-    my $callback;
+
     loadmodules unless @modules;
 
     for my $module(@modules) {
@@ -46,7 +75,9 @@ sub main::Extras {
                 &::status("caught by $module");return 'NOREPLY'
             }
 
-            warn "$@" if "$@";
+            if($@) {
+                warn "$@" unless "$@" =~ /^Undefined subroutine/;
+            }
 
         } else {
             if (

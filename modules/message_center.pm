@@ -3,7 +3,7 @@
 #
 # See the POD for more information
 #
-# $Id: message_center.pm,v 1.8 2007/10/23 06:34:45 rharman Exp $
+# $Id: message_center.pm,v 1.9 2007/10/30 08:11:36 dagbrown Exp $
 #------------------------------------------------------------------------
 
 =head1 NAME
@@ -110,6 +110,12 @@ sub message_read {
     }
 }
 
+sub preprocess {
+    my ($channel,$message,$who) = @_;
+
+    have_message($who);
+}
+
 sub scan(&$$) {
     my ($callback,$message,$who) = @_;
 
@@ -134,9 +140,6 @@ sub scan(&$$) {
     } elsif($message =~ /^(?:messages|msgs)\s*$/i) {
         $callback->(message_read(lc($who)));
         return 1;
-    } else {
-        $callback->(have_message($who));
-        return undef;
     }
 }
 
