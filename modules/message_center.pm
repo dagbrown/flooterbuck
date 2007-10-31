@@ -3,7 +3,7 @@
 #
 # See the POD for more information
 #
-# $Id: message_center.pm,v 1.9 2007/10/30 08:11:36 dagbrown Exp $
+# $Id: message_center.pm,v 1.10 2007/10/31 00:58:57 dagbrown Exp $
 #------------------------------------------------------------------------
 
 =head1 NAME
@@ -103,6 +103,7 @@ sub message_read {
         foreach my $msg (@msgs) {
             ::msg($who,$msg);
         }
+        ::clear("message", $who);
         return "";
     } else {
         ::msg($who, "You have no messages waiting.");
