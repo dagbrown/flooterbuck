@@ -1,8 +1,22 @@
 next -
 
+New features
+============
+- Made it so that "convert" automatically tries to do currency
+  conversions if it looks like the user type "convert" when he meant
+  "exchange".
+- Added a preprocessing callback so that more stuff (karma, or urls, or
+  seen) can be moved into modules instead of being processed by a
+  monolithic slab.
+- The message center is back!  If you say "bot, msg somenick I have a
+  message for you" it will lurk until somenick says something, and then
+  inform somenick via private message that he has messages waiting.
+
 Bug Fixes
 =========
 - Fixed the handling of noon in fuzzyclock which was broken
+- Yet another change to the way Yahoo does currency, hence yet another
+  update of that module.
 
 1.2.2 - 
 
