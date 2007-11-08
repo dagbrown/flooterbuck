@@ -25,7 +25,7 @@ you keep your old installations of Infobot around, just in case you find
 that there is something necessary which only exists in the old Infobot
 (and in that case, please contact the authors of Flooterbuck).
 
-Theoretically, you can copy all of the .db files and the conf/*.config 
+Theoretically, you can copy all of the .db files and the conf/*.config
 files from your old Infobot installations into your Flooterbuck installation
 and it will work.  However, you may not get all of the new features of
 Flooterbuck that way -- you should at least have a look at the sample
@@ -39,7 +39,7 @@ Infobot, please see the REVISIONS files.
 
 -- Very minimal setup instructions
 
-You will need to update your infobot.config 
+You will need to update your infobot.config
 and infobot.users.  See the example files.
 
 This requires perl 5.
@@ -51,10 +51,10 @@ $^O didn't work for me under os8).
 
 The infobot uses parameter files, typically in the
 params directory, to set up with.  It treats anything
-on the command line as a parameter file and tries to 
-load it. 
+on the command line as a parameter file and tries to
+load it.
 
-If you are using macperl, you will want to set 
+If you are using macperl, you will want to set
 the value of the macperl parameter to 1 in the
 two given param files (in the 'files' dir).
 
@@ -63,17 +63,17 @@ may change.  NOTE that the irc version has no output
 by default; you'll have to turn up the debug level
 to get more.
 
-to start up the infobot, just invoke it from the 
+to start up the infobot, just invoke it from the
 command line.
 
-   infobot 
+   infobot
 
 
 
 -- A note on forms
 
 You can prepend the tag <reply>
-to values in the db to just get a reply with no 
+to values in the db to just get a reply with no
 extra info.
 
 e.g.
@@ -91,14 +91,14 @@ of something like "i think x is y".
 You can place your module in the modules directory.  It needs to define a
 package with the same name as the file itself (without the .pm extension).  It
 needs to define a subroutine named scan() that takes a callback function, a
-message, and the nick of the person who wrote that message.  
+message, and the nick of the person who wrote that message.
 
 The callback function is the function which, when called with an
 argument, will reply to the query in the appropriate way.  That is,
 if the query was originally a private message, the callback function
-will reply via private message.  If the query was a message in a 
+will reply via private message.  If the query was a message in a
 channel, the callback function will send the reply to the correct
-channel.  
+channel.
 
 If the module does not "catch" a message, then scan() function should
 return undef to allow the message to "fall through" to other modules.
@@ -163,7 +163,7 @@ Eventually, kill it and then you'll probably
 want to crontab it.  included is a sample crontab
 and the script that you will need to edit.
 
-dump_db <dbname> 
+dump_db <dbname>
 
 will just make a flat ascii file out of the named db,
 e.g.
