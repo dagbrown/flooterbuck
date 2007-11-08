@@ -542,9 +542,11 @@ sub scan(&$$) {
 
         if ($response =~ /Unknown unit `(.*?)'/i) {
 		$result = "I don't know how to convert $from to $to.";
-            if($from =~ /^[A-Za-z][A-Za-z][A-Za-z]$/ and
-               $to =~ /^[A-Za-z][A-Za-z][A-Za-z]$/ ) {
-                $result .= q/  (Perhaps you want "exchange?")/;
+            if($from =~ /^([0-9]*\s+)?[A-Za-z]{3}$/ and
+               $to =~ /^[A-Za-z]{3}$/ ) {
+               $message =~ s/^convert/exchange/;
+               undef $result;
+               &exchange::scan($callback,$message,$who);
             }
         } elsif($response =~ /^(?:[+-]?)(?=\d|\.\d)\d*(?:\.\d*)?(?:[Ee](?:[+-]?\d+))?/
                 && $response !~ /\bis\b/) {
@@ -553,7 +555,9 @@ sub scan(&$$) {
             $result = "$response\n";
         }
 
-        $callback->($result);
+        if($result) {
+            $callback->($result);
+        }
         return 1;
     }
 }
