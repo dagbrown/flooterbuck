@@ -1,0 +1,61 @@
+# Template infobot extension
+
+use strict;
+package modulename;
+
+BEGIN {
+	# eval your "use"ed modules here
+}
+
+sub scan(&$$) {
+    my ($callback,$message,$who) = @_;
+
+    # Check $message, if it's what you want, then do stuff with it
+    if($message is what I want) {
+        my $reply=process_message($message);
+        $callback->($reply);
+        return 1;
+    }
+
+    return undef;
+}
+
+return "modulename";
+
+__END__
+
+=head1 NAME
+
+Filename.pm - Description
+
+=head1 PREREQUISITES
+
+	Some::Module
+
+=head1 PARAMETERS
+
+switchname
+
+=over 4
+
+=item value1
+
+Description
+
+=item value2
+
+Description
+
+=back
+
+=head1 PUBLIC INTERFACE
+
+Here you put how you call your sub from the bot user's point of view
+
+=head1 DESCRIPTION
+
+What is it?
+
+=head1 AUTHORS
+
+Who are you?

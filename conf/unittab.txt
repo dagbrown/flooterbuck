@@ -1,0 +1,619 @@
+#
+# Unit defintions
+# 18 May 2001  M-J. Dominus (mjd-perl-units+@plover.com). 
+# This file is in the PUBLIC DOMAIN.
+# All rights abandoned.
+#
+# If you discover definitions of units that do not appear in this
+# file, you are invited to mail them to mjd-perl-units+@plover.com, so
+# that I can include them in a future version.  Please include the
+# date of this file, 18 May 2001, with all such submissions.
+
+# If a unit is defined as `***', that means
+# it has no definition because it is a fundamental unit.
+
+# Fundamental units:
+# Seven instrinsic SI units:
+gram       ***
+meter	   ***
+second     ***
+ampere     ***
+candela    ***
+Kelvin     ***
+mole       ***
+# Two supplementary units
+radian     ***
+steradian  ***
+# Some miscellany
+dollar     ***
+bit        ***
+sheet      ***      # Of paper
+turn       ***      # Of coiled wire
+
+# DIMENSIONLESS
+pi         3.1415926535897932386
+one        1
+two        2
+three      3
+four       4
+five       5
+six        6
+seven      7
+eight      8
+nine       9
+ten        10
+half       1|2
+e	   2.718281828459045 # Why did I put this in?  Oh, I don't know.
+Neper	   1         # Unit of logarithmic ratio
+Np         Neper
+# Would it be better to make this a fundamental unit?
+bel	   .868588963 Np   # 2/ln(10) actually
+B          bel
+dB         decibel
+
+# SPELLING
+metre   meter
+
+# LENGTH
+m       meter
+km      kilometer
+cm      centimeter
+mm      millimeter
+micron  micrometer
+inch    2.54 cm        # This is the official definition and is exact
+in      inch
+inches  inch           # plural
+mil     0.001 inch
+foot    12 inch
+ft      foot
+feet    foot
+yard    3 feet
+yd      yard
+mile    5280 feet
+mi      mile
+nautical 1.151         # For `nautical mile'
+parsec  1.91615e13 mi
+# light year will be implied by `year' and `light' below
+fathom  6 ft
+cable   120 fathoms
+league  3 mi
+bolt    25 yd          # Of cloth; bolt length varies from bolt to bolt
+                       # 25 yd is typical
+cubit   18 in
+ell     45 in          # More or less standard, although other ells
+                       # have also been used.
+hand    4 in
+palm    3 in
+span    9 in
+pace    2.5ft
+astronomicalunit 92.9 megamiles  # Is this exact?
+au      astronomicalunit
+rope    20 ft
+skein   360 feet
+
+# Surveyor's
+furlong 1|8 mi
+chain   1|10 furlong
+rod     1|4 chain
+link    1|100 chain
+
+# Typographic
+point    .013837 in
+pt       point
+bigpoint 1|72 in
+pica     12 pt
+didot    1238|1157 pt
+dd       didot
+cicero   12dd  # TeX likes to abbreviate this to cc, but cc is cubic centimeter
+scaledpoint 1|65536 pt # Internal to TeX
+sp       scaledpoint
+
+# Sysadmin
+rackunit  1.75 inch
+U       rackunit
+
+# AREA
+are     (10 m)2        # Implies `hectare'
+acre    chain furlong  # Now you know why an acre is the size it is
+rood    1|4 acre
+township 36 mi2        # Who uses these?
+barn    (1.0E-12 centimeter)2 # Particle physics
+board   144 in3/ft     # Implies `board feet'
+tatami  (1.82405 m*m)  # Japanese apartment sizes!
+mat	tatami
+jou tatami
+tsubo (tatami*2)
+
+# VOLUME
+cc      cm3
+liter   (decimeter)3
+ml      milliliter
+l       liter
+litre   liter
+stere   m3
+floz    29.573 ml      # `floz' means `fluid ounce', which is different
+                       # from `ounce', which is a measurement of mass.
+                       # See `pound' below for more details.
+fldram  1|8 floz
+minim   1|60 fldram
+cup     8 floz
+cu      cup
+gill    1|2 cup 
+pint    two cups
+quart   two pints
+pottle  two quarts     # Yup!
+gallon  two pottles
+qt      quart
+gal     gallon
+tablespoon 1|2 floz
+tbsp       tablespoon
+teaspoon   1|3 tbsp
+tsp        teaspoon
+cordfoot   16 ft2      # NOT the same as `cord foot'.
+cordfeet   cordfoot
+cord       8 cordfeet
+# Barrels are complicated.  `Barrel' here means `U.S. liquid barrel'.
+barrel     31.5 gal
+bbl        barrel
+hogshead   two barrels
+butt       two hogsheads
+tun        two butts
+firkin     9 gal        # American firkin, not British firkin
+perch      24.75 ft3    # Masonry
+puncheon   84 gal
+
+# Delightful British liquid volumes; they all begin with `brit'.
+britfloz   28.41225 ml
+britminim  1|480 britfloz
+britdrachm 1|8 britfloz
+drachm     britdrachm     # U.S. drachm is spelled `dram'.
+britgill   5 britfloz     # five, NOT four.
+britnoggin britgill
+noggin     britnoggin     # Yeah, as though anyone else would have a `noggin.'
+britpint   4 britgill
+britpt     britpint
+britquart  2 britpint
+britqt     britquart
+britgallon 4 britquart
+britgal    britgallon    
+britpeck   2 britgal
+britfirkin 9 britgal  
+britkilderkin  two britfirkins
+kilderkin britkilderkin  # kilderkin is British only
+britbucket 4 britgal     # That's `britbucket,' not `bit bucket'.
+bucket     britbucket    # Buckets are brit only.
+britlast   2909.414 liters
+last       britlast
+
+# Dry volume
+dry     1.164904862579 # For `dry pint,' `dry quart,' etc.
+peck    8 dry quarts
+bushel  4 pecks
+bu      bushel
+seam    8bu
+bag     3bu 
+
+
+imperial 1.201          # For `imperial pint,' etc.  
+
+# Wine and Spirits measure
+
+pony                    1 floz
+jigger                  1.5 floz   # Can vary between 1 and 2 floz
+shot                    jigger     # Sometimes 1 floz
+eushot                  25 ml      # EU standard spirits measure
+fifth                   1|5 gallon
+winebottle              750 ml     # US industry standard, 1979
+winesplit               1|4 winebottle
+wineglass               4 floz
+magnum                  1.5 liter  # Standardized in 1979, but given
+                                   # as 2 qt in some references
+metrictenth             375 ml
+metricfifth             750 ml
+metricquart             1 liter
+
+# French champagne bottle sizes
+
+split                   200 ml
+jeroboam                2 magnum
+rehoboam                3 magnum
+methuselah              4 magnum
+salmanazar              6 magnum
+balthazar               8 magnum
+nebuchadnezzar          10 magnum
+
+
+# MASS (also WEIGHT)
+#
+# To avoid confusing the end user, we will pretend that `pound' is
+# a unit of mass, interconvertible with `grams'.  If you want 
+# pounds of force, see `lbf,' below.  In this section, `pound' 
+# really means `mass of an object that weighs one-pound at the surface
+# of the Earth.'  That is, in this program, `slug' has its usual
+# meaning, and `pound' is synonymous aith `slug'.
+g             gram
+kg            kilogram
+metricton     kilokilogram
+tonne         metricton
+mg            milligram
+grain         64.79891 mg
+ounce         437.5 grains
+oz            ounce
+pound         16 oz
+lb            pound
+slug          lb         
+hundredweight 112 lb  # This is the `long' hundredweight, analagous to
+                      # the long ton.  There is also a `short' hundredwight,
+                      # but it's just a hectlb, so I put this one in instead.
+cwt           hundredweight    
+quarter       5 cwts
+longton       20 cwt
+ton           longton
+short         100|112   # Convert long tons, cwts, and quarters to short.
+shortton      short ton
+stone         14 lb
+cental        100 lb
+wey           252 lb
+# Obscure apothecaries' measures
+scruple       20 grains
+dram          3 scruples
+apothounce    480 grains
+apothoz       apothounce
+apothpound    12 apothoz
+apothlb       apothpound  
+# Troy measures (for gold and precious stones)
+pennyweight   24 grains
+troyoz        480 grains # We can't define `troy' as a constant,
+                         # because there are 16 oz in a lb, but only
+                         # 12 troyoz in a troylb, so at least one of
+                         # `troy oz' or `troy lb' would be wrong.
+troylb        12 troyoz
+carat         3.08647 grain # Metric version.  Is this useful?
+atomicmassunit 1.6605402e-27 kg # NIST 19990301 (+/- 0.10e-33 kg)
+amu           atomicmassunit
+quintal       100kg      # Metric quintal.  Wasn't there another quintal?
+elvis         255lb      # At the time of his death, the King weighed 255 lb.
+
+# TIME
+sec		second
+s               second
+minute		60 sec
+min		minute
+hour		60 min
+hr		hour
+day		24 hrs
+dy		day                  # This will denote mean solar days
+siderealday     0.99726957 dys    
+week		7 days
+wk		week
+month		30 days
+lunarmonth      29.530588 days       # Mean solar days
+meanmonth       730 hours
+mo		month
+tropicalyear	365.24219 dys        # Mean solar days
+siderealyear    365.25636 dys        # Mean solar days
+leapyear        366       dys        # Mean solar days
+calendaryear    365       dys        # Mean solar days
+gregorianyear	365.2425  dys
+year            tropicalyear         # Correct on average for most calculations
+yr		years
+fortnight	two weeks
+decade          10 years
+century         100 years
+millennium      1000 years
+millennia       millennium
+centuries       century
+beat		1|1000 day	     # Swatch Internet Time (``Fuck the Sun'')
+
+# Velocity
+knot            1 nautical mi/hour
+mph             1 mi/hr
+
+# SCIENTIFIC
+#
+# Electromagnetic items, work, force, energy.
+#
+# Velocity
+c             299792458 m/s  # NIST 19990301 EXACT
+light         c   # Implies `light year'
+
+
+# Absolute temperature
+kelvin        Kelvin
+K             Kelvin
+Rankine       5|9 K     # This is a very funny unit
+Ra            Rankine
+
+# Amount of substance
+mol           mole
+Avogadro      6.0221367e23
+avogadro      Avogadro
+molecule      1 mole per Avogadro # 1 mole is an Avogagro-number of molecules
+
+# Current
+# The Ampere is fundamental here, defined as the constant current
+# which, if maintained in two straight parallel conductors of infinite
+# length, of negligible circular cross-section, and placed 1m apart in
+# vacuum, would produce between these conductors a force equal to 2e-7
+# newtons per meter of length.
+Ampere        ampere
+amp           ampere
+abampere      10 amps
+abamp         abampere
+statampere    3.335635e-11 abamperes
+statamp       statampere
+
+# What is this called?  Is it capitalized?  Is there an abbreviation?
+gilbert       0.79577472 ampere turns
+
+# Electrostatic charge
+Coulomb       ampere sec
+coulomb       Coulomb
+coul          Coulomb
+C             Coulomb
+electron      1.60217733e-19 C  # Charge on the electron; implies electron-volts
+e             electron 
+abcoulomb     10C
+statcoulomb   3.335635e-11 abcoulomb
+
+
+# Force
+Newton        kg m/s2
+newton        Newton
+N             newton
+dyne          g cm/s2
+grav          9.8 m/s2  # Acceleration due to gravity
+gee           grav
+# Actually the accleration varies with altitude and latitude, 
+# from 9.78039 m/s2 at the equator to 9.83217 m/s2 at the poles.
+# This mean value corresponds to a latitude of about 38 degrees.
+lbf           lb grav
+
+# Pressure
+Pascal        N/m2
+pascal        Pascal
+Pa            pascal
+atmosphere    101325 N/m2  # NIST 20010518 EXACT
+atm           atmosphere
+bar           megadyne/cm2  # Implies `millibars'
+mercury       1|760 atm/mm # Implies `mm mercury' and `inches mercury'
+hg            mercury
+torricelli    mm hg
+torr          torricelli
+water         .0295 atm/ft # Implies `feet water'
+barye         dyne/cm2
+air           6.6083e-5 atm/foot  # At 60 deg.F; Implies `feet air'
+
+# Work and energy
+Joule         newton-meter
+joule         Joule
+J             joule
+footpound     ft-lbf   # foot-pound won't work, because `pound' is a mass
+calorie       4.186 J
+cal           calorie
+kcal          kilocalorie
+britishthermalunit  1054.8 J
+btu           britishthermalunit
+erg           dyne-cm
+# Kilowatt-hour (kWh) will be implied by `Watt'.
+
+
+# Power
+Watt          J/sec
+watt          Watt
+W             Watt
+horsepower    550 ft-lbf/s
+
+# Electric potential
+Volt          W/amp
+volt	      Volt
+V             Volt
+abvolt        1|100 microvolt
+statvolt      2.997930e10 V
+
+# Frequency
+cycle	      1           # For `cycles per second'
+Hertz	      cycles per second
+Hz            Hertz
+hz            Hz
+
+# Inductance
+Henry         volt s/amp
+henry         Henry
+henrie        Henry       # variant spelling
+H             Henry
+abhenry       1.0e-9 henry
+Henries       Henry       # For plural
+henries       Henry
+stathenry     8.987584e11 henries
+stathenries   stathenry
+
+# Etc.
+Weber         volt s
+weber         Weber
+Wb            weber
+Tesla         Wb/m2
+tesla         Tesla
+T             tesla
+Oersted       1|4 pi kiloamp/m
+oersted       Oersted
+Oe            oersted
+Maxwell       1.0e-8 Wb
+maxwell       Maxwell
+Mx            Maxwell
+Gauss         1.0e-4 T
+gauss         Gauss
+# We won't use G for Gauss because it is more important to 
+# use it for the universal gravitational constant
+
+# Capacitance
+# `farad' is *not* an abbreviation for `Faraday' as far as I can tell.
+farad         amp sec / volt
+F             farad
+abfarad       1.0e9 farad
+statfarad     1.112646e-13 farad
+
+# Resistance
+Ohm           volt/amp
+ohm           Ohm
+abohm         1.0e-9 ohm
+statohm       8.987584e11 Ohms
+
+# Conductance
+mho           1/ohm
+abmho         1/abohm
+Siemens       mho
+siemens       Siemens
+
+# Misc
+Angstrom      1.0e-10 m
+angstrom      Angstrom
+G             6.67259e-11 N m2/kg2 # Newton gravitational constant NIST19990301
+lightyear     light year    # Common abbreviation
+eV            e V           # Electron volts
+ev            eV
+kev           kiloeV
+Mev           megaeV
+Gev           gigaeV
+Tev           teraeV
+energy        c2 # You can ask for `1 gram energy' and get
+                 # the amount of energy equivalent to 
+                 # 1 gram according to e=mc2.
+                 # Check: 1amu energy == 931.16 Mev?
+Franklin      (10/c) C cm/sec
+Fr            Franklin
+franklin      Franklin
+Biot          10 amp
+Bi            Biot
+biot          Biot
+
+# Viscosity - Maybe someone who understands this better can check.
+poise         g/(cm s) # Named after M. Poiseuille
+rhe           1/poise
+reyn          (lbf s)/in2
+# Kinematic viscosity = viscosity per unit density
+stoke         cm2/s
+
+# Refrigeration - Maybe someone who understands this better can check.
+refrigeration 288000 btu/ton
+ice           tons refrigeration / 2009.1 lb
+
+# Light
+# The candela is fundamental here.  Prior to 1979, it was defined as
+# the luminous intensity of a black body at the temperature of
+# solidification of platinum, whose radiating surface is 1/60 cm2.  It
+# is now the luminous intensity, in a given direction, of a source
+# that emits monochromatic radiation of frequency 540e12 Hz and that
+# has a radiant intensity in that direction of 1|683 W/sr
+cd            candela
+sr	      steradian
+lumen         candela sr
+lm	      lumen
+lux           lm/m2
+lx            lux
+candlepower   12.566370 lumens
+candle        candela # ``International standard candle''
+Hefner        0.90 candles # This was the German standard in early C20.
+hefner        Hefner
+Lambert       lm/cm2
+lambert       Lambert
+footcandle    lm/ft2  # NOT the same as foot-candle.
+phot          1.0e4 lx
+stilb         candle/m2   # Same as a pi lambert
+
+# Various important physical constants
+# I got this stuff from physics.nist.gov on 19990301.
+h             6.6260755e-27 erg-sec   # Planck's constant
+hbar          h/(2 pi)
+plancklength  1.61605e-35 m
+planckmass    2.17671e-8 kg
+plancktime    5.39056e-44 sec
+# Let's reserve `Planck' for a while longer until I can decide if
+# they'd be useful in `planck time' etc.
+permeability  4*pi*1.0e-7 H/m     # Magnetic permeability of vacuum constant 
+permittivity  8.854187817e-12 F/m # Electric permittivity of vacuum constant 
+protonmass    1.6726231e-27 kg
+neutronmass   1.6749286e-27 kg
+electronmass  9.1093897e-31 kg 
+finestructure 7.29735308e-3 # Rl
+# Electron charge is up above under `electrostatic'.
+# There's no reason to get too obscure here because if someone wants
+# they can make up an `obscure physical constants' file that
+# physiscists could load in if they wanted to.  So I've omitted stuff
+# like the magnetic moment of the muon.
+
+# ANGULAR
+rad		radian
+circle		2 pi radians
+revolution      circle       # For revolutions / sec
+rev             revolution 
+rpm		revolutions per minute
+quadrant        1|4 circle
+degree		1|360 circle
+arcminute       1|60 degree
+arcsecond       1|60 arcminute
+arcmin          arcminute
+arcsec          arcsecond
+sphere          4 pi steradians
+grade           1|100 quadrant
+grad            grade
+
+# PAPER
+quire           50 sheets
+ream            10 quires
+
+# INFORMATION
+byte		8 bits
+kbyte           1024 bytes   # `kilobyte' means 1000    bytes
+# Don't use `K'; that's for Kelvins.
+kb              kbyte
+Kb              kbyte
+KB              kbyte
+mbyte           1024 kbytes  # `megabyte' means 1000000 bytes
+meg             mbyte
+kbit		1024 bits
+Kbit		kbit
+mbit		1024 kbits
+Mbit		mbit
+baud            bit/sec      # Not strictly correct
+
+# MONEY
+# all this crap removed by awh@awh.org since we have a proper exchange
+# module now.
+
+
+#old-stylew brit money
+sovereign               sterling
+shilling             1|20 sterling
+penny                1|12 shilling
+pence                penny
+farthing             1|4 penny
+hapenny              half penny
+twopence             two pence
+tuppence             two pence
+thruppence           3 pence   
+threepence           3 pence   
+sixpence             6 pence   
+crown                5 shillings  # Implies `half crown'
+guinea               21 shillings
+florin               2 shillings
+
+
+# For `register tons'
+register        100 ft3/ton
+registerton     register ton
+
+# What's missing?
+# bequerel (nucleotide radioactivity): Bq = k/s		k=1??
+# gray (absorbed dose): Gy = k J/kg			k=1??
+# sievert (dose equivalent): Sv = k J/kg			k=1??
+# curie: Ci = 3.3e10 Bq
+# roentgen: R = 2.58e-4 C/kg
+# rad: rad = centigray
+# rem: rem = centisievert
+
+# yarn measurements
+cut	300 yards
+heer	2 cuts
+hank	6 heers
+spindle 4 hanks

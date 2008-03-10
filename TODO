@@ -1,0 +1,25 @@
+Future ideas:
+
+A modularized help system where each module is responsible for
+generating its own help.  Maybe as well as scan() each module can
+also define a help() subroutine or something.  
+
+Get rid of the distinction between 'is' and 'are'. 
+
+Stuff that never got fixed in infobot, and still needs to get fixed
+here:
+
+  - Make replacements work when they look like matching operators:
+    "bot, foo =~ s/this /that/" should change "this " to "that",
+    but instead makes bot look for a factoid matching "that" in
+    the factoid with the key "foo =~ s/this" (I think --rich)
+
+  - make "botnick, no, factoid is foo" equivalent to "no, botnick,
+    factoid is foo". Requested by Sean "TorgoX" Burke.
+
+Fix this:
+  
+  <mendel> charlotte, is this broken?
+  <mendel> what is charlotte,
+  <charlotte> i think charlotte, is this broken?
+

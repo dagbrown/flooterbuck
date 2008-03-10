@@ -1,0 +1,16 @@
+Flooterbuck is copyright 2001-2004 Dave Brown, except where noted
+otherwise.
+
+Components of flooterbuck derived from infobot are copyright (c) Kevin
+Lenzo, 1996-2000, except where noted otherwise.  
+ 
+Flooterbuck is released under the same terms as Perl itself;
+specifically, either under the Artistic License, or under version 2 or
+later of the GNU General Public License. 
+
+A copy of the Artistic License can be found in the file
+doc/licenses/Artistic.txt in this distribution.
+
+A copy of the GNU General Public License version 2 can be found in the
+file doc/licenses/GPL.txt in this distribution.
+

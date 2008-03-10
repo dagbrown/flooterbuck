@@ -1,0 +1,10 @@
+what => <reply>
+who => <reply>
+when => <reply>
+where => <reply>
+why => <reply>
+it => <reply>
+how => <reply>
+infobot guide => http://www.cs.cmu.edu/~infobot/infobot_guide.html, but you really want http://flooterbuck.sourceforge.net/
+flooterbuckbot guide => http://flooterbuck.sourceforge.net/
+flooterbuck => the program you're talking to right now! See http://flooterbuck.sourceforge.net/

@@ -1,0 +1,51 @@
+README.modules: required and optional Perl modules for flooterbuck.
+-------------------------------------------------------------------
+
+While mostly everything you need to run Infobot is already on your
+system (providing, of course, that you have Perl 5.6 or newer 
+installed), there are a number of flooterbuck features which require
+modules that do not come with Perl.
+
+There are a handful of ways to install modules. Ranging from most
+straightforward to least straightforward:
+
+1.  Ask your system administrator to make them available for you.
+
+2a. Install them system-wide using Perl's module-management module,
+    CPAN.pm. To install a module with CPAN.pm, issue a command like 
+    this:
+
+       perl -MCPAN -e 'install Module::Name'
+
+    as the user who installed Perl. For more information on CPAN.pm, 
+    type "perldoc CPAN" at your Unix prompt.
+
+2b. Install them system-wide, in Windows, with your Perl distribution's
+    package manager. Consult your distribution's documentation for
+    details. 
+    
+3.  Install them by hand. Find the modules on CPAN, the Comprehensive
+    Perl Archive Network, at <http://www.cpan.org/>, with help from
+    CPAN Search at <http://search.cpan.org/>. For each module, obtain
+    the file from CPAN, untar the package, and follow the instructions
+    in the module's README.
+
+
+THE MODULES
+-----------
+
+The following modules are used by components of INfobot:
+
+   URI::Escape  (install URI from CPAN; required for <rss> factoids)
+   HTML::Entities (install HTML::Parser from CPAN)
+   LWP (install Bundle::LWP from CPAN)
+   Net::Telnet
+   Unicode::String (optional; required to obtain proper accents from 
+        babel translation module)
+   WWW::Search
+   WWW::Search::Google
+   XML::Parser (required by XML::RSS; requires the non-Perl, 
+        open-source 'expat' XML library)
+   XML::RSS 
+
+   

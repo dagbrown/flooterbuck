@@ -1,0 +1,61 @@
+#!/usr/bin/perl -w
+use strict;
+
+# $Id: dbmext-test,v 1.1 2003/11/20 04:38:05 rich_lafferty Exp $
+
+# This shows what files are actually created when you tie() a DBM of the
+# types given on the command line (or the standard types if no args are
+# given).
+
+use Fcntl qw(:flock O_CREAT O_RDWR);
+
+(my $Me = $0) =~ s-.*/--;
+
+sub dirents {
+    @_ == 1			or die;
+    my ($dir) = @_;
+
+    opendir DIR, $dir 		or die $!;
+    my @e = readdir DIR;
+    closedir DIR		or die $!;
+    return grep { $_ ne '.' && $_ ne '..' } @e;
+}
+
+sub main {
+    @ARGV = qw(NDBM_File DB_File GDBM_File SDBM_File ODBM_File)
+	if !@ARGV;
+
+    my $dir = "$Me.$$";
+    mkdir $dir, 0777		or die "$Me: can't mkdir $dir: $!\n";
+    chdir $dir			or die $!;
+
+    $| = 1;
+
+    for my $db (@ARGV) {
+    	printf "%-10s ", $db;
+
+    	if (!eval "require $db") {
+	    chomp $@;
+	    print "can't load module ($@)\n";
+	    next;
+	}
+
+    	my %db;
+	if (!tie %db, $db, 'x', O_CREAT | O_RDWR, 0666) {
+	    print "tie failed ($!)\n";
+	    next;
+	}
+	untie %db;
+
+	for (dirents '.') {
+	    print "$_ ";
+	    unlink		or die $!;
+	}
+	print "\n";
+    }
+
+    chdir '..'			or die $!;
+    rmdir $dir			or die $!;
+}
+
+main;
