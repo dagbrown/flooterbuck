@@ -3,8 +3,6 @@
 #
 # Hardly crypts a block of text.
 # Haldry cprtys a boclk of txet.
-#
-# $Id: rot13.pm,v 1.7 2001/12/13 18:30:51 awh Exp $
 #------------------------------------------------------------------------
  
 use strict;
