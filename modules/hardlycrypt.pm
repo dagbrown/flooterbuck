@@ -14,8 +14,7 @@ use List::Util qw/shuffle/;
 sub scan(&$$) {
     my ($callback,$message,$who) = @_;
 
-    if ($message =~ /^rot13\s+(.*)/i) {
-        # rot13 it
+    if ($message =~ /^hardlycrypt\s+(.*)/i) {
         my $reply = hardlycrypt($1);
         $callback->($reply);
 	return "NOREPLY";
