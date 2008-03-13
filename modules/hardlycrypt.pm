@@ -1,7 +1,8 @@
 #------------------------------------------------------------------------
-# Rot13 command
+# Hardlycrypt command
 #
-# ROT13s a random bit of text.
+# Hardly crypts a block of text.
+# Haldry cprtys a boclk of txet.
 #
 # $Id: rot13.pm,v 1.7 2001/12/13 18:30:51 awh Exp $
 #------------------------------------------------------------------------
@@ -32,7 +33,6 @@ sub hardlycrypt {
             $reply .= join '', @word;
         }
         else {
-            $DB::single=1;
             my $front = $word[0];
             my $end = $word[$#word];
             my $mid = join '', shuffle(@word[1 .. ($#word-1)]);
