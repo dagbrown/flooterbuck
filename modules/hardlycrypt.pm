@@ -8,18 +8,17 @@
 use strict;
 package hardlycrypt;
 use List::Util qw/shuffle/;
- 
+
 sub scan(&$$) {
     my ($callback,$message,$who) = @_;
- 
     if ($message =~ /^hardlycrypt\s+(.*)/i) {
         my $reply = hardlycrypt($1);
         $callback->($reply);
-  return "NOREPLY";
+        return "NOREPLY";
     }
     undef;
 }
- 
+
 sub hardlycrypt {
     my $phrase = shift;
     my @words = split /\b/, $phrase;
@@ -38,5 +37,5 @@ sub hardlycrypt {
     }
     return $reply;
 }
- 
+
 "hardlycrypt";
