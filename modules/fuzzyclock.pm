@@ -206,9 +206,9 @@ fuzzyclock.pm - let infobot tell you what time it is
 
 =head1 PREREQUISITES
 
-I was originally going to just make this require Ruby, but then I
-figured that might be unreasonable.  So now it doesn't have any
-prerequisites (apart from Perl).
+Since time zone support was added, it needs DateTime::TimeZone.  If it's
+not available, I guess it doesn't do the time zone thing, but mendel
+FORGOT TO DOCUMENT THAT.
 
 =head1 PUBLIC INTERFACE
 
@@ -223,4 +223,4 @@ on an IRC channel.)
 
 =head1 AUTHOR
 
-Dave Brown (dagbrown@rogers.com)
+Dave Brown (dagbrown@lart.ca)
