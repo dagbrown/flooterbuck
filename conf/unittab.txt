@@ -155,6 +155,7 @@ cord       8 cordfeet
 # Barrels are complicated.  `Barrel' here means `U.S. liquid barrel'.
 barrel     31.5 gal
 bbl        barrel
+keg        1|2 bbl
 hogshead   two barrels
 butt       two hogsheads
 tun        two butts
