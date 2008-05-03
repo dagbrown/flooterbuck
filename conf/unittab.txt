@@ -30,6 +30,10 @@ bit        ***
 sheet      ***      # Of paper
 turn       ***      # Of coiled wire
 
+# And an alternate spelling or two
+metre      meter
+gramme     gram
+
 # DIMENSIONLESS
 pi         3.1415926535897932386
 one        1
