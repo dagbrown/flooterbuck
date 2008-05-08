@@ -9,7 +9,7 @@ BEGIN {
         use HTTP::Request::Common qw(GET);
     };
 
-    $no_headlines++ if($@);
+    $no_headlines++ if ($@);
 }
 
 sub get_headlines {
@@ -23,29 +23,30 @@ sub get_headlines {
         &status("getting headlines from $rdf_loc");
 
         my $ua = new LWP::UserAgent;
-        if (my $proxy = main::getparam('httpproxy')) {
-            $ua->proxy('http', $proxy) 
-        };
+        if ( my $proxy = main::getparam('httpproxy') ) {
+            $ua->proxy( 'http', $proxy );
+        }
 
         $ua->timeout(10);
 
-        my $request = new HTTP::Request ("GET", $rdf_loc);
-        my $result = $ua->request ($request);
+        my $request = new HTTP::Request( "GET", $rdf_loc );
+        my $result = $ua->request($request);
 
-        if ($result->is_success) {
-            my ($str, $error);
+        if ( $result->is_success ) {
+            my ( $str, $error );
             $str = $result->content;
             $rss = new XML::RSS;
             eval { $rss->parse($str); };
             if ($@) {
                 main::status("RDF: $@")
-                # but soldier on, in hopes that we've gotten
-                # something sensible nonetheless
-            } 
+
+                  # but soldier on, in hopes that we've gotten
+                  # something sensible nonetheless
+            }
             my $return;
 
-            if ( scalar(@{$rss->{"items"}}) > 0 ) {
-                foreach my $item (@{$rss->{"items"}}) {
+            if ( scalar( @{ $rss->{"items"} } ) > 0 ) {
+                foreach my $item ( @{ $rss->{"items"} } ) {
                     $return .= $item->{"title"} . "; ";
                     last if length($return) > $param{maxDataSize};
                 }
@@ -55,7 +56,7 @@ sub get_headlines {
 
                 return $return;
             } else {
-                return "I'm sorry; something went wrong with that RSS feed and I couldn't find anything sensible in it.  Is it well-formed?"
+                return "I'm sorry; something went wrong with that RSS feed and I couldn't find anything sensible in it.  Is it well-formed?";
             }
         } else {
             return "error: $rdf_loc wasn't successful";
@@ -63,7 +64,7 @@ sub get_headlines {
     } else {
         return "error: no location stored for $where";
     }
-};
+}
 
 1;
 

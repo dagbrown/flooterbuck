@@ -1,47 +1,51 @@
 # Template infobot extension
 
 use strict;
+
 package help;
 
 BEGIN {
-	# eval your "use"ed modules here
+
+    # eval your "use"ed modules here
 }
 
 sub scan(&$$) {
-    my ($callback,$message,$who) = @_;
+    my ( $callback, $message, $who ) = @_;
 
     # Check $message, if it's what you want, then do stuff with it
 
-    if($message =~ /^\s*help(?:\s+(\w+)|)(\W*)?/) {
-        my $mod=$1;
-        my $reply="NULL";
-        my @modules=Extras::modules();
+    if ( $message =~ /^\s*help(?:\s+(\w+)|)(\W*)?/ ) {
+        my $mod     = $1;
+        my $reply   = "NULL";
+        my @modules = Extras::modules();
         ::status("Module $mod");
-        ::status(join(" ; ",@modules));
-        if($mod ne "" and grep { /$mod/ } @modules) {
+        ::status( join( " ; ", @modules ) );
+        if ( $mod ne "" and grep { /$mod/ } @modules ) {
             &::status("Eval'ing $mod\:\:help()");
-            $reply=$who.": ".eval "$mod\:\:help()";
-            if($@) {
-                $reply="$who: No help is available for $mod";
-                my $randnum=rand;
-                if($randnum<0.2) {
+            $reply = $who . ": " . eval "$mod\:\:help()";
+            if ($@) {
+                $reply = "$who: No help is available for $mod";
+                my $randnum = rand;
+                if ( $randnum < 0.2 ) {
                     $reply .= ", unfortunately.";
-                } elsif($randnum<0.4) {
+                } elsif ( $randnum < 0.4 ) {
                     $reply .= ", I'm afraid.";
-                } elsif($randnum<0.6) {
+                } elsif ( $randnum < 0.6 ) {
                     $reply .= ".  Sorry.";
-                } elsif($randnum<0.8) {
+                } elsif ( $randnum < 0.8 ) {
                     $reply .= " (I tried).";
                 } else {
-                    $reply .= ", so you'll have to figure it out yourself.";
+                    $reply .=
+                      ", so you'll have to figure it out yourself.";
                 }
             }
         } else {
-            scanmodules: {
+          scanmodules: {
                 for my $module (@modules) {
-                    my $tmpreply=eval "$module\:\:help_scan(\$message)";
-                    if($tmpreply) {
-                        $reply="$who: $tmpreply";
+                    my $tmpreply =
+                      eval "$module\:\:help_scan(\$message)";
+                    if ($tmpreply) {
+                        $reply = "$who: $tmpreply";
                         last scanmodules;
                     }
                 }
@@ -62,10 +66,10 @@ sub help {
 sub help_scan {
     my $message = shift;
 
-    if ($message =~ /help\s+(index|modules)?\s*$/) {
-        return "Help topics: ", join(", ", sort(Extras::modules()) ) ;
+    if ( $message =~ /help\s+(index|modules)?\s*$/ ) {
+        return "Help topics: ", join( ", ", sort( Extras::modules() ) );
     }
-    if ($message =~ /help\W*$/) {
+    if ( $message =~ /help\W*$/ ) {
         return q{Hi, I'm a Flooterbuck infobot. I learn mainly by observing declarative statements such as "x is at http://www.xxx.com", and then reply when people ask things like "Where can I find x?" For a list of the other things I can do, ask me about 'help index'.};
     }
 }

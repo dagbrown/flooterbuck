@@ -43,9 +43,9 @@ Richard G Harman Jr <flooterbuck+track.pm@richardharman.com>
 # Check that LWP is available, so we don't waste our time
 # generating error messages later on.
 #------------------------------------------------------------------------
-my ($no_track, $no_posix);
+my ( $no_track, $no_posix );
 
-my $pakalert_url = 'http://www.pakalert.com/trackpack.asp?';
+my $pakalert_url      = 'http://www.pakalert.com/trackpack.asp?';
 my $pakalert_username = 'flooterbuck@richardharman.com';
 my $pakalert_password = 'flooterbuck';
 
@@ -67,56 +67,60 @@ BEGIN {
 #
 # This handles the forking (or not) stuff.
 #------------------------------------------------------------------------
-sub track_get($$)
-{
-    if($no_track)
-    {
-        &main::status("Sorry, track.pm requires LWP, and XML::Simple couldn't find it or you need to pick a valid pakalert.com username/password.");
+sub track_get($$) {
+    if ($no_track) {
+        &main::status(
+"Sorry, track.pm requires LWP, and XML::Simple couldn't find it or you need to pick a valid pakalert.com username/password."
+        );
         return "";
     }
 
-    my($line,$callback)=@_;
-    $SIG{CHLD}="IGNORE";
-    my $pid=eval { fork(); };         # Don't worry if OS isn't forking
+    my ( $line, $callback ) = @_;
+    $SIG{CHLD} = "IGNORE";
+    my $pid = eval { fork(); };    # Don't worry if OS isn't forking
     return 'NOREPLY' if $pid;
-    $callback->(&track_getdata($line));
-    if (defined($pid))                # child exits, non-forking OS returns
+    $callback->( &track_getdata($line) );
+    if ( defined($pid) )           # child exits, non-forking OS returns
     {
         exit 0 if ($no_posix);
         POSIX::_exit(0);
     }
 }
 
-sub track_getdata($)
-{
-  my $track_id=shift;
-  my $url = join("",$pakalert_url,"trackno=",escape($track_id),'&login=',escape($pakalert_username),"&password=",escape($pakalert_password));
-  my $xs = new XML::Simple();
-  my $XML = LWP::Simple::get($url);
-  my $ref = $xs->XMLin($XML);
-  my $hashref = \$ref->{trackinfo}->{objalertinformation}->{colltrackinginformation}->{colltrackinginformation_Item}[0];
-  if ($$$hashref{dtimeofaction})
-  {
-  my $string = $$$hashref{dtimeofaction};
-  $string =~ s/T/ /; # they separate date/time with a T.
-  $string .= ": $$$hashref{taction} $$$hashref{tlocationcity}, $$$hashref{tlocationstate}";
-  return $string;
-  }
-  else
-  { return "That doesn't look like a tracking number..." };
+sub track_getdata($) {
+    my $track_id = shift;
+    my $url      = join( "",
+        $pakalert_url,              "trackno=",
+        escape($track_id),          '&login=',
+        escape($pakalert_username), "&password=",
+        escape($pakalert_password) );
+    my $xs  = new XML::Simple();
+    my $XML = LWP::Simple::get($url);
+    my $ref = $xs->XMLin($XML);
+    my $hashref =
+      \$ref->{trackinfo}->{objalertinformation}
+      ->{colltrackinginformation}->{colltrackinginformation_Item}[0];
+    if ( $$$hashref{dtimeofaction} ) {
+        my $string = $$$hashref{dtimeofaction};
+        $string =~ s/T/ /;    # they separate date/time with a T.
+        $string .=
+": $$$hashref{taction} $$$hashref{tlocationcity}, $$$hashref{tlocationstate}";
+        return $string;
+    } else {
+        return "That doesn't look like a tracking number...";
+    }
 }
-
 
 #------------------------------------------------------------------------
 # This is the main interface to infobot
 #------------------------------------------------------------------------
 
 sub scan(&$$) {
-    my ($callback, $message, $who)=@_;
+    my ( $callback, $message, $who ) = @_;
 
     if ( ::getparam('track') and $message =~ /^\s*track\s+(.+)$/i ) {
         &main::status("Pakalert (track) query");
-        &track_get($1,$callback);
+        &track_get( $1, $callback );
         return 1;
     }
 }

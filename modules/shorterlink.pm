@@ -8,7 +8,6 @@
 package shorterlink;
 use strict;
 
-
 =head1 NAME
 
 shorterlink.pm - generate a shorterlink from a big long one
@@ -43,7 +42,7 @@ Nickname interface added by Drew Hamilton <awh@awh.org>
 # Check that LWP is available, so we don't waste our time
 # generating error messages later on.
 #------------------------------------------------------------------------
-my ($no_shorterlink, $no_posix);
+my ( $no_shorterlink, $no_posix );
 
 BEGIN {
     eval qq{
@@ -74,10 +73,11 @@ BEGIN {
 # in the container you asked for.
 #------------------------------------------------------------------------
 sub snag_element($$) {
-    my $element=shift;
-    my $blob_o_html=shift;
+    my $element     = shift;
+    my $blob_o_html = shift;
 
-    return ($blob_o_html=~/\<$element[^>]*\>(.*?)\<\/$element\>/gis);
+    return (
+        $blob_o_html =~ /\<$element[^>]*\>(.*?)\<\/$element\>/gis );
 }
 
 #------------------------------------------------------------------------
@@ -87,11 +87,11 @@ sub snag_element($$) {
 # man's "lynx -dump".
 #------------------------------------------------------------------------
 sub strip_html($) {
-    my $blob=shift;
+    my $blob = shift;
     chomp $blob;
-    $blob=~s/\<[^>]+\>//g;
-    $blob=~s/\&[a-z]+\;?//g;
-    $blob=~s/\s+/ /g;
+    $blob =~ s/\<[^>]+\>//g;
+    $blob =~ s/\&[a-z]+\;?//g;
+    $blob =~ s/\s+/ /g;
     return $blob;
 }
 
@@ -101,23 +101,25 @@ sub strip_html($) {
 # Given a long URL, return the shorterlink version.
 #------------------------------------------------------------------------
 sub shorterlink_create($) {
-    my $longurl=shift;
+    my $longurl = shift;
 
-    my $ua=new LWP::UserAgent or die "oh fuck";
-    $ua->agent("Flooterbuck/0.1 ".$ua->agent);
-    my $request=HTTP::Request->new(
-        POST => "http://makeashorterlink.com/index.php"
-    ) or die "oh shit";
+    my $ua = new LWP::UserAgent or die "oh fuck";
+    $ua->agent( "Flooterbuck/0.1 " . $ua->agent );
+    my $request =
+      HTTP::Request->new(
+        POST => "http://makeashorterlink.com/index.php" )
+      or die "oh shit";
     $request->content_type('application/x-www-form-urlencoded');
-    $request->content("url="..uri_escape($longurl));
+    $request->content( "url=" .. uri_escape($longurl) );
 
-    my $response=$ua->request($request);
+    my $response = $ua->request($request);
 
-    if($response->is_success) {
-        my $content=$response->content;
-        my @elements=snag_element("a",$content);
-        my ($shorterlink)=grep { /http\:\/\/makeashorterlink\.com\/\?/ } @elements;
-        
+    if ( $response->is_success ) {
+        my $content = $response->content;
+        my @elements = snag_element( "a", $content );
+        my ($shorterlink) =
+          grep { /http\:\/\/makeashorterlink\.com\/\?/ } @elements;
+
         return "Your shorter link is $shorterlink";
     } else {
         return "Couldn't get hold of makeashorterlink.com";
@@ -131,9 +133,9 @@ sub shorterlink_create($) {
 # and feed the URL into shorterlink_create.
 #------------------------------------------------------------------------
 sub shorterlink_getdata($) {
-    my $line=shift;
+    my $line = shift;
 
-    if($line =~ /shorterlink\s+(\w+:\S+)/i) {
+    if ( $line =~ /shorterlink\s+(\w+:\S+)/i ) {
         return shorterlink_create($1);
     }
 }
@@ -144,19 +146,18 @@ sub shorterlink_getdata($) {
 # This handles the forking (or not) stuff.
 #------------------------------------------------------------------------
 sub shorterlink::get($$) {
-    if($no_shorterlink) {
-        &main::status("Sorry, shorterlink.pm requires LWP and couldn't find it");
+    if ($no_shorterlink) {
+        &main::status(
+            "Sorry, shorterlink.pm requires LWP and couldn't find it");
         return "";
     }
 
-    my($line,$callback)=@_;
-    $SIG{CHLD}="IGNORE";
-    my $pid=eval { fork(); };         # Don't worry if OS isn't forking
+    my ( $line, $callback ) = @_;
+    $SIG{CHLD} = "IGNORE";
+    my $pid = eval { fork(); };    # Don't worry if OS isn't forking
     return 'NOREPLY' if $pid;
-    eval {
-        $callback->(&shorterlink_getdata($line));
-    };
-    if (defined($pid))                # child exits, non-forking OS returns
+    eval { $callback->( &shorterlink_getdata($line) ); };
+    if ( defined($pid) )           # child exits, non-forking OS returns
     {
         exit 0 if ($no_posix);
         POSIX::_exit(0);
@@ -168,11 +169,11 @@ sub shorterlink::get($$) {
 #------------------------------------------------------------------------
 
 sub scan(&$$) {
-    my ($callback, $message, $who)=@_;
+    my ( $callback, $message, $who ) = @_;
 
     if ( $message =~ /^\s*shorterlink\s+(\w+:\S+)/i ) {
         &main::status("ShorterLink Creation");
-        &shorterlink::get($message,$callback);
+        &shorterlink::get( $message, $callback );
         return 1;
     }
 }

@@ -3,7 +3,7 @@
 use Socket;
 
 # checks if Japanese messages should be converted to EUC upon
-# receipt.  This should only happen if a) Jcode is available, 
+# receipt.  This should only happen if a) Jcode is available,
 # and b) the user has requested this feature.  This *should*
 # work; contact me at aww@awh.org if it doesn't.
 my $no_japanese = 0;
@@ -13,40 +13,41 @@ eval qq{
 $no_japanese++ if ($@);
 
 sub srvConnect {
-    my ($server, $port) = @_;
-    my ($iaddr, $paddr, $proto);
+    my ( $server, $port ) = @_;
+    my ( $iaddr, $paddr, $proto );
     select(STDOUT);
     $| = 1;
 
     $iaddr  = inet_aton($server);
     $ip_num = inet_ntoa($iaddr);
-    if (not $ip_num) {
+    if ( not $ip_num ) {
         die "can't get the address of $server ($ip_num)!\n";
     }
     &status("Connecting to port $port of server $server ($ip_num)...");
-    $paddr = sockaddr_in($port, $iaddr);
+    $paddr = sockaddr_in( $port, $iaddr );
     $proto = getprotobyname('tcp');
-    socket(SOCK, PF_INET, SOCK_STREAM, $proto) or die "socket failed: $!";
+    socket( SOCK, PF_INET, SOCK_STREAM, $proto )
+      or die "socket failed: $!";
     $sockaddr = 'S n a4 x8';
-    if ($param{'vhost_name'}) {
+    if ( $param{'vhost_name'} ) {
         my $hostname = $param{'vhost_name'};
-        $this = pack($sockaddr, AF_INET,  0, inet_aton($hostname));
-        &status("trying to bind as $hostname"); 
-        bind(SOCK, $this) || die "bind: $!";
+        $this = pack( $sockaddr, AF_INET, 0, inet_aton($hostname) );
+        &status("trying to bind as $hostname");
+        bind( SOCK, $this ) || die "bind: $!";
     }
-    connect(SOCK, $paddr) or die "connect failed: $!";
+    connect( SOCK, $paddr ) or die "connect failed: $!";
 
     &status(" connected.");
 }
 
 sub procservmode {
-    my ($server, $e, $f) = @_;
-    my @parts = split (/ /, $f);
-    $cnt=0;
-    my $mode="";
-    my $chan="";
+    my ( $server, $e, $f ) = @_;
+    my @parts = split( / /, $f );
+    $cnt = 0;
+    my $mode = "";
+    my $chan = "";
     foreach (@parts) {
-        if ($cnt == 0) {
+        if ( $cnt == 0 ) {
             $chan = $_;
         } else {
             $mode .= $_;
@@ -55,18 +56,20 @@ sub procservmode {
         ++$cnt;
     }
     chop $mode;
-    $mode=~s/://;
+    $mode =~ s/://;
 
-    if ($server eq $chan) {
-        if ($params{ansi_control}) {
+    if ( $server eq $chan ) {
+        if ( $params{ansi_control} ) {
             &status(">>> $b$server$ob sets user mode: $b$mode$ob");
         } else {
             &status(">>> $server sets mode: $mode");
         }
 
     } else {
-        if ($params{ansi_control}) {
-            &status(">>> $b$server$ob/$b$chan$ob sets server mode: $b$mode$ob");
+        if ( $params{ansi_control} ) {
+            &status(
+">>> $b$server$ob/$b$chan$ob sets server mode: $b$mode$ob"
+            );
         } else {
             &status(">>> $server/$chan sets mode: $mode");
         }
@@ -76,17 +79,17 @@ sub procservmode {
 ### added by the xk.
 # Usage: &nickServ(text);
 sub nickServ {
-    my $text	= shift;
+    my $text = shift;
     return if !defined $param{'nickServ_pass'};
 
     &status("NickServ: <= '$text'");
 
-    if ($text =~ /Password incorrect/i) {
+    if ( $text =~ /Password incorrect/i ) {
         &status("NickServ: ** identify failed.");
         return;
     }
 
-    if ($text =~ /Password accepted/i) {
+    if ( $text =~ /Password accepted/i ) {
         &status("NickServ: ** identify success.");
         return;
     }
@@ -101,8 +104,9 @@ sub nickServ {
 ###
 # Usage: &chanServ(text);
 sub chanServ {
-    my $text	= shift;
-#    return if !defined $param{'chanServ_ops'};
+    my $text = shift;
+
+    #    return if !defined $param{'chanServ_ops'};
     &status("chanServ_ops => '$param{'chanServ_ops'}'.");
 
     &status("ChanServ: <= '$text'");
@@ -110,16 +114,17 @@ sub chanServ {
     # to be continued...
     return;
 }
+
 # end of xk functions.
 
 sub procmode {
-    my ($nick, $user, $host, $e, $f) = @_;
-    my @parts = split (/ /, $f);
-    $cnt=0;
-    my $mode="";
-    my $chan="";
+    my ( $nick, $user, $host, $e, $f ) = @_;
+    my @parts = split( / /, $f );
+    $cnt = 0;
+    my $mode = "";
+    my $chan = "";
     foreach (@parts) {
-        if ($cnt == 0) {
+        if ( $cnt == 0 ) {
             $chan = $_;
         } else {
             $mode .= $_;
@@ -129,34 +134,35 @@ sub procmode {
     }
     $mode =~ s/\s$//;
 
-
-    if ($param{ansi_control}) {
+    if ( $param{ansi_control} ) {
         &status(">>> mode/$b$chan$ob [$b$mode$ob] by $b$nick$ob");
     } else {
         &status(">>> mode/$chan [$mode] by $nick");
     }
 
-    if ($chan =~ /^[\#\&]/) {
-        my ($modes, $targets) = ($mode =~ /^(\S+)\s+(.*)/);
-        my @m = ($modes =~ /([+-]*\w)/g);
+    if ( $chan =~ /^[\#\&]/ ) {
+        my ( $modes, $targets ) = ( $mode =~ /^(\S+)\s+(.*)/ );
+        my @m = ( $modes =~ /([+-]*\w)/g );
         my @t = split /\s+/, $targets;
-        if (@m != @t) {
-            &status("number of modes does not match number of targets: @m / @t");
+        if ( @m != @t ) {
+            &status(
+"number of modes does not match number of targets: @m / @t"
+            );
         } else {
             my $parity = 0;
-            foreach (0..$#m) {
-                if ($m[$_] =~ s/^([-+])//) {
+            foreach ( 0 .. $#m ) {
+                if ( $m[$_] =~ s/^([-+])// ) {
                     $sign = $1;
-                    if ($sign eq '-') {
+                    if ( $sign eq '-' ) {
                         $parity = -1;
                     } else {
                         $parity = 1;
                     }
                 }
-                if ($parity == 0) {
+                if ( $parity == 0 ) {
                     &status("zero parity mode change... ignored");
                 } else {
-                    if ($parity > 0) {
+                    if ( $parity > 0 ) {
                         $channels{$chan}{$m}{$t} = '+';
                     } else {
                         delete $channels{$chan}{$mode}{$t};
@@ -168,19 +174,19 @@ sub procmode {
 }
 
 sub entryEvt {
-    my ($nick, $user, $host, $type, $chan) = @_;
-    if ($type=~/PART/) {
-        if ($param{ansi_control}) {
+    my ( $nick, $user, $host, $type, $chan ) = @_;
+    if ( $type =~ /PART/ ) {
+        if ( $param{ansi_control} ) {
             &status(">>> $nick ($user\@$host) has left $chan");
         } else {
             &status(">>> $nick ($user\@$host) has left $chan");
         }
-    } elsif ($type=~/JOIN/) {
+    } elsif ( $type =~ /JOIN/ ) {
         if ($netsplit) {
-            foreach (keys(%snick)) {
-                if ($nick eq $snick{$_}) {
-                    @be = split (/ /);
-                    if ($param{ansi_control}) {
+            foreach ( keys(%snick) ) {
+                if ( $nick eq $snick{$_} ) {
+                    @be = split(/ /);
+                    if ( $param{ansi_control} ) {
                         &status(">>> ${b}Netjoined$ob: $be[0] $be[1]");
                     } else {
                         &status(">>> ${b}Netjoined$ob: $be[0] $be[1]");
@@ -189,26 +195,33 @@ sub entryEvt {
                 }
             }
         }
-        if ($param{ansi_control}) {
+        if ( $param{ansi_control} ) {
             &status(">>> $nick ($user\@$host) has joined $chan");
         } else {
             &status(">>> $nick ($user\@$host) has joined $chan");
         }
-    } elsif ($type=~/QUIT/) {
-        $chan=~s/\r//;
-        if ($chan=~/^([\d\w\_\-\/]+\.[\.\d\w\_\-\/]+)\s([\d\w\_\-\/]+\.[\.\d\w\_\-\/]+)$/) {
-            $i=0;
+    } elsif ( $type =~ /QUIT/ ) {
+        $chan =~ s/\r//;
+        if ( $chan =~
+/^([\d\w\_\-\/]+\.[\.\d\w\_\-\/]+)\s([\d\w\_\-\/]+\.[\.\d\w\_\-\/]+)$/
+          )
+        {
+            $i = 0;
         } else {
-            if ($param{ansi_control}) {
-                &status(">>> $b$nick$ob has signed off IRC ($b$chan$ob)");
+            if ( $param{ansi_control} ) {
+                &status(
+                    ">>> $b$nick$ob has signed off IRC ($b$chan$ob)");
             } else {
-                &status(">>> $b$nick$ob has signed off IRC ($b$chan$ob)");
+                &status(
+                    ">>> $b$nick$ob has signed off IRC ($b$chan$ob)");
             }
         }
-    } elsif ($type=~/NICK/) {
-        if ($param{ansi_control}) {
-            &status(">>> ".c($nick,'bold green').
-                " materializes into ".c($chan,'bold green'));
+    } elsif ( $type =~ /NICK/ ) {
+        if ( $param{ansi_control} ) {
+            &status(">>> "
+                  . c( $nick, 'bold green' )
+                  . " materializes into "
+                  . c( $chan, 'bold green' ) );
         } else {
             &status(">>> $b$nick$ob materializes into $b$chan$ob");
         }
@@ -216,55 +229,57 @@ sub entryEvt {
 }
 
 sub procevent {
-    my ($nick, $user, $host, $type, $chan, $msg) = @_;
+    my ( $nick, $user, $host, $type, $chan, $msg ) = @_;
 
     # anonymous submitter++.
     # stuck in here by awh@awh.org -- if this causes a problem for
     # anyone, please let me know.
-    if (($no_japanese == 0) && (::getparam('japanese')) && (Jcode::getcode($msg) eq 'jis'))
+    if (   ( $no_japanese == 0 )
+        && ( ::getparam('japanese') )
+        && ( Jcode::getcode($msg) eq 'jis' ) )
     {
-        $msg = Jcode::convert($msg,'euc'); 
-    }	
+        $msg = Jcode::convert( $msg, 'euc' );
+    }
 
     # support global $nuh, $who
     $nuh = "$nick!$user\@$host";
 
-    if ($type=~/PRIVMSG/) {
-        if ($chan =~ /^$ischan/) {
+    if ( $type =~ /PRIVMSG/ ) {
+        if ( $chan =~ /^$ischan/ ) {
             ## It's a public message on the channel##
             $chan =~ tr/A-Z/a-z/;
 
-            if ($msg =~ /\001(.*)\001/ && $msg !~ /ACTION/) {
+            if ( $msg =~ /\001(.*)\001/ && $msg !~ /ACTION/ ) {
                 #### Client To Client Protocol ####
-                parsectcp($nick, $user, $host, $1, $chan);
-            } elsif ($msg !~ /ACTION\s(.+)/) {
+                parsectcp( $nick, $user, $host, $1, $chan );
+            } elsif ( $msg !~ /ACTION\s(.+)/ ) {
                 #### Public Channel Message ####
-                &IrcMsgHook('public', $chan, $nick, $msg);
+                &IrcMsgHook( 'public', $chan, $nick, $msg );
             } else {
                 #### Public Action ####
-                &IrcActionHook($nick, $chan, $1);
+                &IrcActionHook( $nick, $chan, $1 );
             }
         } else {
             ## Is Private ##
-            if ($msg=~/\001(.*)\001/) {
+            if ( $msg =~ /\001(.*)\001/ ) {
                 #### Client To Client Protocol ####
-                parsectcp($nick, $user, $host, $1, $chan);
+                parsectcp( $nick, $user, $host, $1, $chan );
             } else {
                 #### Is a Private Message ##
-                &IrcMsgHook('private', $chan, $nick, $msg);
+                &IrcMsgHook( 'private', $chan, $nick, $msg );
             }
         }
-    } elsif ($type=~/NOTICE/) {
-        if ($chan =~ /^$ischan/) {
+    } elsif ( $type =~ /NOTICE/ ) {
+        if ( $chan =~ /^$ischan/ ) {
             $chan =~ tr/A-Z/a-z/;
-            if ($msg !~ /ACTION (.*)/) {
+            if ( $msg !~ /ACTION (.*)/ ) {
                 &status("-$nick/$chan- $msg");
             } else {
                 &status("* $nick/$chan $1");
             }
         } else {
-            if ($msg=~/\001([A-Z]*)\s(.*)\001/) {
-                ctcpReplyParse($nick, $user, $host, $1, $2);
+            if ( $msg =~ /\001([A-Z]*)\s(.*)\001/ ) {
+                ctcpReplyParse( $nick, $user, $host, $1, $2 );
             } else {
                 &status("-$nick($user\@$host)- $msg");
             }
@@ -273,56 +288,58 @@ sub procevent {
 }
 
 sub servmsg {
-    my $msg=$_[0];
-    my ($ucount, $uc) = (0, 0);
-    if ($msg=~/^001/) {
-# joinChan(split/\s+/, $param{'join_channels'});
-# Line in infobot.config:
-#   join_channels #chan,key #chan_with_no_key
-        #
-# since , is not allowed in channels, we'll use it to specify keys
-# without breaking current join_channels format
-        for (split /\s+/, $param{'join_channels'}) {
-            # if it's a keyed chan, replace the comma with a space so it'll
-            # work as per the RFC (i.e. JOIN #chan key)
-            s/,/ /; 
-            joinChan ($_);
+    my $msg = $_[0];
+    my ( $ucount, $uc ) = ( 0, 0 );
+    if ( $msg =~ /^001/ ) {
+
+      # joinChan(split/\s+/, $param{'join_channels'});
+      # Line in infobot.config:
+      #   join_channels #chan,key #chan_with_no_key
+      #
+      # since , is not allowed in channels, we'll use it to specify keys
+      # without breaking current join_channels format
+        for ( split /\s+/, $param{'join_channels'} ) {
+
+         # if it's a keyed chan, replace the comma with a space so it'll
+         # work as per the RFC (i.e. JOIN #chan key)
+            s/,/ /;
+            joinChan($_);
         }
-        $nicktries=0;
-    } elsif ($msg=~/^NOTICE ($ident) :(.*)/) {
-        serverNotice($1,$2);
-    } elsif ($msg=~/^332 $ident ($ischan) :(.*)/) {
-        if ($param{ansi_control}) {
+        $nicktries = 0;
+    } elsif ( $msg =~ /^NOTICE ($ident) :(.*)/ ) {
+        serverNotice( $1, $2 );
+    } elsif ( $msg =~ /^332 $ident ($ischan) :(.*)/ ) {
+        if ( $param{ansi_control} ) {
             &status(">>> topic for $b$1$ob: $2");
         } else {
             &status(">>> topic for $1: $2");
         }
-    } elsif ($msg=~/^333 $ident $ischan (.*) (.*)$/) {
-        if ($param{ansi_control}) {
+    } elsif ( $msg =~ /^333 $ident $ischan (.*) (.*)$/ ) {
+        if ( $param{ansi_control} ) {
             &status(">>> set by $b$1$ob at $b$2$ob");
         } else {
             &status(">>> set by $1 at $2");
         }
-    } elsif ($msg=~/^433/) {
+    } elsif ( $msg =~ /^433/ ) {
         ++$nicktries;
-        if (length($param{wantNick}) > 9) {
+        if ( length( $param{wantNick} ) > 9 ) {
             $ident = chop $param{wantNick};
             $ident .= $nicktries;
         } else {
-            $ident = $param{wantNick}.$nicktries;
+            $ident = $param{wantNick} . $nicktries;
         }
-        if ($param{'opername'}) {
+        if ( $param{'opername'} ) {
             &rawout("OPER $param{opername} $param{operpass}");
         }
         $param{nick} = $ident;
         &status("*** Nickname $param{wantNick} in use, trying $ident");
         rawout("NICK $ident");
 
-    } elsif ($msg=~/[0-9]+ $ident . ($ischan) :(.*)/) {
-        my ($chan, $users) = ($1, $2);
+    } elsif ( $msg =~ /[0-9]+ $ident . ($ischan) :(.*)/ ) {
+        my ( $chan, $users ) = ( $1, $2 );
         &status("NAMES $chan: $users");
         my $u;
-        foreach $u (split /\s+/, $users) {
+        foreach $u ( split /\s+/, $users ) {
             if (s/\@//) {
                 $channels{$chan}{o}{$u}++;
             }
@@ -330,14 +347,14 @@ sub servmsg {
                 $channels{$chan}{v}{$u}++;
             }
         }
-    } elsif ($msg=~/[0-9]{3} $ident(\s$ischan)*?\s:(.*)/) {
+    } elsif ( $msg =~ /[0-9]{3} $ident(\s$ischan)*?\s:(.*)/ ) {
         &status("$2");
     }
 }
 
 sub serverNotice {
-    ($type, $msg) = @_;
-    if ($type=~/AUTH/) {
+    ( $type, $msg ) = @_;
+    if ( $type =~ /AUTH/ ) {
         &status("!$param{server}! $msg");
     } else {
         $msg =~ s/\*\*\* Notice -- //;
@@ -346,59 +363,65 @@ sub serverNotice {
 }
 
 sub OperWall {
-    my ($nick, $msg) = @_;
-    $msg=~s/\*\*\* Notice -- //;
+    my ( $nick, $msg ) = @_;
+    $msg =~ s/\*\*\* Notice -- //;
     &status("[wallop($nick)] $msg");
 }
 
 sub prockick {
-    my ($kicker, $chan, $knick, $why) = @_;
+    my ( $kicker, $chan, $knick, $why ) = @_;
 
-    if ($param{ansi_control}) {
-        &status(">>> $b$knick$ob was kicked off $b$chan$ob by $b$kicker$ob ($b$why$ob)");
+    if ( $param{ansi_control} ) {
+        &status(
+">>> $b$knick$ob was kicked off $b$chan$ob by $b$kicker$ob ($b$why$ob)"
+        );
     } else {
-        &status(">>> $b$knick$ob was kicked off $b$chan$ob by $b$kicker$ob ($b$why$ob)");
+        &status(
+">>> $b$knick$ob was kicked off $b$chan$ob by $b$kicker$ob ($b$why$ob)"
+        );
     }
-    if ($knick eq $ident) {
+    if ( $knick eq $ident ) {
         &status("SELF attempting to rejoin lost channel $chan");
         &joinChan($chan);
     }
 }
 
 sub prockill {
-    my ($killer, $knick, $kserv, $killnick, $why) = @_;
-    if ($knick eq $ident) {
-        &status("KILLED by $killnick ($why)");	
+    my ( $killer, $knick, $kserv, $killnick, $why ) = @_;
+    if ( $knick eq $ident ) {
+        &status("KILLED by $killnick ($why)");
     } else {
         &status("KILL $knick by $killnick ($why)");
     }
 }
 
 sub fhbits {
-    local (@fhlist) = split(' ',$_[0]);
+    local (@fhlist) = split( ' ', $_[0] );
     local ($bits);
     for (@fhlist) {
-        vec($bits,fileno($_),1) = 1;
+        vec( $bits, fileno($_), 1 ) = 1;
     }
     $bits;
 }
 
 sub irc {
-    local ($rin, $rout);
-    local ($buf, $line);
+    local ( $rin, $rout );
+    local ( $buf, $line );
 
-    $nicktries=0;
-    $connected=1;
+    $nicktries = 0;
+    $connected = 1;
     while ($connected) {
-        srvConnect($param{server}, $param{port});
+        srvConnect( $param{server}, $param{port} );
 
-        if ($param{server_pass}) { # ksiero++
+        if ( $param{server_pass} ) {    # ksiero++
             rawout("PASS $param{server_pass}");
         }
 
         rawout("NICK $param{wantNick}");
-        rawout("USER $param{ircuser} $param{ident} $param{server} :$param{realname}");
-        if ($param{operator}) {
+        rawout(
+"USER $param{ircuser} $param{ident} $param{server} :$param{realname}"
+        );
+        if ( $param{operator} ) {
             rawout("OPER $param{operName} $param{operPass}\n");
         }
         $param{nick} = $param{wantNick};
@@ -408,17 +431,18 @@ sub irc {
 
         $rin = fhbits('SOCK');
         while (1) {
-            ($nfound,$timeleft) = select($rout=$rin, undef, undef, 0);
-            if ($rout & SOCK) {
-                if (sysread(SOCK,$buf,1) <= 0) {
+            ( $nfound, $timeleft ) =
+              select( $rout = $rin, undef, undef, 0 );
+            if ( $rout & SOCK ) {
+                if ( sysread( SOCK, $buf, 1 ) <= 0 ) {
                     last;
                 }
-                if ($buf=~/\n/) {
-                    $line.=$buf;
+                if ( $buf =~ /\n/ ) {
+                    $line .= $buf;
                     sparse($line);
                     undef $line;
                 } else {
-                    $line.=$buf;
+                    $line .= $buf;
                 }
             }
         }
@@ -437,47 +461,51 @@ sub sparse {
     $_ = $_[0];
     s/\r//;
 
-    if (/^PING :(\S+)/) {	# Pings are important
+    if (/^PING :(\S+)/) {    # Pings are important
         rawout("PONG :$1");
         &status("SELF replied to server PING") if $param{VERBOSITY} > 2;
     } elsif (/^:\S+ ([\d]{3} .*)/) {
         servmsg($1);
-    } elsif (/^:([\d\w\_\-\/]+\.[\.\d\w\_\-\/]+) NOTICE ($ident) :(.*)/) {
+    } elsif (/^:([\d\w\_\-\/]+\.[\.\d\w\_\-\/]+) NOTICE ($ident) :(.*)/)
+    {
         &status("\-\[$1\]- $3");
     } elsif (/^NOTICE (.*) :(.*)/) {
-        serverNotice($1, $2);
+        serverNotice( $1, $2 );
     } elsif (/^:NickServ!s\@NickServ NOTICE \S+ :(.*)/i) {
-        &nickServ($1);		# added by the xk.
+        &nickServ($1);       # added by the xk.
     } elsif (/^:NickServ!NickServ\@services\. NOTICE \S+ :(.*)/i) {
-        &nickServ($1);      # freenode style
+        &nickServ($1);       # freenode style
     } elsif (/^:ChanServ!s\@ChanServ NOTICE \S+ :(.*)/i) {
-        &chanServ($1);		# added by the xk.
-    } elsif (/^:(\S+)!(\S+)@(\S+)\s(PRIVMSG|NOTICE)\s([\#\&]?\S+)\s:(.*)/) {
-        procevent($1,$2,$3,$4,$5,$6);
+        &chanServ($1);       # added by the xk.
+    } elsif (
+        /^:(\S+)!(\S+)@(\S+)\s(PRIVMSG|NOTICE)\s([\#\&]?\S+)\s:(.*)/)
+    {
+        procevent( $1, $2, $3, $4, $5, $6 );
     } elsif (/^:(\S+)!(\S+)@(\S+)\s(PART|JOIN|NICK|QUIT)\s:?(.*)/) {
-        entryEvt($1,$2,$3,$4,$5);
+        entryEvt( $1, $2, $3, $4, $5 );
     } elsif (/^:(.*) WALLOPS :(.*)/) {
-        OperWall($1,$2);
+        OperWall( $1, $2 );
     } elsif (/^:(.*)!(.*)@(.*) (MODE) (.*)/) {
-        procmode($1,$2,$3,$4,$5);
+        procmode( $1, $2, $3, $4, $5 );
     } elsif (/^:(.*) (MODE) (.*)/) {
-        procservmode($1,$2,$3);
+        procservmode( $1, $2, $3 );
     } elsif (/^:(\S+)!(?:\S+)@(?:\S+) KICK ((\#|&).+) (.*) :(.*)/) {
-        prockick($1,$2,$4,$5);
+        prockick( $1, $2, $4, $5 );
     } elsif (/^ERROR :(.*)/) {
         &status("ERROR $1");
     } elsif (/^:([^! ]+)!\S+@\S+ TOPIC (\#.+) :(.*)/) {
-        if ($param{ansi_control}) {
+        if ( $param{ansi_control} ) {
             &status(">>> $1$b\[$ob$2$b\]$ob set the topic: $3");
         } else {
             &status(">>> $1\[$2\] set the topic: $3");
         }
     } elsif (/^:(\S+)!\S+@\S+ KILL (.*) :(.*)!(.*) \((.*)\)/) {
-        prockill($1,$2,$3,$4,$5);
+        prockill( $1, $2, $3, $4, $5 );
     } else {
         &status("UNKNOWN $_");
     }
-#Corion--
+
+    #Corion--
 }
 
 1;

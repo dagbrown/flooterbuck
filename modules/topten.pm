@@ -6,7 +6,6 @@
 # $Id: topten.pm,v 1.7 2005/05/19 20:06:36 rich_lafferty Exp $
 #------------------------------------------------------------------------
 
-
 =head1 NAME
 
 topten.pm - List the top 10 participants by karma or by number of
@@ -50,37 +49,36 @@ use strict;
 package topten;
 
 sub scan(&$$) {
-    my ($callback,$message,$who) = @_;
+    my ( $callback, $message, $who ) = @_;
 
     # Now with INTENSE CASE INSENSITIVITY!  SUNDAY SUNDAY SUNDAY!
-    if ($message =~ /^(?:topten|bottomten)(?:\s+karma)?\s*[?!.]?$/i) {
-	my @showtop;
-	my $reply;
-	if ($message =~ /karma/i) {
-		if ($message =~ /bottomten/i) {
-        		@showtop = &::showtop("plusplus" ,10, "bottom");
-			$reply = "Bottom 10 karma is: ";
-		} else {
-        		@showtop = &::showtop("plusplus" ,10, "top");
-			$reply = "Top 10 karma is: ";
-		}
-	} else {
-                if ($message =~ /topten/i) {
-		@showtop = &::showtop("topten", 10, "top");
-		$reply = "Top 10 are: ";
-                } else {
-		@showtop = &::showtop("topten", 10, "bottom");
-		$reply = "Bottom 10 are: ";
-                }
-	}
-	my $counter = 1;
-	foreach (@showtop)
-	{
-		my ($nick, $lines) = split(/ => /);
-		$reply .= "$counter. $nick ($lines), ";
-		$counter++;
-	}
-	$reply =~ s/, $//;
+    if ( $message =~ /^(?:topten|bottomten)(?:\s+karma)?\s*[?!.]?$/i ) {
+        my @showtop;
+        my $reply;
+        if ( $message =~ /karma/i ) {
+            if ( $message =~ /bottomten/i ) {
+                @showtop = &::showtop( "plusplus", 10, "bottom" );
+                $reply = "Bottom 10 karma is: ";
+            } else {
+                @showtop = &::showtop( "plusplus", 10, "top" );
+                $reply = "Top 10 karma is: ";
+            }
+        } else {
+            if ( $message =~ /topten/i ) {
+                @showtop = &::showtop( "topten", 10, "top" );
+                $reply = "Top 10 are: ";
+            } else {
+                @showtop = &::showtop( "topten", 10, "bottom" );
+                $reply = "Bottom 10 are: ";
+            }
+        }
+        my $counter = 1;
+        foreach (@showtop) {
+            my ( $nick, $lines ) = split(/ => /);
+            $reply .= "$counter. $nick ($lines), ";
+            $counter++;
+        }
+        $reply =~ s/, $//;
         $callback->($reply);
         return 1;
     }

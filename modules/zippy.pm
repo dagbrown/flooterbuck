@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------
 # zippy -- infobot module for Zippy the Pinhead quotes
-#          hacked up by Rich Lafferty (mendel) <rich@vax2.concordia.ca> 
+#          hacked up by Rich Lafferty (mendel) <rich@vax2.concordia.ca>
 #
 # Data gratuitously swiped from fortune-mod-9708, the 'fortune' program.
 #
@@ -9,28 +9,31 @@
 
 package zippy;
 
-my $no_zippy; # Can't think of any situation in which this won't work..
+my $no_zippy;  # Can't think of any situation in which this won't work..
 
 sub scan(&$$) {
-    my ($callback,$message,$who) = @_;
+    my ( $callback, $message, $who ) = @_;
 
-    unless ($message =~ /^yow[!? ]*$/i or $message =~ /^be zippy\?*$/i) { 
+    unless ( $message =~ /^yow[!? ]*$/i
+        or $message =~ /^be zippy\?*$/i )
+    {
         return undef;
     }
 
-    unless (@yows) { # read data unless it's been read already.
+    unless (@yows) {    # read data unless it's been read already.
         print "Reading...\n";
         while (<DATA>) {
             chomp;
-            push @yows, $_; 
+            push @yows, $_;
         }
     }
 
-    if ($no_zippy) { # ..but just in case :-)
-        $callback->("YOW! I'm an INFOBOT without ZIPPY!") if $main::addressed;
+    if ($no_zippy) {    # ..but just in case :-)
+        $callback->("YOW! I'm an INFOBOT without ZIPPY!")
+          if $main::addressed;
     }
 
-    my $yow = $yows[rand(@yows)];
+    my $yow = $yows[ rand(@yows) ];
 
     $callback->($yow);
     return 1;

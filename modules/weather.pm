@@ -25,13 +25,14 @@ sub get_weather {
 
     # make this work like Aviation
     $station = uc($station);
-    
+
     my $station = uc($2);
     $station =~ s/[.?!]$//;
     $station =~ s/\s+$//g;
     return "'$station' doesn't look like a valid ICAO airport identifier."
-        unless $station =~ /^[\w\d]{3,4}$/;
-    $station = "C" . $station if length($station) == 3 && $station =~ /^Y/;
+      unless $station =~ /^[\w\d]{3,4}$/;
+    $station = "C" . $station
+      if length($station) == 3 && $station =~ /^Y/;
     $station = "K" . $station if length($station) == 3;
 
     if ($no_weather) {
@@ -39,23 +40,27 @@ sub get_weather {
     } else {
 
         my $ua = new LWP::UserAgent;
-        if (my $proxy = main::getparam('httpproxy')) { $ua->proxy('http', $proxy) };
+        if ( my $proxy = main::getparam('httpproxy') ) {
+            $ua->proxy( 'http', $proxy );
+        }
 
         $ua->timeout(10);
-        my $request = new HTTP::Request('GET', "http://weather.noaa.gov/weather/current/$station.html");
-        my $response = $ua->request($request); 
+        my $request = new HTTP::Request( 'GET',
+            "http://weather.noaa.gov/weather/current/$station.html" );
+        my $response = $ua->request($request);
 
-        if (!$response->is_success) {
+        if ( !$response->is_success ) {
             return "Something failed in connecting to the NOAA web server. Try again later.";
         }
 
         $content = $response->content;
 
-        if ($content =~  /ERROR/i) {
+        if ( $content =~ /ERROR/i ) {
             return "I can't find that station code (see http://weather.noaa.gov/weather/curcond.html for locations codes)";
-        } 
+        }
 
-        $content =~ s|.*?current weather conditions:<BR>(.*?)</B>.*?</TR>||is;
+        $content =~
+          s|.*?current weather conditions:<BR>(.*?)</B>.*?</TR>||is;
         my $place = $1;
 
         # $content =~ s|.*?<TR>(?:\s*<[^>]+>)*\s*([^<]+)\s<.*?</TR>||is;
@@ -68,7 +73,8 @@ sub get_weather {
 
         $content =~ s|.*?conditions at.*?</TD>||is;
 
-        $content =~ s|.*?<OPTION SELECTED>\s+([^<]+)\s<OPTION>.*?</TR>||s;
+        $content =~
+          s|.*?<OPTION SELECTED>\s+([^<]+)\s<OPTION>.*?</TR>||s;
         my $time = $1;
         $time =~ s/-//g;
         $time =~ s/\s+/ /g;
@@ -77,43 +83,50 @@ sub get_weather {
         my $features = $1;
 
         my %feat;
-        while ($features =~ s|.*?<TD ALIGN[^>]*>(?:\s*<[^>]+>)*\s+([^<]+?)\s+<.*?<TD>(?:\s*<[^>]+>)*\s+([^<]+?)\s<.*?/TD>||s) {
-            my ($f,$v) = ($1, $2);
-            chomp $f; chomp $v;
+        while ( $features =~
+s|.*?<TD ALIGN[^>]*>(?:\s*<[^>]+>)*\s+([^<]+?)\s+<.*?<TD>(?:\s*<[^>]+>)*\s+([^<]+?)\s<.*?/TD>||s
+          )
+        {
+            my ( $f, $v ) = ( $1, $2 );
+            chomp $f;
+            chomp $v;
             $feat{$f} = $v;
         }
 
-        $content =~ s|.*?>(\d+\S+\s+\(\S+\)).*?</TD>||s;  # max temp;
+        $content =~ s|.*?>(\d+\S+\s+\(\S+\)).*?</TD>||s;    # max temp;
         $max_temp = $1;
-        $content =~ s|.*?>(\d+\S+\s+\(\S+\)).*?</TD>||s;  
+        $content =~ s|.*?>(\d+\S+\s+\(\S+\)).*?</TD>||s;
         $min_temp = $1;
 
         if ($time) {
             $result = "$place; $id; last updated: $time";
-            foreach (sort keys %feat) {
+            foreach ( sort keys %feat ) {
                 next if $_ eq 'ob';
                 $result .= "; $_: $feat{$_}";
             }
             my $t = time();
         } else {
-            $result = "I can't find that station code (see http://weather.noaa.gov/weather/curcond.html for locations and codes)";
+            $result =
+"I can't find that station code (see http://weather.noaa.gov/weather/curcond.html for locations and codes)";
         }
         return $result;
     }
 }
 
 sub scan (&$$) {
-    my ($callback,$message,$who) = @_;
+    my ( $callback, $message, $who ) = @_;
 
-    if (::getparam('weather') 
-            and ($message =~ /^\s*(wx|weather)\s+(?:for\s+)?(.*?)\s*\?*\s*$/)) {
+    if ( ::getparam('weather')
+        and
+        ( $message =~ /^\s*(wx|weather)\s+(?:for\s+)?(.*?)\s*\?*\s*$/ )
+      )
+    {
         my $code = $2;
-        $callback->(get_weather($code));
+        $callback->( get_weather($code) );
         return 'NOREPLY';
     }
     return undef;
 }
-
 
 "weather";
 

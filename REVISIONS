@@ -11,6 +11,10 @@ New features
 - The message center is back!  If you say "bot, msg somenick I have a
   message for you" it will lurk until somenick says something, and then
   inform somenick via private message that he has messages waiting.
+- Added support for time zones in fuzzyclock.  (Actually this was added
+  a while ago, but the person who added it neglected to mention so here.)
+- Added a few extra units, like "barrel", and old units under new extra
+  spellings like "metre".
 
 Bug Fixes
 =========

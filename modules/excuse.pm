@@ -10,6 +10,7 @@
 #------------------------------------------------------------------------
 
 use strict;
+
 package excuse;
 
 my $no_excuse;
@@ -17,18 +18,18 @@ my $no_excuse;
 my @excuses;
 
 sub scan(&$$) {
-    my ($callback, $message, $who)=@_;
+    my ( $callback, $message, $who ) = @_;
 
-    unless($message=~/\bexcuse\b/) {
+    unless ( $message =~ /\bexcuse\b/ ) {
         return undef;
     }
 
-    unless(@excuses) {
+    unless (@excuses) {
         ::status("Reading excuses...");
-        @excuses=<DATA>;
+        @excuses = <DATA>;
     }
 
-    my $excuse=$excuses[rand(@excuses)];
+    my $excuse = $excuses[ rand(@excuses) ];
 
     $callback->($excuse);
     return 1;

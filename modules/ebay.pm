@@ -8,7 +8,6 @@
 package ebay;
 use strict;
 
-
 =head1 NAME
 
 ebay.pl - get auction summary from eBay
@@ -49,7 +48,7 @@ Nickname interface added by Drew Hamilton <awh@awh.org>
 # Check that LWP is available, so we don't waste our time
 # generating error messages later on.
 #------------------------------------------------------------------------
-my ($no_ebay, $no_posix);
+my ( $no_ebay, $no_posix );
 
 BEGIN {
     eval qq{
@@ -70,10 +69,11 @@ BEGIN {
 # in the container you asked for.
 #------------------------------------------------------------------------
 sub snag_element($$) {
-    my $element=shift;
-    my $blob_o_html=shift;
+    my $element     = shift;
+    my $blob_o_html = shift;
 
-    return ($blob_o_html=~/\<$element[^>]*\>(.*?)\<\/$element\>/gis);
+    return (
+        $blob_o_html =~ /\<$element[^>]*\>(.*?)\<\/$element\>/gis );
 }
 
 #------------------------------------------------------------------------
@@ -83,12 +83,12 @@ sub snag_element($$) {
 # man's "lynx -dump".
 #------------------------------------------------------------------------
 sub strip_html($) {
-    my $blob=shift;
+    my $blob = shift;
     chomp $blob;
-    $blob=~s/\<br\>/; /ig;
-    $blob=~s/\<[^>]+\>//g;
-    $blob=~s/\&[a-z]+\;?//g;
-    $blob=~s/\s+/ /g;
+    $blob =~ s/\<br\>/; /ig;
+    $blob =~ s/\<[^>]+\>//g;
+    $blob =~ s/\&[a-z]+\;?//g;
+    $blob =~ s/\s+/ /g;
     return $blob;
 }
 
@@ -98,12 +98,12 @@ sub strip_html($) {
 # Given an eBay auction page, return a quick one-line summary of it
 #------------------------------------------------------------------------
 sub parse_response($) {
-    my $response=shift;
+    my $response = shift;
 
-    $response=~s/\n//g;
-    $response=~s/\r//g;
+    $response =~ s/\n//g;
+    $response =~ s/\r//g;
 
-    my ($title)=snag_element("title",$response);
+    my ($title) = snag_element( "title", $response );
     chomp $title;
     $title =~ s/\(Ends [^\)]*\)//g;
     $title =~ s/ +/ /g;
@@ -111,51 +111,65 @@ sub parse_response($) {
     my %snagged_info;
     my @seller_info;
 
-    my @columns=snag_element("td",$response); # all columns, everywhere
-    my $color=0;
-    my $storedinfo=undef;
+    my @columns =
+      snag_element( "td", $response );    # all columns, everywhere
+    my $color      = 0;
+    my $storedinfo = undef;
 
-    my $sellerinfo_mode=0;
+    my $sellerinfo_mode = 0;
 
     map {
-        my $info=strip_html $_;
-        $info=~s/^\s*//;$info=~s/\s*$//;$info=~s/\n//g;
-        if($info eq "Seller information") {
+        my $info = strip_html $_;
+        $info =~ s/^\s*//;
+        $info =~ s/\s*$//;
+        $info =~ s/\n//g;
+        if ( $info eq "Seller information" ) {
             $sellerinfo_mode++;
         }
-        if($sellerinfo_mode>0) {
-            push(@seller_info,$info);
+        if ( $sellerinfo_mode > 0 ) {
+            push( @seller_info, $info );
             $sellerinfo_mode++;
-            if($sellerinfo_mode>10) {
-                $sellerinfo_mode=0;
+            if ( $sellerinfo_mode > 10 ) {
+                $sellerinfo_mode = 0;
             }
         }
-        if($storedinfo) {
-            $snagged_info{$storedinfo}=$info;
+        if ($storedinfo) {
+            $snagged_info{$storedinfo} = $info;
         }
-        $storedinfo=$info;
+        $storedinfo = $info;
     } @columns;
 
-    @seller_info=grep {/./} @seller_info;
+    @seller_info = grep { /./ } @seller_info;
 
     # fix the Buy It Now bug
-    $snagged_info{"Currently"} =~ s/Buy.*//;
+    $snagged_info{"Currently"}  =~ s/Buy.*//;
     $snagged_info{"Time left:"} =~ s/ *\;.*//;
 
-    my $reply = $title." [".$seller_info[1]."] ".
-        ($snagged_info{"Current bid:"}
-            || $snagged_info{"Starting bid:"}
-            || $snagged_info{"Winning bid:"}) ." ".
-        ($snagged_info{"Current bid:"} ?
-            " [".$snagged_info{"High bidder:"}."]"
-            : ($snagged_info{"Winning bid:"} ?
-                " [".$snagged_info{"Winning bidder:"}."]"
-                : "[no bids]")) ." ".
-        ($snagged_info{"Time left:"} ?
-            $snagged_info{"Time left:"}. " to go" :
-            "Auction ended ".$snagged_info{"Ended:"});
+    my $reply =
+        $title . " ["
+      . $seller_info[1] . "] "
+      . (    $snagged_info{"Current bid:"}
+          || $snagged_info{"Starting bid:"}
+          || $snagged_info{"Winning bid:"} )
+      . " "
+      . (
+        $snagged_info{"Current bid:"}
+        ? " [" 
+          . $snagged_info{"High bidder:"}
+          . "]"
+        : (
+            $snagged_info{"Winning bid:"}
+            ? " [" . $snagged_info{"Winning bidder:"} . "]"
+            : "[no bids]"
+        )
+      )
+      . " "
+      . (
+          $snagged_info{"Time left:"}
+        ? $snagged_info{"Time left:"} . " to go"
+        : "Auction ended " . $snagged_info{"Ended:"}
+      );
 }
-
 
 #------------------------------------------------------------------------
 # parse_seller_response
@@ -169,18 +183,19 @@ sub parse_seller_response($) {
     $response =~ s/\n//g;
     $response =~ s/\r//g;
 
-    my @rows = snag_element("tr", $response);
+    my @rows = snag_element( "tr", $response );
 
-    my ($reply, $gotreply);
-    foreach (@rows)
-    {
-        my @cols = snag_element("td", $_);
-        # it's the right row if the first column is a URL to an item listing.
-        if ($cols[0] =~ m#ViewItem#) {
-            my ($item) = ($cols[0] =~ /item=(\d+)/);
+    my ( $reply, $gotreply );
+    foreach (@rows) {
+        my @cols = snag_element( "td", $_ );
+
+   # it's the right row if the first column is a URL to an item listing.
+        if ( $cols[0] =~ m#ViewItem# ) {
+            my ($item) = ( $cols[0] =~ /item=(\d+)/ );
             my ($price) = $cols[3];
-            ($price) = snag_element("b", $price) if ($price =~ /<b>/); 
-            $price .= " (No Bids)" if ($cols[5] =~ m#No Bids#);
+            ($price) = snag_element( "b", $price )
+              if ( $price =~ /<b>/ );
+            $price .= " (No Bids)" if ( $cols[5] =~ m#No Bids# );
             $reply .= "$item - $price, ";
             $gotreply++;
         }
@@ -198,22 +213,22 @@ sub parse_seller_response($) {
 # quick summary
 #------------------------------------------------------------------------
 sub auction_summary {
-    my $auction_id=shift;
+    my $auction_id = shift;
 
     my $response;
-    if($auction_id =~ /^[0-9]+$/) {
-        $response=LWP::Simple::get(
+    if ( $auction_id =~ /^[0-9]+$/ ) {
+        $response = LWP::Simple::get(
             'http://cgi.ebay.com/aw-cgi/eBayISAPI.dll?ViewItem&item='
-            .$auction_id);
+              . $auction_id );
     }
 
-    if($auction_id =~ /http:\/\/.*ebay.com\/.*item=\d+/) {
-        $response=LWP::Simple::get($auction_id);
+    if ( $auction_id =~ /http:\/\/.*ebay.com\/.*item=\d+/ ) {
+        $response = LWP::Simple::get($auction_id);
     }
 
-    my ($title)=snag_element("title",$response);
+    my ($title) = snag_element( "title", $response );
 
-    if($title =~ /Invalid Item/) {
+    if ( $title =~ /Invalid Item/ ) {
         return "I'm sorry, I couldn't find that item on eBay.";
     } else {
         return parse_response($response);
@@ -227,14 +242,15 @@ sub auction_summary {
 # quick summary of his first 10 auctions listed.
 #------------------------------------------------------------------------
 sub auction_sellerlist($) {
-    my $seller_id=shift;
+    my $seller_id = shift;
 
-    my $response=LWP::Simple::get(
-        "http://cgi6.ebay.com/aw-cgi/eBayISAPI.dll?MfcISAPICommand=ViewListedItems&userid=$seller_id&include=0&since=-1&sort=3&rows=10");
+    my $response = LWP::Simple::get(
+"http://cgi6.ebay.com/aw-cgi/eBayISAPI.dll?MfcISAPICommand=ViewListedItems&userid=$seller_id&include=0&since=-1&sort=3&rows=10"
+    );
 
-    my ($title)=snag_element("title",$response);
+    my ($title) = snag_element( "title", $response );
 
-    if($title =~ /User Error/) {
+    if ( $title =~ /User Error/ ) {
         return "I'm sorry, I couldn't find that seller ID on eBay.";
     } else {
         return parse_seller_response($response);
@@ -248,27 +264,26 @@ sub auction_sellerlist($) {
 # and feed the auction ID number into the maw of auction_summary.
 #------------------------------------------------------------------------
 sub ebay_getdata($) {
-    my $line=shift;
+    my $line = shift;
 
-    if(
-        ($line =~ /ebay\s+(\d+)/i && ($1 > 0)) 
-            or
-        ($line =~ /ebay\s+(http:\/\/.*ebay.com\/\S*item=\d+\S*)/)
-    ) {
-        return auction_summary($1); 
-    } elsif($line =~ /ebay\s+that/i) {
-        my $auction_url=::lastURL(::channel());
-        if($auction_url =~ /http:\/\/.*ebay.com\/\S*item=\d+\S*/) {
+    if (   ( $line =~ /ebay\s+(\d+)/i && ( $1 > 0 ) )
+        or ( $line =~ /ebay\s+(http:\/\/.*ebay.com\/\S*item=\d+\S*)/ ) )
+    {
+        return auction_summary($1);
+    } elsif ( $line =~ /ebay\s+that/i ) {
+        my $auction_url = ::lastURL( ::channel() );
+        if ( $auction_url =~ /http:\/\/.*ebay.com\/\S*item=\d+\S*/ ) {
             return auction_summary($auction_url);
         } else {
-            if($::addressed){
+            if ($::addressed) {
                 return "The last URL wasn't eBay";
             } else {
-                # don't say anything (assume someone saying "ebay that then")
-                return 'NOREPLY'; 
+
+           # don't say anything (assume someone saying "ebay that then")
+                return 'NOREPLY';
             }
         }
-    } elsif ($line =~ /ebay\s+(\S+)/i) {
+    } elsif ( $line =~ /ebay\s+(\S+)/i ) {
         return auction_sellerlist($1);
     } else {
         return "That doesn't look like an eBay item number or seller ID.\n";
@@ -281,17 +296,18 @@ sub ebay_getdata($) {
 # This handles the forking (or not) stuff.
 #------------------------------------------------------------------------
 sub ebay::get($$) {
-    if($no_ebay) {
-        &main::status("Sorry, eBay.pl requires LWP and couldn't find it");
+    if ($no_ebay) {
+        &main::status(
+            "Sorry, eBay.pl requires LWP and couldn't find it");
         return "";
     }
 
-    my($line,$callback)=@_;
-    $SIG{CHLD}="IGNORE";
-    my $pid=eval { fork(); };         # Don't worry if OS isn't forking
+    my ( $line, $callback ) = @_;
+    $SIG{CHLD} = "IGNORE";
+    my $pid = eval { fork(); };    # Don't worry if OS isn't forking
     return 'NOREPLY' if $pid;
-    $callback->(&ebay_getdata($line));
-    if (defined($pid))                # child exits, non-forking OS returns
+    $callback->( &ebay_getdata($line) );
+    if ( defined($pid) )           # child exits, non-forking OS returns
     {
         exit 0 if ($no_posix);
         POSIX::_exit(0);
@@ -303,11 +319,11 @@ sub ebay::get($$) {
 #------------------------------------------------------------------------
 
 sub scan(&$$) {
-    my ($callback, $message, $who)=@_;
+    my ( $callback, $message, $who ) = @_;
 
     if ( ::getparam('ebay') and $message =~ /^\s*ebay\s+(\S+)\s*$/i ) {
         &main::status("eBay query");
-        &ebay::get($message,$callback);
+        &ebay::get( $message, $callback );
         return 1;
     }
 }
@@ -317,7 +333,7 @@ sub scan(&$$) {
 #------------------------------------------------------------------------
 
 sub help {
-    q(Say "ebay" and then a number, and I'll summarize that auction for you.  If someone pasted an eBay URL recently, you can say "ebay that" and I'll summarize.);
+q(Say "ebay" and then a number, and I'll summarize that auction for you.  If someone pasted an eBay URL recently, you can say "ebay that" and I'll summarize.);
 }
 
 "ebay";

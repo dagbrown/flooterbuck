@@ -8,9 +8,9 @@
 package example;
 
 sub scan(&$$) {
-    my ($callback,$message,$who) = @_;
+    my ( $callback, $message, $who ) = @_;
 
-    if($message=~/^\s*foo\s*$/) {
+    if ( $message =~ /^\s*foo\s*$/ ) {
         $callback->("bar");
         return 1;
     } else {

@@ -6,7 +6,6 @@
 # $Id: combinatorics.pm,v 1.2 2003/03/10 15:38:22 awh Exp $
 #------------------------------------------------------------------------
 
-
 =head1 NAME
 
 combinatorics.pm - Returns some combinatorics functions -- permutation,
@@ -54,45 +53,48 @@ Drew Hamilton <awh@awh.org>
 =cut
 
 use strict;
+
 package combinatorics;
 
 sub scan(&$$) {
-    my ($callback,$message,$who) = @_;
+    my ( $callback, $message, $who ) = @_;
 
-    if ($message =~ /^\s*(\d*)\s*(\s+factorial|\!)\s*$/i) {
-	if ($1 > 200) {
-		$callback->("I don't like big numbers like that.");
-		return "NOREPLY";
-	}
+    if ( $message =~ /^\s*(\d*)\s*(\s+factorial|\!)\s*$/i ) {
+        if ( $1 > 200 ) {
+            $callback->("I don't like big numbers like that.");
+            return "NOREPLY";
+        }
         my $reply = &fact($1);
         $callback->($reply);
-	return "NOREPLY";
-    }
-   
-# x C y == x! / y! * (x-y)! 
-    if ($message =~ /^\s*(\d*)\s+(?:choose|combin(?:e|ation)|c)\s+(\d*)\s*$/i) {
-	if (($1 > 200) || ($2 > 200)) {
-		$callback->("I don't like big numbers like that.");
-		return "NOREPLY";
-	}
-        my $reply = &fact($1)/(&fact($2)*&fact($1-$2));
-        $callback->($reply);
-	return "NOREPLY";
-    }
-   
-# x P y == x! / (x-y)! 
-    if ($message =~ /^\s*(\d*)\s+(?:permut(?:e|ation)|p)\s+(\d*)\s*$/i) {
-	if (($1 > 200) || ($2 > 200)) {
-		$callback->("I don't like big numbers like that.");
-		return "NOREPLY";
-	}
-        my $reply = &fact($1)/&fact($1-$2);
-        $callback->($reply);
-	return "NOREPLY";
+        return "NOREPLY";
     }
 
+    # x C y == x! / y! * (x-y)!
+    if ( $message =~
+        /^\s*(\d*)\s+(?:choose|combin(?:e|ation)|c)\s+(\d*)\s*$/i )
+    {
+        if ( ( $1 > 200 ) || ( $2 > 200 ) ) {
+            $callback->("I don't like big numbers like that.");
+            return "NOREPLY";
+        }
+        my $reply = &fact($1) / ( &fact($2) * &fact( $1 - $2 ) );
+        $callback->($reply);
+        return "NOREPLY";
+    }
 
-	
+    # x P y == x! / (x-y)!
+    if (
+        $message =~ /^\s*(\d*)\s+(?:permut(?:e|ation)|p)\s+(\d*)\s*$/i )
+    {
+        if ( ( $1 > 200 ) || ( $2 > 200 ) ) {
+            $callback->("I don't like big numbers like that.");
+            return "NOREPLY";
+        }
+        my $reply = &fact($1) / &fact( $1 - $2 );
+        $callback->($reply);
+        return "NOREPLY";
+    }
+
     undef;
 }
 
@@ -101,20 +103,19 @@ sub scan(&$$) {
 #
 # of course, x! == x * (x-1) * (x-2) * ... * 1
 #            x! == 1 when x == 0;
-sub fact($)
-{
-	my $i;
-	my $fact = shift();
+sub fact($) {
+    my $i;
+    my $fact = shift();
 
-	if ($fact > 400) {
-		return 1;
-	}
+    if ( $fact > 400 ) {
+        return 1;
+    }
 
-	my $resp = 1;
-	for ($i = 1; $i <= $fact; $i++) {
-		$resp *= $i;
-	}
-	$resp;
+    my $resp = 1;
+    for ( $i = 1 ; $i <= $fact ; $i++ ) {
+        $resp *= $i;
+    }
+    $resp;
 }
 
 "combinatorics";

@@ -8,7 +8,6 @@
 package shorten;
 use strict;
 
-
 =head1 NAME
 
 shorten.pm - generate a shorten from a big long url
@@ -61,20 +60,24 @@ BEGIN {
 # Given a long URL, return the shorten version.
 #------------------------------------------------------------------------
 sub shorten_create($) {
-    my $longurl=shift;
-    
-    my $shorten=LWP::Simple::get('http://metamark.net/api/rest/simple?long_url='
-            . uri_escape($longurl));
+    my $longurl = shift;
+
+    my $shorten =
+      LWP::Simple::get( 'http://metamark.net/api/rest/simple?long_url='
+          . uri_escape($longurl) );
     chomp $shorten;
 
-    unless ($shorten =~ /^ERROR:/) {
-      (my $best_guess) = $longurl =~ m!^\w+://(?:www[0-9]*\.)?([a-z0-9.-]+)(?:/|$)!;
-      ($best_guess) = $longurl =~ m!^\w+://(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/! unless $best_guess;
+    unless ( $shorten =~ /^ERROR:/ ) {
+        ( my $best_guess ) =
+          $longurl =~ m!^\w+://(?:www[0-9]*\.)?([a-z0-9.-]+)(?:/|$)!;
+        ($best_guess) =
+          $longurl =~ m!^\w+://(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/!
+          unless $best_guess;
 
-      $shorten .= " [$best_guess]" if $best_guess;
-      return "That URL is at $shorten";
+        $shorten .= " [$best_guess]" if $best_guess;
+        return "That URL is at $shorten";
     } else {
-      return $shorten;
+        return $shorten;
     }
 }
 
@@ -85,11 +88,12 @@ sub shorten_create($) {
 # and feed the URL into shorten_create.
 #------------------------------------------------------------------------
 sub shorten_getdata($) {
-    my $line=shift;
+    my $line = shift;
 
-    if($line =~ /^shorten\s+(that(,?\s+please)?|please)?[!?.]?\s*$/) {
-        return shorten_create(::lastURL(::channel()));
-    } elsif ($line =~ /^shorten\s+(.+)/i) {
+    if ( $line =~ /^shorten\s+(that(,?\s+please)?|please)?[!?.]?\s*$/ )
+    {
+        return shorten_create( ::lastURL( ::channel() ) );
+    } elsif ( $line =~ /^shorten\s+(.+)/i ) {
         return shorten_create($1);
     }
 }
@@ -100,17 +104,18 @@ sub shorten_getdata($) {
 # This handles the forking (or not) stuff.
 #------------------------------------------------------------------------
 sub shorten::get {
-    if($no_shorten) {
-        &main::status("Sorry, shorten.pm requires LWP and couldn't find it");
+    if ($no_shorten) {
+        &main::status(
+            "Sorry, shorten.pm requires LWP and couldn't find it");
         return "";
     }
 
-    my($line,$callback)=@_;
-    $SIG{CHLD}="IGNORE";
-    my $pid=eval { fork(); };         # Don't worry if OS isn't forking
+    my ( $line, $callback ) = @_;
+    $SIG{CHLD} = "IGNORE";
+    my $pid = eval { fork(); };    # Don't worry if OS isn't forking
     return 'NOREPLY' if $pid;
-    $callback->(&shorten_getdata($line));
-    if (defined($pid))                # child exits, non-forking OS returns
+    $callback->( &shorten_getdata($line) );
+    if ( defined($pid) )           # child exits, non-forking OS returns
     {
         exit 0 if ($no_posix);
         POSIX::_exit(0);
@@ -122,17 +127,16 @@ sub shorten::get {
 #------------------------------------------------------------------------
 
 sub scan(&$$) {
-    my ($callback, $message, $who)=@_;
-
+    my ( $callback, $message, $who ) = @_;
 
     if ( $message =~ /^\s*(?:shorten)\s+(\w+:\S+)\??/i ) {
         &main::status("shorten small-URL creation");
-        shorten::get($message,$callback);
+        shorten::get( $message, $callback );
         return 1;
     }
-    if ( $message =~ /\s*(?:shorten)\s+(?:that|please)/i) {
+    if ( $message =~ /\s*(?:shorten)\s+(?:that|please)/i ) {
         &main::status("auto-shorten last-url creation");
-        shorten::get($message,$callback);
+        shorten::get( $message, $callback );
     }
 }
 

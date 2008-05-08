@@ -18,7 +18,7 @@ my $ups_version = "1.03f";
 # Check that LWP is available, so we don't waste our time
 # generating error messages later on.
 #------------------------------------------------------------------------
-my ($no_ups, $no_posix);
+my ( $no_ups, $no_posix );
 
 BEGIN {
     eval qq{
@@ -39,15 +39,15 @@ BEGIN {
 # man's "lynx -dump".
 #------------------------------------------------------------------------
 sub strip_html($) {
-    my $blob=shift;
-    $blob=~s,</tr>|<br>,,gi;
-    $blob=~s/&nbsp;/ /sgi;
-    $blob=~s/\<[^>]+\>//g;
-    $blob=~s/\s+/ /g;
+    my $blob = shift;
+    $blob =~ s,</tr>|<br>,,gi;
+    $blob =~ s/&nbsp;/ /sgi;
+    $blob =~ s/\<[^>]+\>//g;
+    $blob =~ s/\s+/ /g;
 
     $blob =~ s/\&amp;/&/g;
 
-    $blob=~s/\&[a-z]+\;?//ig;
+    $blob =~ s/\&[a-z]+\;?//ig;
     return $blob;
 }
 
@@ -58,32 +58,35 @@ sub strip_html($) {
 # quick summary
 #------------------------------------------------------------------------
 sub track_it($) {
-    my $track_num=uc(shift);
+    my $track_num = uc(shift);
 
-    my $ua=new LWP::UserAgent;
-    my $request=new HTTP::Request(
-        GET=> "http://wwwapps.ups.com/etracking/tracking.cgi?".
-            "tracknums_displayed=1&TypeOfInquiryNumber=T".
-            "&HTMLVersion=4.0&InquiryNumber1=$track_num&track=Track"
-    );
-    my $response=$ua->request($request);
+    my $ua = new LWP::UserAgent;
+    my $request =
+      new HTTP::Request(
+            GET => "http://wwwapps.ups.com/etracking/tracking.cgi?"
+          . "tracknums_displayed=1&TypeOfInquiryNumber=T"
+          . "&HTMLVersion=4.0&InquiryNumber1=$track_num&track=Track" );
+    my $response = $ua->request($request);
 
-    return "I can't seem to reach UPS right now, sorry." 
-        unless $response->is_success;
-    
-    my $stripped = strip_html($response->content);
+    return "I can't seem to reach UPS right now, sorry."
+      unless $response->is_success;
 
-    return ("Sorry, I can't find any information on that tracking number.") 
-        if ($stripped =~ /One\sor\smore\sof\sthe\snumbers\s
+    my $stripped = strip_html( $response->content );
+
+    return (
+        "Sorry, I can't find any information on that tracking number.")
+      if (
+        $stripped =~ /One\sor\smore\sof\sthe\snumbers\s
                           you\sentered\sare\snot\svalid\s
-                          UPS\sTracking\sNumbers/x);
+                          UPS\sTracking\sNumbers/x
+      );
 
-    # delete up to the point of usable data (we don't need the header stuff)
-    # the '1.' we search for is actually the itemized tracking list.
+# delete up to the point of usable data (we don't need the header stuff)
+# the '1.' we search for is actually the itemized tracking list.
     $stripped =~ s/^.*1\.//;
 
-    # delete from the end of usable data to EOL.  We don't need the notice or
-    # anything else past it.
+# delete from the end of usable data to EOL.  We don't need the notice or
+# anything else past it.
     $stripped =~ s/NOTICE:.*$//;
 
     # rewrite the timestamp to make it more succinct.
@@ -92,14 +95,14 @@ sub track_it($) {
     # get rid of spaces followed by periods.
     $stripped =~ s/\s+\./\./g;
 
-    # OK, this next block is because the tracking # in the response
-    # is returned as "1Z 828 747 7277 1 ......" and it takes up a
-    # lot of space (plus is redundant).  I start removing spaces
-    # from the beginning until we've got a full tracking # with
-    # no internal spaces ("1Z82874772771 ....", then I just get rid of it.
+  # OK, this next block is because the tracking # in the response
+  # is returned as "1Z 828 747 7277 1 ......" and it takes up a
+  # lot of space (plus is redundant).  I start removing spaces
+  # from the beginning until we've got a full tracking # with
+  # no internal spaces ("1Z82874772771 ....", then I just get rid of it.
 
-    while (!($stripped =~ /^$track_num/)) {
-      $stripped =~ s/ // ;
+    while ( !( $stripped =~ /^$track_num/ ) ) {
+        $stripped =~ s/ //;
     }
 
     $stripped =~ s/^$track_num//;
@@ -117,9 +120,9 @@ sub track_it($) {
 # and feed the auction ID number into the maw of auction_summary.
 #------------------------------------------------------------------------
 sub ups_getdata($) {
-    my $line=shift;
+    my $line = shift;
 
-    if($line =~ /ups\s+(.+)\??/i) {
+    if ( $line =~ /ups\s+(.+)\??/i ) {
         return track_it($1);
     } else {
         return "That doesn't look like a UPS tracking number ($1).";
@@ -132,17 +135,18 @@ sub ups_getdata($) {
 # This handles the forking (or not) stuff.
 #------------------------------------------------------------------------
 sub get($$) {
-    if($no_ups) {
-        &main::status("Sorry, UPS.pl requires LWP and couldn't find it");
+    if ($no_ups) {
+        &main::status(
+            "Sorry, UPS.pl requires LWP and couldn't find it");
         return "";
     }
 
-    my($line,$callback)=@_;
-    $SIG{CHLD}="IGNORE";
-    my $pid=eval { fork(); };         # Don't worry if OS isn't forking
+    my ( $line, $callback ) = @_;
+    $SIG{CHLD} = "IGNORE";
+    my $pid = eval { fork(); };    # Don't worry if OS isn't forking
     return 'NOREPLY' if $pid;
-    $callback->(&ups_getdata($line));
-    if (defined($pid))                # child exits, non-forking OS returns
+    $callback->( &ups_getdata($line) );
+    if ( defined($pid) )           # child exits, non-forking OS returns
     {
         exit 0 if ($no_posix);
         POSIX::_exit(0);
@@ -157,10 +161,10 @@ sub get($$) {
 #------------------------------------------------------------------------
 
 sub scan(&$$) {
-    my ($callback,$message,$who) = @_;
+    my ( $callback, $message, $who ) = @_;
 
-    if($message=~/^\s*ups [0-9A-Z]+\??$/) {
-        return get($message,$callback);
+    if ( $message =~ /^\s*ups [0-9A-Z]+\??$/ ) {
+        return get( $message, $callback );
     }
     return undef;
 }

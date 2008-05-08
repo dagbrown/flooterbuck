@@ -77,17 +77,18 @@ sub bash_getdata($) {
 
 sub bash::get_quote ($) {
     my $quote_number = shift;
-    my $bash         = LWP::Simple::get( 'http://bash.org/?' . $quote_number );
+    my $bash = LWP::Simple::get( 'http://bash.org/?' . $quote_number );
     my ($quote) = ( $bash =~ m/<p class="qt">(.+)<\/p>/sgi );
     $quote =~ s/<br \/>//g;
     $quote = HTML::Entities::decode($quote);
     $quote =~ s/\r//g;
-    return split ( "\n", $quote );
+    return split( "\n", $quote );
 }
 
 sub bash::get_random ($) {
-    my $bash         = LWP::Simple::get( 'http://bash.org/?random1');
-    my ($quote_id) = ( $bash =~ m/<p class="quote"><a href="\?(\d+)" title.+/sgi );
+    my $bash = LWP::Simple::get('http://bash.org/?random1');
+    my ($quote_id) =
+      ( $bash =~ m/<p class="quote"><a href="\?(\d+)" title.+/sgi );
     return get_quote($quote_id);
 }
 
@@ -98,7 +99,8 @@ sub bash::get_random ($) {
 #------------------------------------------------------------------------
 sub bash::get($) {
     if ($no_bash) {
-        &main::status("Sorry, bash.pm requires LWP and couldn't find it");
+        &main::status(
+            "Sorry, bash.pm requires LWP and couldn't find it");
         return "";
     }
 
@@ -108,32 +110,33 @@ sub bash::get($) {
     return 'NOREPLY' if $pid;
     my $force = 0;
 
-    if ($line =~ m/-force/)
-    { $force=1; }
+    if ( $line =~ m/-force/ ) { $force = 1; }
 
     my $quote_id;
     my @lines;
-    if ($line =~ m/(\d+)/)
-    {
-      $quote_id = $1;
-      @lines = &get_quote($quote_id);
-    } elsif ($line =~ m/-random/) {
-      @lines = &get_random();
+    if ( $line =~ m/(\d+)/ ) {
+        $quote_id = $1;
+        @lines    = &get_quote($quote_id);
+    } elsif ( $line =~ m/-random/ ) {
+        @lines = &get_random();
     }
 
     &::status("BASH: line = $line\n");
     if ( !scalar @lines ) {
-        $callback->( "Either that quote id does't exist, or bash.org is busted at the moment." );
-    }
-    else {
+        $callback->(
+"Either that quote id does't exist, or bash.org is busted at the moment."
+        );
+    } else {
         &::status("BASH: force = $force\n");
-        if( $force == 1 || scalar(@lines) <= $BASH_LINES_LIMIT ) {
+        if ( $force == 1 || scalar(@lines) <= $BASH_LINES_LIMIT ) {
             foreach (@lines) {
                 $callback->($_);
                 sleep 1;
             }
         } else {
-            $callback->("Ack!  That one's too long! Look for yourself at http://bash.org/?$quote_id");
+            $callback->(
+"Ack!  That one's too long! Look for yourself at http://bash.org/?$quote_id"
+            );
         }
     }
     if ( defined($pid) )    # child exits, non-forking OS returns
@@ -150,11 +153,14 @@ sub bash::get($) {
 sub scan(&$$) {
     my ( $callback, $message, $who ) = @_;
 
-    unless($BASH_LINES_LIMIT) {
-        $BASH_LINES_LIMIT=::getparam('bash_lines_limit')||4;
+    unless ($BASH_LINES_LIMIT) {
+        $BASH_LINES_LIMIT = ::getparam('bash_lines_limit') || 4;
     }
 
-    if ( ::getparam('bash') and $message =~ /^\s*bash\s+(?:-force|-random)?(?:\s*(\d+))?\s*/ix) {
+    if ( ::getparam('bash')
+        and $message =~
+        /^\s*bash\s+(?:-force|-random)?(?:\s*(\d+))?\s*/ix )
+    {
         &main::status("bash playback");
         &bash::get( $message, $callback );
         return 1;

@@ -1,22 +1,25 @@
 # Template infobot extension
 
 use strict;
+
 package comicchat;
 
 sub scan(&$$) {
-    my ($callback,$message,$who) = @_;
+    my ( $callback, $message, $who ) = @_;
 
     # Check $message, if it's what you want, then do stuff with it
-    if( ::getparam('comicchat') && $message =~ /^comicchat/)
-    {
-      $callback->("# Appears as FLOOTERBUCK.http://village.infoweb.ne.jp/~iorin/aya_lollipop_cat.avb");
-      return 1;
+    if ( ::getparam('comicchat') && $message =~ /^comicchat/ ) {
+        $callback->(
+"# Appears as FLOOTERBUCK.http://village.infoweb.ne.jp/~iorin/aya_lollipop_cat.avb"
+        );
+        return 1;
     }
 
-    if($message =~ /^\# Appears as/)
-    {
-      $callback->("# Appears as FLOOTERBUCK.http://village.infoweb.ne.jp/~iorin/aya_lollipop_cat.avb");
-      return 1;
+    if ( $message =~ /^\# Appears as/ ) {
+        $callback->(
+"# Appears as FLOOTERBUCK.http://village.infoweb.ne.jp/~iorin/aya_lollipop_cat.avb"
+        );
+        return 1;
     }
 
     return undef;

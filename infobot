@@ -9,20 +9,21 @@
 require 5.6.0;
 
 BEGIN {
-  $VER_MAJ = 1;
-  $VER_MIN = 2;
-  $VER_MOD = 1;
+    $VER_MAJ = 1;
+    $VER_MIN = 2;
+    $VER_MOD = 1;
 
-  $version = "Flooterbuck infobot $VER_MAJ\.$VER_MIN\.$VER_MOD [dagbrown]";
+    $version = "Flooterbuck infobot $VER_MAJ\.$VER_MIN\.$VER_MOD [dagbrown]";
 }
 
 BEGIN {
-    $filesep = '/'; 
+    $filesep = '/';
 
     # set this to the absolute path if you need it; especially
     # if . is not in your path
 
-    $param{'basedir'} = ($0 =~ /(.*)$filesep/) ? $1 : '.'; 
+    $param{'basedir'} = ( $0 =~ /(.*)$filesep/ ) ? $1 : '.';
+
     # $infobot_base_dir = '/usr/local/lib/infobot';
 
     # change this next line if you run a local instance of
@@ -34,14 +35,14 @@ BEGIN {
 
     # everything is loaded, then the variables that
     # you want to set will override the defaults; this
-    # is why all these requires are here.  
+    # is why all these requires are here.
 
-    $param{'srcdir'} = $param{'basedir'}.$filesep."src";
+    $param{'srcdir'} = $param{'basedir'} . $filesep . "src";
 
     opendir DIR, $param{'srcdir'}
-    or die "can't open source directory $param{srcdir}: $!";
+      or die "can't open source directory $param{srcdir}: $!";
 
-    while ($file = readdir DIR) {
+    while ( $file = readdir DIR ) {
         next unless $file =~ /\.pl$/;
         require "$param{srcdir}$filesep$file";
     }
@@ -51,14 +52,13 @@ BEGIN {
 # get the command line arguments
 &getArgs();
 
-# initialize everything 
+# initialize everything
 &setup();
 
 # launch the irc event loop
 &irc();
 
-exit 0;  # just so you don't look farther down in this file :)
-
+exit 0;    # just so you don't look farther down in this file :)
 
 # --- support routines
 
@@ -71,13 +71,13 @@ sub usage {
 }
 
 sub getArgs {
-    if ($ARGV[0]) {
-        if ($ARGV[0] =~ /^-[hi\?]/) {
+    if ( $ARGV[0] ) {
+        if ( $ARGV[0] =~ /^-[hi\?]/ ) {
             &usage;
             exit 1;
         }
         else {
-            $paramfile = $ARGV[0]
+            $paramfile = $ARGV[0];
         }
     }
     else {

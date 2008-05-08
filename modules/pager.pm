@@ -12,13 +12,12 @@ BEGIN {
 }
 
 sub scan(&$$) {
-    my ($callback, $message, $who)=@_;
+    my ( $callback, $message, $who ) = @_;
 
-
-    unless ($message =~ /^page\s+(\S+)\s+(.*)$/) {
+    unless ( $message =~ /^page\s+(\S+)\s+(.*)$/ ) {
         return undef;
     }
-    
+
     if ($no_mail) {
         &::status("pager requires Mail::Mailer");
         return undef;
@@ -27,21 +26,20 @@ sub scan(&$$) {
     my $from = $who;
     my $to   = $1;
     my $msg  = $2;
-    
-    my $tofactoid = &::get('is', "${to}'s pager");
 
-    if ($tofactoid =~ /(\S+@\S+)/) {
+    my $tofactoid = &::get( 'is', "${to}'s pager" );
+
+    if ( $tofactoid =~ /(\S+@\S+)/ ) {
         my $toaddr = $1;
         $toaddr =~ s/^mailto://;
-        
-        my $fromfactoid = &::get('is', "${from}'s pager");
+
+        my $fromfactoid = &::get( 'is', "${from}'s pager" );
 
         my $fromaddr;
-        if ($fromfactoid =~ /(\S+@\S+)/) {
+        if ( $fromfactoid =~ /(\S+@\S+)/ ) {
             $fromaddr = $1;
             $fromaddr =~ s/^mailto://;
-        }
-        else {
+        } else {
             $fromaddr = 'infobot@example.com';
         }
 
@@ -56,7 +54,7 @@ sub scan(&$$) {
         );
 
         my $logmsg;
-        for (keys %headers) {
+        for ( keys %headers ) {
             $logmsg .= "$_: $headers{$_}\n";
         }
         $logmsg .= "\n$msg\n";
@@ -64,19 +62,17 @@ sub scan(&$$) {
 
         my $failed;
         my $mailer = new Mail::Mailer 'sendmail';
-        $failed++ unless $mailer->open(\%headers);
+        $failed++ unless $mailer->open( \%headers );
         $failed++ unless print $mailer "$msg\n";
         $failed++ unless $mailer->close;
 
         if ($failed) {
-             $callback->("Sorry, an error occurred while sending mail.")
+            $callback->("Sorry, an error occurred while sending mail.");
+        } else {
+            $callback->("$from: I sent mail to $toaddr.");
         }
-        else {
-             $callback->("$from: I sent mail to $toaddr.");
-        }
-    }
-    else{
-        $callback->("Sorry, I don't know ${to}'s email address.")
+    } else {
+        $callback->("Sorry, I don't know ${to}'s email address.");
     }
     return 'NOREPLY';
 }

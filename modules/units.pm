@@ -2,12 +2,12 @@
 #------------------------------------------------------------------------
 #     units: convert units of measurement
 #     Copyright (C) 1996,1999 M-J. Dominus (mjd-perl-units@plover.com)
-# 
+#
 #     This program is free software; you can redistribute it and/or modify
 #     it under the terms of the GNU General Public License as published by
 #     the Free Software Foundation; either version 2 of the License, or
 #     (at your option) any later version, or under Perl's `Artistic License'.
-# 
+#
 #     This program is distributed in the hope that it will be useful,
 #     but WITHOUT ANY WARRANTY; without even the implied warranty of
 #     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -33,249 +33,272 @@ my $VERSION = '1.01';
 my $PARSE_ERROR;
 
 # set by the BEGIN block, below...
-my (%PREF,$PREF,@actions,@UNITTABS,@DEFAULT_UNITTABS);
+my ( %PREF, $PREF, @actions, @UNITTABS, @DEFAULT_UNITTABS );
 
-my %unittab;					# Definitions loaded here
+my %unittab;    # Definitions loaded here
 
 use constant BOT_UNITTAB => "$main::param{confdir}/unittab.txt";
 
 sub read_defs {
-	my ($file) = @_;
-	unless (open D, $file) {
-       &main::status("units: Couldn't read definitions from from `$file': $!");
-       return;
-   }
-	while (<D>) {
-		s/\#.*$//;
-		trim($_);
-		next unless /\S/;
+    my ($file) = @_;
+    unless ( open D, $file ) {
+        &main::status(
+            "units: Couldn't read definitions from from `$file': $!");
+        return;
+    }
+    while (<D>) {
+        s/\#.*$//;
+        trim($_);
+        next unless /\S/;
 
-		print ">>> $_\n" if $DEBUG_d;
-		my $r = definition_line($_);
-		unless (defined $r) {
-			&main::status("Error in line $. of $file: $PARSE_ERROR.  Skipping.\n");
-		}
-	}
+        print ">>> $_\n" if $DEBUG_d;
+        my $r = definition_line($_);
+        unless ( defined $r ) {
+            &main::status(
+                "Error in line $. of $file: $PARSE_ERROR.  Skipping.\n"
+            );
+        }
+    }
 }
 
 # special case: celsius and fahrenheit
 # warning: you cannot use "F" for farads and "c" for
 # lightspeed in the same conversion now :)
-my ($rnumber, $rcelsius, $rfahr);
+my ( $rnumber, $rcelsius, $rfahr );
+
 BEGIN {
-	$rnumber = qr/(?:[+-]?)(?=\d|\.\d)\d*(?:\.\d*)?(?:[Ee](?:[+-]?\d+))?/;
-	$rcelsius = qr/c(?:elsius)?/i;
-	$rfahr = qr/f(?:ahrenheit)?/i;
+    $rnumber =
+      qr/(?:[+-]?)(?=\d|\.\d)\d*(?:\.\d*)?(?:[Ee](?:[+-]?\d+))?/;
+    $rcelsius = qr/c(?:elsius)?/i;
+    $rfahr    = qr/f(?:ahrenheit)?/i;
 }
 
 sub check_one {
-	my($from, $to, $fa, $fb, $ra, $rb, $format, $func, $eqn) = @_;
-	if ($from =~ /^(?:($rnumber)\s*)?$ra$/) {
-		my $n = $1;
-		if ($to =~ /^$rb$/) {
-		  return defined $n ? sprintf($format, $n, $func->($n)) : $eqn;
-		}
-		# if the user explicitly requests one of the units by name,
-		# but the other isn't the complement, whinge
-		elsif ($from =~ /$fa/i || $to =~ /$fb/i) {
-			return "I don't know how to do that.";
-		}
-	}
-	undef;
+    my ( $from, $to, $fa, $fb, $ra, $rb, $format, $func, $eqn ) = @_;
+    if ( $from =~ /^(?:($rnumber)\s*)?$ra$/ ) {
+        my $n = $1;
+        if ( $to =~ /^$rb$/ ) {
+            return defined $n ? sprintf( $format, $n, $func->($n) ) : $eqn;
+        }
+
+        # if the user explicitly requests one of the units by name,
+        # but the other isn't the complement, whinge
+        elsif ( $from =~ /$fa/i || $to =~ /$fb/i ) {
+            return "I don't know how to do that.";
+        }
+    }
+    undef;
 }
 
 sub check_cf {
-	my ($from, $to) = @_;
-	my $result;
+    my ( $from, $to ) = @_;
+    my $result;
 
-	$result = check_one($from, $to, 'fahrenheit', 'celsius', $rfahr, $rcelsius,
-						'%.6g Fahrenheit is %.6g Celsius.',
-						sub { 5.0 * ($_[0]-32) / 9 },
-						'C = 5/9 * (F - 32)');
-	
-	$result ||= check_one($from, $to, 'celsius', 'fahrenheit', $rcelsius, $rfahr,
-						  '%.6g Celsius is %.6g Fahrenheit.',
-						  sub { 9.0 * $_[0] / 5 + 32 },
-						  'F = 9/5 * C + 32');
+    $result = check_one(
+        $from,
+        $to,
+        'fahrenheit',
+        'celsius',
+        $rfahr,
+        $rcelsius,
+        '%.6g Fahrenheit is %.6g Celsius.',
+        sub { 5.0 * ( $_[0] - 32 ) / 9 },
+        'C = 5/9 * (F - 32)'
+    );
 
-	return $result;
+    $result ||= check_one(
+        $from,
+        $to,
+        'celsius',
+        'fahrenheit',
+        $rcelsius,
+        $rfahr,
+        '%.6g Celsius is %.6g Fahrenheit.',
+        sub { 9.0 * $_[0] / 5 + 32 },
+        'F = 9/5 * C + 32'
+    );
+
+    return $result;
 }
 
 sub convert {
-	my ($have, $want) = @_;
+    my ( $have, $want ) = @_;
 
-	if (my $cf_result = check_cf($have, $want)) {
-		return $cf_result;
-	}
+    if ( my $cf_result = check_cf( $have, $want ) ) {
+        return $cf_result;
+    }
 
-	my $hu = parse_unit($have);
-	if (is_Zero($hu)) {
-		return $PARSE_ERROR;
-	}
-	my $wu;
-	$wu = parse_unit($want);
-	if (is_Zero($wu)) {
-		return $PARSE_ERROR;
-	}
-	my $quot = unit_divide($hu, $wu);
-	if (is_dimensionless($quot)) {
-		my $q = $quot->{_};
-		#my $p = 1/$q;
-		return sprintf '%.6g', $q;
-	} else {
-		return "I can't compare ". text_unit($hu)
-		  . " with " . text_unit($wu) . ".";
-	}
+    my $hu = parse_unit($have);
+    if ( is_Zero($hu) ) {
+        return $PARSE_ERROR;
+    }
+    my $wu;
+    $wu = parse_unit($want);
+    if ( is_Zero($wu) ) {
+        return $PARSE_ERROR;
+    }
+    my $quot = unit_divide( $hu, $wu );
+    if ( is_dimensionless($quot) ) {
+        my $q = $quot->{_};
+
+        #my $p = 1/$q;
+        return sprintf '%.6g', $q;
+    } else {
+        return "I can't compare "
+          . text_unit($hu)
+          . " with "
+          . text_unit($wu) . ".";
+    }
 }
-
 
 ################################################################
 
 sub definition_line {
-	my ($line) = @_;
-	my ($name, $data) = split /\s+/, $line, 2;
-	my $value = parse_unit($data);
-	if (is_Zero($value)) {
-		return;
-	}
-	if (is_fundamental($value)) {
-		return $unittab{$name} = {_ => 1, $name => 1};
-	} else {
-		return $unittab{$name} = $value;
-	}
+    my ($line) = @_;
+    my ( $name, $data ) = split /\s+/, $line, 2;
+    my $value = parse_unit($data);
+    if ( is_Zero($value) ) {
+        return;
+    }
+    if ( is_fundamental($value) ) {
+        return $unittab{$name} = { _ => 1, $name => 1 };
+    } else {
+        return $unittab{$name} = $value;
+    }
 }
 
 sub trim {
-	$_[0] =~ s/\s+$//;
-	$_[0] =~ s/^\s+//;
+    $_[0] =~ s/\s+$//;
+    $_[0] =~ s/^\s+//;
 }
 
 sub Zero () { +{ _ => 0 } }
 
 sub is_Zero {
-	$_[0]{_} == 0;
+    $_[0]{_} == 0;
 }
 
 sub unit_lookup {
-	my ($name) = @_;
-	print STDERR "Looking up unit `$name'\n" if $DEBUG_o;
-	return $unittab{$name} if exists $unittab{$name};
-	if ($name =~ /s$/) {
-		my $shortname = $name;
-		$shortname =~ s/s$//;
-		return $unittab{$shortname} if exists $unittab{$shortname};
-	}
-	my ($prefix, $rest) = ($name =~ /^($PREF-?)(.*)/o);
-	unless ($prefix) {
-		$PARSE_ERROR = "Unknown unit `$name'";
-		return Zero;
-	}
-	my $base_unit = unit_lookup($rest); # Recursive
-	con_multiply($base_unit, 10**$PREF{$prefix});
+    my ($name) = @_;
+    print STDERR "Looking up unit `$name'\n" if $DEBUG_o;
+    return $unittab{$name} if exists $unittab{$name};
+    if ( $name =~ /s$/ ) {
+        my $shortname = $name;
+        $shortname =~ s/s$//;
+        return $unittab{$shortname} if exists $unittab{$shortname};
+    }
+    my ( $prefix, $rest ) = ( $name =~ /^($PREF-?)(.*)/o );
+    unless ($prefix) {
+        $PARSE_ERROR = "Unknown unit `$name'";
+        return Zero;
+    }
+    my $base_unit = unit_lookup($rest);    # Recursive
+    con_multiply( $base_unit, 10**$PREF{$prefix} );
 }
 
 sub unit_multiply {
-	my ($a, $b) = @_;
-	print STDERR "Multiplying @{[%$a]} by @{[%$b]}: \n" if $DEBUG_o;
-	my $r = {%$a};
-	$r->{_} *= $b->{_};
-	my $u;
-	for $u (keys %$b) {
-		next if $u eq '_';
-		$r->{$u} += $b->{$u};
-	}
-	print STDERR "\tResult: @{[%$r]}\n" if $DEBUG_o;
-	$r;
+    my ( $a, $b ) = @_;
+    print STDERR "Multiplying @{[%$a]} by @{[%$b]}: \n" if $DEBUG_o;
+    my $r = {%$a};
+    $r->{_} *= $b->{_};
+    my $u;
+    for $u ( keys %$b ) {
+        next if $u eq '_';
+        $r->{$u} += $b->{$u};
+    }
+    print STDERR "\tResult: @{[%$r]}\n" if $DEBUG_o;
+    $r;
 }
 
 sub unit_divide {
-	my ($a, $b) = @_;
-	die "Division by zero error" if $b->{_} == 0;
-	my $r = {%$a};
-	$r->{_} /= $b->{_};
-	my $u;
-	for $u (keys %$b) {
-		next if $u eq '_';
-		$r->{$u} -= $b->{$u};
-	}
-	$r;
+    my ( $a, $b ) = @_;
+    die "Division by zero error" if $b->{_} == 0;
+    my $r = {%$a};
+    $r->{_} /= $b->{_};
+    my $u;
+    for $u ( keys %$b ) {
+        next if $u eq '_';
+        $r->{$u} -= $b->{$u};
+    }
+    $r;
 }
 
 sub unit_power {
-	my ($p, $u) = @_;
-	print STDERR "Raising unit @{[%$u]} to power $p.\n" if $DEBUG_o;
-	my $r = {%$u};
-	$r->{_} **= $p;
-	my $d;
-	for $d (keys %$r) {
-		next if $d eq '_';
-		$r->{$d} *= $p;
-	}
-	print STDERR "\tResult: @{[%$r]}\n" if $DEBUG_o;
-	$r;
+    my ( $p, $u ) = @_;
+    print STDERR "Raising unit @{[%$u]} to power $p.\n" if $DEBUG_o;
+    my $r = {%$u};
+    $r->{_}**= $p;
+    my $d;
+    for $d ( keys %$r ) {
+        next if $d eq '_';
+        $r->{$d} *= $p;
+    }
+    print STDERR "\tResult: @{[%$r]}\n" if $DEBUG_o;
+    $r;
 }
 
 sub unit_dimensionless {
-	print "Turning $_[0] into a dimensionless unit.\n" if $DEBUG_o;
-	return +{_ => $_[0]};
+    print "Turning $_[0] into a dimensionless unit.\n" if $DEBUG_o;
+    return +{ _ => $_[0] };
 }
 
 sub con_multiply {
-	my ($u, $c) = @_;
-	print STDERR "Multiplying unit @{[%$u]} by constant $c.\n" if $DEBUG_o;
-	my $r = {%$u};
-	$r->{_} *= $c;
-	print STDERR "\tResult: @{[%$r]}\n" if $DEBUG_o;
-	$r;
+    my ( $u, $c ) = @_;
+    print STDERR "Multiplying unit @{[%$u]} by constant $c.\n"
+      if $DEBUG_o;
+    my $r = {%$u};
+    $r->{_} *= $c;
+    print STDERR "\tResult: @{[%$r]}\n" if $DEBUG_o;
+    $r;
 }
 
 sub is_dimensionless {
-	my ($r) = @_;
-	my $u;
-	for $u (keys %$r) {
-		next if $u eq '_';
-		return if $r->{$u} != 0;
-	}
-	return 1;
+    my ($r) = @_;
+    my $u;
+    for $u ( keys %$r ) {
+        next if $u eq '_';
+        return if $r->{$u} != 0;
+    }
+    return 1;
 }
 
 # Generate bogus unit value that signals that a new fundamental unit
 # is being defined
 sub new_fundamental_unit {
-	return +{__ => 'new', _ => 1};
+    return +{ __ => 'new', _ => 1 };
 }
 
 # Recognize this  bogus value when it appears again.
 sub is_fundamental {
-	exists $_[0]{__};
+    exists $_[0]{__};
 }
 
 sub text_unit {
-	my ($u) = @_;
-	my (@pos, @neg);
-	my $k;
-	my $c = $u->{_};
-	for $k (sort keys %$u) {
-		next if $k eq '_';
-		push @pos, $k if $u->{$k} > 0;
-		push @neg, $k if $u->{$k} < 0;
-	}
-	my $text = ($c == 1 ? '' : $c);
-	my $d;
-	for $d (@pos) {
-		my $e = $u->{$d};
-		$text .= " $d";
-		$text .= "^$e" if $e > 1;
-	}
+    my ($u) = @_;
+    my ( @pos, @neg );
+    my $k;
+    my $c = $u->{_};
+    for $k ( sort keys %$u ) {
+        next if $k eq '_';
+        push @pos, $k if $u->{$k} > 0;
+        push @neg, $k if $u->{$k} < 0;
+    }
+    my $text = ( $c == 1 ? '' : $c );
+    my $d;
+    for $d (@pos) {
+        my $e = $u->{$d};
+        $text .= " $d";
+        $text .= "^$e" if $e > 1;
+    }
 
-	$text .= ' per' if @neg;
-	for $d (@neg) {
-		my $e = - $u->{$d};
-		$text .= " $d";
-		$text .= "^$e" if $e > 1;
-	}
-  
-	$text;
+    $text .= ' per' if @neg;
+    for $d (@neg) {
+        my $e = -$u->{$d};
+        $text .= " $d";
+        $text .= "^$e" if $e > 1;
+    }
+
+    $text;
 }
 ################################################################
 #
@@ -283,210 +306,248 @@ sub text_unit {
 #
 
 BEGIN {
-	sub sh { ['shift', $_[0]]  };
-	sub go { ['goto', $_[0]] };
-	@actions = 
-	  (
-	   # Initial state
-	   {PREFIX => sh(1),
-		NUMBER => sh(2),
-		NAME   => sh(3),
-		FUNDAMENTAL => sh(4),
-		FRACTION => sh(5),
-		'(' => sh(6),
-		'unit' => go(7),
-		'topunit' => go(17),
-		'constant' => go(8),
-	   },
-	   # State 1:   constant -> PREFIX .
-	   {
-		_ => ['reduce', 1, 'constant']},
-	   # State 2:   constant -> NUMBER .
-	   {
-		_ => ['reduce', 1, 'constant']},
-	   # State 3:   unit -> NAME .
-	   {
-		_ => ['reduce', 1, 'unit', \&unit_lookup ]},
-	   # State 4:   unit -> FUNDAMENTAL .
-	   {
-		_ => ['reduce', 1, 'unit', \&new_fundamental_unit ]},
-	   # State 5:   constant -> FRACTION .
-	   {
-		_ => ['reduce', 1, 'constant']},
-	   # State 6:   unit -> '(' . unit ')'
-	   {PREFIX => sh(1),
-		NUMBER => sh(2),
-		NAME   => sh(3),
-		FUNDAMENTAL => sh(4),
-		FRACTION => sh(5),
-		'(' => sh(6),
-		'unit' => go(9),
-		'constant' => go(8),
-	   },
-	   # State 7:   topunit -> unit .
-	   #            unit  ->  unit . TIMES unit
-	   #            unit  ->  unit . DIVIDE unit
-	   #            unit  ->  unit . NUMBER
-	   {NUMBER => sh(10),
-		TIMES => sh(11),
-		DIVIDE => sh(12),
-		_ =>  ['reduce', 1, 'topunit'],
-	   },
-	   # State 8:   unit -> constant . unit 
-	   #            unit -> constant .
-	   {PREFIX => sh(1),
-		NUMBER => sh(2),		# Shift-reduce conflict resolved in favor of shift
-		NAME   => sh(3),
-		FUNDAMENTAL => sh(4),
-		FRACTION => sh(5),
-		'(' => sh(6),
-		_ =>   ['reduce', 1, 'unit', \&unit_dimensionless],
-		'unit' => go(13),
-		'constant' => go(8),
-	   },
-	   # State 9:   unit -> unit . TIMES unit
-	   #            unit -> unit . DIVIDE unit
-	   #            unit -> '(' unit . ')'
-	   #            unit -> unit . NUMBER
-	   {NUMBER => sh(10),
-		TIMES => sh(11),
-		DIVIDE => sh(12),
-		')' => sh(14),
-	   },
-	   # State 10:  unit -> unit NUMBER .
-	   { _ => ['reduce', 2, 'unit',
-			   sub {
-				   unless (int($_[1]) == $_[1]) {
-					   ABORT("Nonintegral power $_[1]");
-					   return Zero;
-				   }
-				   unit_power(@_);
-			   }
-			  ],
-	   },
-	   # State 11:  unit -> unit TIMES . unit
-	   {PREFIX => sh(1),
-		NUMBER => sh(2), 
-		NAME   => sh(3),
-		FUNDAMENTAL => sh(4),
-		FRACTION => sh(5),
-		'(' => sh(6),
-		'unit' => go(15),
-		'constant' => go(8),
-	   },
-	   # State 12:  unit -> unit DIVIDE . unit
-	   {PREFIX => sh(1),
-		NUMBER => sh(2), 
-		NAME   => sh(3),
-		FUNDAMENTAL => sh(4),
-		FRACTION => sh(5),
-		'(' => sh(6),
-		'unit' => go(16),
-		'constant' => go(8),
-	   },
-	   # State 13:  unit -> unit . TIMES unit
-	   #            unit -> unit . DIVIDE unit
-	   #            unit -> constant unit . 
-	   #            unit -> unit . NUMBER
-	   {NUMBER => sh(10),		# Shift-reduce conflict resolved in favor of shift
-		TIMES => sh(11),		# Shift-reduce conflict resolved in favor of shift
-		DIVIDE => sh(12),		# Shift-reduce conflict resolved in favor of shift
-		_ => ['reduce', 2, 'unit', \&con_multiply],
-	   },
-	   # State 14: unit => '(' unit ')' .
-	   {
-		_ => ['reduce', 3, 'unit', sub {$_[1]}] },
-	   # State 15: unit  ->  unit . TIMES unit
-	   #           unit  ->  unit TIMES unit . 
-	   #           unit  ->  unit . DIVIDE unit
-	   #           unit  ->  unit . NUMBER 
-	   {NUMBER => sh(10),		# Shift-reduce conflict resolved in favor of shift
-		_ => ['reduce', 3, 'unit', sub {unit_multiply($_[0], $_[2])}],
-	   },
-	   # State 16: unit  ->  unit . TIMES unit
-	   #           unit  ->  unit DIVIDE unit . 
-	   #           unit  ->  unit . DIVIDE unit 
-	   #           unit  ->  unit . NUMBER  
-	   {NUMBER => sh(10),		# Shift-reduce conflict resolved in favor of shift
-		_ => ['reduce', 3, 'unit', sub{unit_divide($_[2], $_[0])}],
-	   },
-	   # State 17: Finishing path
-	   {
-		EOF => go(18),},
-	   # State 18: Final state
-	   {
-		_ => ['accept']},
-	  );
+    sub sh { [ 'shift', $_[0] ] }
+    sub go { [ 'goto',  $_[0] ] }
+    @actions = (
+
+        # Initial state
+        {
+            PREFIX      => sh(1),
+            NUMBER      => sh(2),
+            NAME        => sh(3),
+            FUNDAMENTAL => sh(4),
+            FRACTION    => sh(5),
+            '('         => sh(6),
+            'unit'      => go(7),
+            'topunit'   => go(17),
+            'constant'  => go(8),
+        },
+
+        # State 1:   constant -> PREFIX .
+        { _ => [ 'reduce', 1, 'constant' ] },
+
+        # State 2:   constant -> NUMBER .
+        { _ => [ 'reduce', 1, 'constant' ] },
+
+        # State 3:   unit -> NAME .
+        { _ => [ 'reduce', 1, 'unit', \&unit_lookup ] },
+
+        # State 4:   unit -> FUNDAMENTAL .
+        { _ => [ 'reduce', 1, 'unit', \&new_fundamental_unit ] },
+
+        # State 5:   constant -> FRACTION .
+        { _ => [ 'reduce', 1, 'constant' ] },
+
+        # State 6:   unit -> '(' . unit ')'
+        {
+            PREFIX      => sh(1),
+            NUMBER      => sh(2),
+            NAME        => sh(3),
+            FUNDAMENTAL => sh(4),
+            FRACTION    => sh(5),
+            '('         => sh(6),
+            'unit'      => go(9),
+            'constant'  => go(8),
+        },
+
+        # State 7:   topunit -> unit .
+        #            unit  ->  unit . TIMES unit
+        #            unit  ->  unit . DIVIDE unit
+        #            unit  ->  unit . NUMBER
+        {
+            NUMBER => sh(10),
+            TIMES  => sh(11),
+            DIVIDE => sh(12),
+            _      => [ 'reduce', 1, 'topunit' ],
+        },
+
+        # State 8:   unit -> constant . unit
+        #            unit -> constant .
+        {
+            PREFIX => sh(1),
+            NUMBER => sh(2)
+            ,    # Shift-reduce conflict resolved in favor of shift
+            NAME        => sh(3),
+            FUNDAMENTAL => sh(4),
+            FRACTION    => sh(5),
+            '('         => sh(6),
+            _          => [ 'reduce', 1, 'unit', \&unit_dimensionless ],
+            'unit'     => go(13),
+            'constant' => go(8),
+        },
+
+        # State 9:   unit -> unit . TIMES unit
+        #            unit -> unit . DIVIDE unit
+        #            unit -> '(' unit . ')'
+        #            unit -> unit . NUMBER
+        {
+            NUMBER => sh(10),
+            TIMES  => sh(11),
+            DIVIDE => sh(12),
+            ')'    => sh(14),
+        },
+
+        # State 10:  unit -> unit NUMBER .
+        {
+            _ => [
+                'reduce', 2, 'unit',
+                sub {
+                    unless ( int( $_[1] ) == $_[1] ) {
+                        ABORT("Nonintegral power $_[1]");
+                        return Zero;
+                    }
+                    unit_power(@_);
+                  }
+            ],
+        },
+
+        # State 11:  unit -> unit TIMES . unit
+        {
+            PREFIX      => sh(1),
+            NUMBER      => sh(2),
+            NAME        => sh(3),
+            FUNDAMENTAL => sh(4),
+            FRACTION    => sh(5),
+            '('         => sh(6),
+            'unit'      => go(15),
+            'constant'  => go(8),
+        },
+
+        # State 12:  unit -> unit DIVIDE . unit
+        {
+            PREFIX      => sh(1),
+            NUMBER      => sh(2),
+            NAME        => sh(3),
+            FUNDAMENTAL => sh(4),
+            FRACTION    => sh(5),
+            '('         => sh(6),
+            'unit'      => go(16),
+            'constant'  => go(8),
+        },
+
+        # State 13:  unit -> unit . TIMES unit
+        #            unit -> unit . DIVIDE unit
+        #            unit -> constant unit .
+        #            unit -> unit . NUMBER
+        {
+            NUMBER => sh(10)
+            ,    # Shift-reduce conflict resolved in favor of shift
+            TIMES => sh(11)
+            ,    # Shift-reduce conflict resolved in favor of shift
+            DIVIDE => sh(12)
+            ,    # Shift-reduce conflict resolved in favor of shift
+            _ => [ 'reduce', 2, 'unit', \&con_multiply ],
+        },
+
+        # State 14: unit => '(' unit ')' .
+        { _ => [ 'reduce', 3, 'unit', sub { $_[1] } ] },
+
+        # State 15: unit  ->  unit . TIMES unit
+        #           unit  ->  unit TIMES unit .
+        #           unit  ->  unit . DIVIDE unit
+        #           unit  ->  unit . NUMBER
+        {
+            NUMBER => sh(10)
+            ,    # Shift-reduce conflict resolved in favor of shift
+            _ => [
+                'reduce', 3,
+                'unit', sub { unit_multiply( $_[0], $_[2] ) }
+            ],
+        },
+
+        # State 16: unit  ->  unit . TIMES unit
+        #           unit  ->  unit DIVIDE unit .
+        #           unit  ->  unit . DIVIDE unit
+        #           unit  ->  unit . NUMBER
+        {
+            NUMBER => sh(10)
+            ,    # Shift-reduce conflict resolved in favor of shift
+            _ => [
+                'reduce', 3,
+                'unit', sub { unit_divide( $_[2], $_[0] ) }
+            ],
+        },
+
+        # State 17: Finishing path
+        { EOF => go(18), },
+
+        # State 18: Final state
+        { _ => ['accept'] },
+    );
 }
 
 sub ABORT {
-	$PARSE_ERROR = shift;
+    $PARSE_ERROR = shift;
 }
 
 sub parse_unit {
-	my ($s) = @_;
-	my $tokens = lex($s);
-	my $STATE = 0;
-	my (@state_st, @val_st);
+    my ($s)    = @_;
+    my $tokens = lex($s);
+    my $STATE  = 0;
+    my ( @state_st, @val_st );
 
-	$PARSE_ERROR = undef;
+    $PARSE_ERROR = undef;
 
-	# Now let's run the parser
-	for (;;) {
-		return Zero if $PARSE_ERROR;
-		my $la = @$tokens ? token_type($tokens->[0]) : 'EOF';
-		print STDERR "Now in state $STATE.  Lookahead type is $la.\n" if $DEBUG_p;
-		print STDERR "State stack is (@state_st).\n" if $DEBUG_p;
-		my $actiontab = $actions[$STATE];
-		my $action = $actiontab->{$la} || $actiontab->{_};
-		unless ($action) {
-			$PARSE_ERROR = 'Syntax error';
-			return Zero;
-		}
-    
-		my ($primary, @actargs) = @$action;
-		print STDERR "  $primary (@actargs)\n" if $DEBUG_p;
-		if ($primary eq 'accept') {
-			return $val_st[0];	# Success!
-		} elsif ($primary eq 'shift') {
-			my $token = shift @$tokens;
-			my $val = token_value($token);
-			push @val_st, $val;
-			push @state_st, $STATE;
-			$STATE = $actargs[0];
-		} elsif ($primary eq 'goto') {
-			$STATE = $actargs[0];
-		} elsif ($primary eq 'reduce') {
-			my ($n_args, $result_type, $semantic) = @actargs;
-			my @arglist;
-			#      push @state_st, 'FAKE';	# So that we only really remove n-1 states
-			while ($n_args--) {
-				push @arglist, pop @val_st;
-				$STATE = pop @state_st;
-			}
-			my $result = $semantic ? &$semantic(@arglist) : $arglist[0];
-			push @val_st, $result;
-			push @state_st, $STATE;
-			#      $STATE = $state_st[-1];
-			print STDERR "Post-reduction state is $STATE.\n" if $DEBUG_p;
-      
-			# Now look for `goto' actions
-			my $goto = $actions[$STATE]{$result_type};
-			unless ($goto && $goto->[0] eq 'goto') {
-				die "No post-reduction goto in state $STATE for $result_type.\n";
-			}
-			print STDERR "goto $goto->[1]\n" if $DEBUG_p;
-			$STATE = $goto->[1];
-		} else {
-			die "Bad primary $primary";
-		}
-	}
+    # Now let's run the parser
+    for ( ; ; ) {
+        return Zero if $PARSE_ERROR;
+        my $la = @$tokens ? token_type( $tokens->[0] ) : 'EOF';
+        print STDERR "Now in state $STATE.  Lookahead type is $la.\n"
+          if $DEBUG_p;
+        print STDERR "State stack is (@state_st).\n" if $DEBUG_p;
+        my $actiontab = $actions[$STATE];
+        my $action = $actiontab->{$la} || $actiontab->{_};
+        unless ($action) {
+            $PARSE_ERROR = 'Syntax error';
+            return Zero;
+        }
+
+        my ( $primary, @actargs ) = @$action;
+        print STDERR "  $primary (@actargs)\n" if $DEBUG_p;
+        if ( $primary eq 'accept' ) {
+            return $val_st[0];    # Success!
+        } elsif ( $primary eq 'shift' ) {
+            my $token = shift @$tokens;
+            my $val   = token_value($token);
+            push @val_st,   $val;
+            push @state_st, $STATE;
+            $STATE = $actargs[0];
+        } elsif ( $primary eq 'goto' ) {
+            $STATE = $actargs[0];
+        } elsif ( $primary eq 'reduce' ) {
+            my ( $n_args, $result_type, $semantic ) = @actargs;
+            my @arglist;
+
+#      push @state_st, 'FAKE';	# So that we only really remove n-1 states
+            while ( $n_args-- ) {
+                push @arglist, pop @val_st;
+                $STATE = pop @state_st;
+            }
+            my $result = $semantic ? &$semantic(@arglist) : $arglist[0];
+            push @val_st,   $result;
+            push @state_st, $STATE;
+
+            #      $STATE = $state_st[-1];
+            print STDERR "Post-reduction state is $STATE.\n"
+              if $DEBUG_p;
+
+            # Now look for `goto' actions
+            my $goto = $actions[$STATE]{$result_type};
+            unless ( $goto && $goto->[0] eq 'goto' ) {
+                die
+"No post-reduction goto in state $STATE for $result_type.\n";
+            }
+            print STDERR "goto $goto->[1]\n" if $DEBUG_p;
+            $STATE = $goto->[1];
+        } else {
+            die "Bad primary $primary";
+        }
+    }
 }
 
-
 sub lex {
-	my ($s) = @_;
-	my @t = split /(
+    my ($s) = @_;
+    my @t = split /(
                    \*{3}        # Special `new unit' symbol
                 |  [()*-]	# Symbol
                 |  \s*(?:\/|\bper\b)\s*      # Division
@@ -497,65 +558,70 @@ sub lex {
 		|  [A-Za-z_][A-Za-z_.]* # identifier
 	        |  \s+		# White space
                 )/ox, $s;
-	@t = grep {$_ ne ''} @t;	# Discard empty and all-white tokens
-	\@t;
+    @t = grep { $_ ne '' } @t;    # Discard empty and all-white tokens
+    \@t;
 }
 
 sub token_type {
-	my ($token) = @_;
-	return $token->[0] if ref $token;
-	return $token if $token =~ /[()]/;
-	return TIMES if $token =~ /^\s+$/;
-	return FUNDAMENTAL if $token eq '***';
-	return DIVIDE if $token =~ /^\s*(\/|\bper\b)\s*$/;
-	return TIMES if $token eq '*' || $token eq '-';
-	return FRACTION if $token =~ /^\d+\|\d+$/;
-	return NUMBER if $token =~ /^[.\d]/;
-	#  return PREFIX if $token =~ /^$PREF/o;
-	return NAME;
+    my ($token) = @_;
+    return $token->[0] if ref $token;
+    return $token if $token =~ /[()]/;
+    return TIMES  if $token =~ /^\s+$/;
+    return FUNDAMENTAL if $token eq '***';
+    return DIVIDE if $token =~ /^\s*(\/|\bper\b)\s*$/;
+    return TIMES if $token eq '*' || $token eq '-';
+    return FRACTION if $token =~ /^\d+\|\d+$/;
+    return NUMBER   if $token =~ /^[.\d]/;
+
+    #  return PREFIX if $token =~ /^$PREF/o;
+    return NAME;
 }
 
 sub token_value {
-	my ($token) = @_;
-	return $token if $token =~ /^([()*\/-]|\s*\bper\b\s*)$/;
-	if ($token =~ /(\d+)\|(\d+)/) {
-		if ($2 == 0) {
-			ABORT("Zero denominator in fraction `$token'");
-			return 0;
-		}
-		return $1/$2;
-		#  } elsif ($token =~ /$PREF/o) {
-		#    $token =~ s/-$//;
-		#    return 10**($PREF{$token});
-	}
-	return $token;				# Perl takes care of the others.
+    my ($token) = @_;
+    return $token if $token =~ /^([()*\/-]|\s*\bper\b\s*)$/;
+    if ( $token =~ /(\d+)\|(\d+)/ ) {
+        if ( $2 == 0 ) {
+            ABORT("Zero denominator in fraction `$token'");
+            return 0;
+        }
+        return $1 / $2;
+
+        #  } elsif ($token =~ /$PREF/o) {
+        #    $token =~ s/-$//;
+        #    return 10**($PREF{$token});
+    }
+    return $token;    # Perl takes care of the others.
 }
 
 sub scan(&$$) {
-    my ($callback,$message,$who) = @_;
+    my ( $callback, $message, $who ) = @_;
 
-    if ($message =~ /^convert\s+(.*?)\s+(in)?to\s+(.+?)\s*$/) {
-        my ($from, $to) = ($1, $3);
+    if ( $message =~ /^convert\s+(.*?)\s+(in)?to\s+(.+?)\s*$/ ) {
+        my ( $from, $to ) = ( $1, $3 );
         my $result;
 
-        my $response = units::convert($from, $to);
+        my $response = units::convert( $from, $to );
 
-        if ($response =~ /Unknown unit `(.*?)'/i) {
-		$result = "I don't know how to convert $from to $to.";
-            if($from =~ /^([0-9]*\s+)?[A-Za-z]{3}$/ and
-               $to =~ /^[A-Za-z]{3}$/ ) {
-               $message =~ s/^convert/exchange/;
-               undef $result;
-               &exchange::scan($callback,$message,$who);
+        if ( $response =~ /Unknown unit `(.*?)'/i ) {
+            $result = "I don't know how to convert $from to $to.";
+            if (    $from =~ /^([0-9]*\s+)?[A-Za-z]{3}$/
+                and $to =~ /^[A-Za-z]{3}$/ )
+            {
+                $message =~ s/^convert/exchange/;
+                undef $result;
+                &exchange::scan( $callback, $message, $who );
             }
-        } elsif($response =~ /^(?:[+-]?)(?=\d|\.\d)\d*(?:\.\d*)?(?:[Ee](?:[+-]?\d+))?/
-                && $response !~ /\bis\b/) {
+        } elsif ( $response =~
+            /^(?:[+-]?)(?=\d|\.\d)\d*(?:\.\d*)?(?:[Ee](?:[+-]?\d+))?/
+            && $response !~ /\bis\b/ )
+        {
             $result = "$from is $response $to.\n";
         } else {
             $result = "$response\n";
         }
 
-        if($result) {
+        if ($result) {
             $callback->($result);
         }
         return 1;
@@ -565,45 +631,46 @@ sub scan(&$$) {
 # Metric prefixes.  These must be powers of ten or change the
 # token_value subroutine
 BEGIN {
-	@UNITTABS = (BOT_UNITTAB);
-	@DEFAULT_UNITTABS = ('');
-	%PREF = (yotta => -24,
-			 zetta => -21,
-			 atto => -18,
-			 femto => -15,
-			 pico => -12,
-			 nano => -9,
-			 micro => -6,
-			 #	      u => -6,
-			 milli => -3,
-			 centi => -2,
-			 deci => -1,
-             penta => 0.698970004336019,
-			 deca => 1,
-			 deka => 1,
-			 hecto => 2,
-			 hect => 2,
-			 kilo => 3,
-			 myria => 4,
-			 mega => 6,
-			 giga => 9,
-			 tera => 12,
-			 zepto => 15,
-			 yocto => 18,
-			);
-	$PREF = join '|', sort {$PREF{$a} <=> $PREF{$b}} (keys %PREF);
-	if (defined $ENV{UNITTAB}) {
-	  @UNITTABS = split /:/, $ENV{UNITTAB} unless @UNITTABS;
-	}
-	@UNITTABS = @DEFAULT_UNITTABS unless @UNITTABS;
-	for (@UNITTABS) {
-		read_defs($_);
-	}
+    @UNITTABS         = (BOT_UNITTAB);
+    @DEFAULT_UNITTABS = ('');
+    %PREF             = (
+        yotta => -24,
+        zetta => -21,
+        atto  => -18,
+        femto => -15,
+        pico  => -12,
+        nano  => -9,
+        micro => -6,
+
+        #	      u => -6,
+        milli => -3,
+        centi => -2,
+        deci  => -1,
+        penta => 0.698970004336019,
+        deca  => 1,
+        deka  => 1,
+        hecto => 2,
+        hect  => 2,
+        kilo  => 3,
+        myria => 4,
+        mega  => 6,
+        giga  => 9,
+        tera  => 12,
+        zepto => 15,
+        yocto => 18,
+    );
+    $PREF = join '|', sort { $PREF{$a} <=> $PREF{$b} } ( keys %PREF );
+    if ( defined $ENV{UNITTAB} ) {
+        @UNITTABS = split /:/, $ENV{UNITTAB} unless @UNITTABS;
+    }
+    @UNITTABS = @DEFAULT_UNITTABS unless @UNITTABS;
+    for (@UNITTABS) {
+        read_defs($_);
+    }
 }
 
-
 sub WARRANTY {
-	print <<EOM
+    print <<EOM
   11. BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
 FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW.  EXCEPT WHEN
 OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
@@ -627,7 +694,7 @@ EOM
 }
 
 sub COPYING {
-	print <<EOM;
+    print <<EOM;
 		    GNU GENERAL PUBLIC LICENSE
 		       Version 2, June 1991
 
@@ -887,8 +954,8 @@ of promoting the sharing and reuse of software generally.
 
 EOM
 
-	WARRANTY();
-	1;
+    WARRANTY();
+    1;
 }
 
 "units";

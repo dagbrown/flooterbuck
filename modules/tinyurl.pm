@@ -8,7 +8,6 @@
 package tinyurl;
 use strict;
 
-
 =head1 NAME
 
 tinyurl.pm - generate a tinyurl from a big long one
@@ -43,7 +42,7 @@ Nickname interface added by Drew Hamilton <awh@awh.org>
 # Check that LWP and POSIX are available, so we don't waste our
 # time generating error messages later on.
 #------------------------------------------------------------------------
-my ($no_tinyurl, $no_posix);
+my ( $no_tinyurl, $no_posix );
 
 BEGIN {
     eval qq{
@@ -64,10 +63,11 @@ BEGIN {
 # in the container you asked for.
 #------------------------------------------------------------------------
 sub snag_element($$) {
-    my $element=shift;
-    my $blob_o_html=shift;
+    my $element     = shift;
+    my $blob_o_html = shift;
 
-    return ($blob_o_html=~/\<$element[^>]*\>(.*?)\<\/$element\>/gis);
+    return (
+        $blob_o_html =~ /\<$element[^>]*\>(.*?)\<\/$element\>/gis );
 }
 
 #------------------------------------------------------------------------
@@ -77,11 +77,11 @@ sub snag_element($$) {
 # man's "lynx -dump".
 #------------------------------------------------------------------------
 sub strip_html($) {
-    my $blob=shift;
+    my $blob = shift;
     chomp $blob;
-    $blob=~s/\<[^>]+\>//g;
-    $blob=~s/\&[a-z]+\;?//g;
-    $blob=~s/\s+/ /g;
+    $blob =~ s/\<[^>]+\>//g;
+    $blob =~ s/\&[a-z]+\;?//g;
+    $blob =~ s/\s+/ /g;
     return $blob;
 }
 
@@ -91,14 +91,14 @@ sub strip_html($) {
 # Given a long URL, return the tinyurl version.
 #------------------------------------------------------------------------
 sub tinyurl_create($) {
-    my $longurl=shift;
+    my $longurl = shift;
 
-    my $response=LWP::Simple::get(
-        'http://www.tinyurl.com/create.php?url='
-        .$longurl);
+    my $response = LWP::Simple::get(
+        'http://www.tinyurl.com/create.php?url=' . $longurl );
 
-    my @stuff=snag_element("blockquote",$response);
-    my ($tinyurl) = snag_element("b",$stuff[1]);
+    my @stuff = snag_element( "blockquote", $response );
+    my ($tinyurl) = snag_element( "b", $stuff[1] );
+
     # my ($newlongurl,$tinyurl) = snag_element("blockquote",$response);
     # $tinyurl = snag_element("b",$tinyurl);
 
@@ -112,13 +112,13 @@ sub tinyurl_create($) {
 # and feed the URL into tinyurl_create.
 #------------------------------------------------------------------------
 sub tinyurl_getdata($) {
-    my $line=shift;
+    my $line = shift;
 
-    if($line =~ /^\s*tinyurl\s+(?:that|please)/i) {
-        return tinyurl_create(::lastURL(::channel()));
-    } elsif($line =~ /tinyurl\s+(\w+:\S+)/i) {
+    if ( $line =~ /^\s*tinyurl\s+(?:that|please)/i ) {
+        return tinyurl_create( ::lastURL( ::channel() ) );
+    } elsif ( $line =~ /tinyurl\s+(\w+:\S+)/i ) {
         return tinyurl_create($1);
-    } 
+    }
 }
 
 #------------------------------------------------------------------------
@@ -127,17 +127,18 @@ sub tinyurl_getdata($) {
 # This handles the forking (or not) stuff.
 #------------------------------------------------------------------------
 sub tinyurl::get($$) {
-    if($no_tinyurl) {
-        &main::status("Sorry, tinyurl.pm requires LWP and couldn't find it");
+    if ($no_tinyurl) {
+        &main::status(
+            "Sorry, tinyurl.pm requires LWP and couldn't find it");
         return "";
     }
 
-    my($line,$callback)=@_;
-    $SIG{CHLD}="IGNORE";
-    my $pid=eval { fork(); };         # Don't worry if OS isn't forking
+    my ( $line, $callback ) = @_;
+    $SIG{CHLD} = "IGNORE";
+    my $pid = eval { fork(); };    # Don't worry if OS isn't forking
     return 'NOREPLY' if $pid;
-    $callback->(&tinyurl_getdata($line));
-    if (defined($pid))                # child exits, non-forking OS returns
+    $callback->( &tinyurl_getdata($line) );
+    if ( defined($pid) )           # child exits, non-forking OS returns
     {
         exit 0 if ($no_posix);
         POSIX::_exit(0);
@@ -149,16 +150,20 @@ sub tinyurl::get($$) {
 #------------------------------------------------------------------------
 
 sub scan(&$$) {
-    my ($callback, $message, $who)=@_;
+    my ( $callback, $message, $who ) = @_;
 
-    if ( ::getparam('tinyurl') and $message =~ /^\s*(tinyurl|shrivel)\s+(\w+:\S+)/i ) {
+    if ( ::getparam('tinyurl')
+        and $message =~ /^\s*(tinyurl|shrivel)\s+(\w+:\S+)/i )
+    {
         &main::status("TinyURL creation");
-        &tinyurl::get($message,$callback);
+        &tinyurl::get( $message, $callback );
         return 1;
     }
-    if ( ::getparam('tinyurl') and $message =~ /^\s*(tinyurl|shrivel)\s+(?:that|please)/i ) {
+    if ( ::getparam('tinyurl')
+        and $message =~ /^\s*(tinyurl|shrivel)\s+(?:that|please)/i )
+    {
         &main::status("auto-TinyURL last URL creation");
-        &tinyurl::get($message,$callback);
+        &tinyurl::get( $message, $callback );
         return 1;
     }
 }

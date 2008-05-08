@@ -4,12 +4,12 @@
 # Tidied up ?
 
 sub IrcActionHook {
-    my ($who, $channel, $message) = @_;
+    my ( $who, $channel, $message ) = @_;
 
     &channel($channel);
-    &process($who, 'public action', $message);
+    &process( $who, 'public action', $message );
 
-    if ($msgType =~ /public/) {
+    if ( $msgType =~ /public/ ) {
         &status("<$who/$channel> $origMessage");
     } else {
         &status("[$who] $origMessage");
@@ -17,55 +17,55 @@ sub IrcActionHook {
 }
 
 sub IrcMsgHook {
-    my ($type, $channel, $who, $message) = @_;
+    my ( $type, $channel, $who, $message ) = @_;
 
-    if ($type =~ /public/i)	{
+    if ( $type =~ /public/i ) {
         &channel($channel);
-        &process($who, $type, $message);
+        &process( $who, $type, $message );
         &status("<$who/$channel> $origMessage");
     }
 
-    if ($type =~ /private/i) {
-        if (($params{'mode'} eq 'IRC') && ($who eq $prevwho)) {
+    if ( $type =~ /private/i ) {
+        if ( ( $params{'mode'} eq 'IRC' ) && ( $who eq $prevwho ) ) {
             $delay = time() - $prevtime;
             $prevcount++;
 
-            return if (($message eq $prevmsg) && ($delay < 10));
+            return if ( ( $message eq $prevmsg ) && ( $delay < 10 ) );
         } else {
             $prevcount = 0;
             $firsttime = time;
         }
 
-        $prevtime = time unless ($message eq $prevmsg);
-        $prevmsg = $message;
-        $prevwho = $who;
-        &process($who, $type, $message);
+        $prevtime = time unless ( $message eq $prevmsg );
+        $prevmsg  = $message;
+        $prevwho  = $who;
+        &process( $who, $type, $message );
         &status("[$who] $origMessage");
     }
     return;
 }
 
 sub hook_dcc_request {
-    my($type, $text) = @_;
-    if ($type =~ /chat/i) {
+    my ( $type, $text ) = @_;
+    if ( $type =~ /chat/i ) {
         &status("received dcc chat request from $who  :  $text");
-        my($locWho) = $who;
+        my ($locWho) = $who;
         $locWho =~ tr/A-Z/a-z/;
         $locWho =~ s/\W//;
-        &docommand("dcc chat ".$who);
-        &msg('='.$who, "Hello, ".$who);
+        &docommand( "dcc chat " . $who );
+        &msg( '=' . $who, "Hello, " . $who );
     }
 
     return '';
 }
 
 sub hook_dcc_chat {
-    my($locWho, $message)=@_;
+    my ( $locWho, $message ) = @_;
     $msgType = "dcc_chat";
-    my($saveWho) = $who;
+    my ($saveWho) = $who;
 
-    $who = "=".$who;
-    &process($who, $msgType, $message);
+    $who = "=" . $who;
+    &process( $who, $msgType, $message );
     $who = $saveWho;
     return '';
 
