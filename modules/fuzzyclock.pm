@@ -145,7 +145,7 @@ sub tzday {
 sub scan(&$$) {
     my ( $callback, $message, $who ) = @_;
 
-    if (   $message =~ /^\s*what time is it in (.*\w)/i
+    if (   $message =~ /^\s*what time is it (?:in|for) (.*\w)/i
         or $message =~ /^\s*worldclock\s+(.*\w)/i )
     {
         if ($no_datetime) {
