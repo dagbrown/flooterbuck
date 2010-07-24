@@ -1,7 +1,5 @@
 # infobot :: Kevin Lenzo & Patrick Cole   (c) 1997
 
-use IO::Socket;
-
 # checks if Japanese messages should be converted to EUC upon
 # receipt.  This should only happen if a) Jcode is available,
 # and b) the user has requested this feature.  This *should*
@@ -12,13 +10,25 @@ eval qq{
 };
 $no_japanese++ if ($@);
 
+eval { require Net::SSL; };
+if ($@) {
+    eval { require IO::Socket::SSL; };
+    if ($@) {
+        $SOCKET_CLASS = "IO::Socket::INET";
+    } else {
+        $SOCKET_CLASS = "IO::Socket::SSL";
+    }
+} else {
+    $SOCKET_CLASS = "Net::SSL";
+}
+
 sub srvConnect {
     my ( $server, $port ) = @_;
 
     my $ipaddr  = inet_aton($server);
     my $ip_num = inet_ntoa($ipaddr);
     &status("Connecting to port $port of server $server ($ip_num)...");
-    my $sock = IO::Socket::INET->new(
+    $sock = $SOCKET_CLASS->new(
         PeerAddr    => $ip_num,
         PeerPort    => $port,
         Proto       => 'tcp',
@@ -27,8 +37,6 @@ sub srvConnect {
         die "connected failed to $server:$port ($@)";
     }
 
-    # Reuse filehandle for compatibility
-    open(SOCK,"+<&=",$sock->fileno());
     &status(" connected.");
 }
 
@@ -421,22 +429,8 @@ sub irc {
 
         $/ = "\015" if $^O eq "MacOS";
 
-        $rin = fhbits('SOCK');
-        while (1) {
-            ( $nfound, $timeleft ) =
-              select( $rout = $rin, undef, undef, 0 );
-            if ( $rout & SOCK ) {
-                if ( sysread( SOCK, $buf, 1 ) <= 0 ) {
-                    last;
-                }
-                if ( $buf =~ /\n/ ) {
-                    $line .= $buf;
-                    sparse($line);
-                    undef $line;
-                } else {
-                    $line .= $buf;
-                }
-            }
+        while( defined($buf = $sock->getline()) ) {
+            sparse($buf);
         }
     }
 }
@@ -461,7 +455,7 @@ sub sparse {
     } elsif (/^:([\d\w\_\-\/]+\.[\.\d\w\_\-\/]+) NOTICE ($ident) :(.*)/)
     {
         &status("\-\[$1\]- $3");
-    } elsif (/^NOTICE (.*) :(.*)/) {
+    } elsif (/NOTICE (.*) :(.*)/) {
         serverNotice( $1, $2 );
     } elsif (/^:NickServ!s\@NickServ NOTICE \S+ :(.*)/i) {
         &nickServ($1);       # added by the xk.

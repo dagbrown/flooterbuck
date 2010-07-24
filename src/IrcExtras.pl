@@ -1,7 +1,5 @@
 # infobot :: Kevin Lenzo (c) 1999
 
-use Socket;
-
 # checks if Japanese messages should be converted to EUC upon
 # receipt.  This should only happen if a) Jcode is available,
 # and b) the user has requested this feature.  This *should*
@@ -98,7 +96,7 @@ sub quit {
     my $quitmsg = $_[0];
     rawout("QUIT :$quitmsg");
     &status("QUIT $param{nick} has quit IRC ($quitmsg)");
-    close(SOCK);
+    close($sock);
 }
 
 sub nick {
@@ -173,9 +171,8 @@ sub rawout {
     }
 
     $buf =~ s/\n//gi;
-    select(SOCK);
     $| = 1;
-    print SOCK "$buf\n";
+    print $sock "$buf\n";
     select(STDOUT);
 }
 
