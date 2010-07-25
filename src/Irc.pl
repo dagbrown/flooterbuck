@@ -10,25 +10,37 @@ eval qq{
 };
 $no_japanese++ if ($@);
 
-eval { require Net::SSL; };
-if ($@) {
-    eval { require IO::Socket::SSL; };
-    if ($@) {
-        $SOCKET_CLASS = "IO::Socket::INET";
-    } else {
-        $SOCKET_CLASS = "IO::Socket::SSL";
-    }
-} else {
-    $SOCKET_CLASS = "Net::SSL";
-}
-
 sub srvConnect {
     my ( $server, $port ) = @_;
 
+    my $socket_class;
+    if ( $param{ssl} ) {
+        eval { require Net::SSL; };
+        if ($@) {
+            eval { require IO::Socket::SSL; };
+            if ($@) {
+                die "SSL requires Net::SSL or IO::Socket::SSL";
+            } else {
+                $socket_class = "IO::Socket::SSL";
+            }
+        } else {
+            $socket_class = "Net::SSL";
+        }
+    } else {
+        require IO::Socket::INET;
+        $socket_class = "IO::Socket::INET";
+    }
+
     my $ipaddr  = inet_aton($server);
     my $ip_num = inet_ntoa($ipaddr);
-    &status("Connecting to port $port of server $server ($ip_num)...");
-    $sock = $SOCKET_CLASS->new(
+    if ( exists $param{ssl} ) {
+        &status("Connecting to port $port of server $server ".
+            "($ip_num) via ssl...");
+    } else {
+        &status("Connecting to port $port of server $server ".
+            "($ip_num)...");
+    }
+    $sock = $socket_class->new(
         PeerAddr    => $ip_num,
         PeerPort    => $port,
         Proto       => 'tcp',

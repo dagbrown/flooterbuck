@@ -108,6 +108,10 @@ server           irc.example.com
 port             6667
 allowed_channels #infobot #$ident
 
+# ssl support... requires Net::SSL or IO::Socket::SSL
+# 1 = enable, 0 otherwise
+ssl              0
+
 # channels to join
 # use #channel,key (thanks to tile++) for keyed channels
 
