@@ -15,16 +15,11 @@ sub srvConnect {
 
     my $socket_class;
     if ( $param{ssl} ) {
-        eval { require Net::SSL; };
+        eval { require IO::Socket::SSL; };
         if ($@) {
-            eval { require IO::Socket::SSL; };
-            if ($@) {
-                die "SSL requires Net::SSL or IO::Socket::SSL";
-            } else {
-                $socket_class = "IO::Socket::SSL";
-            }
+            die "SSL requires Net::SSL or IO::Socket::SSL";
         } else {
-            $socket_class = "Net::SSL";
+            $socket_class = "IO::Socket::SSL";
         }
     } else {
         require IO::Socket::INET;
@@ -35,7 +30,7 @@ sub srvConnect {
     my $ip_num = inet_ntoa($ipaddr);
     if ( exists $param{ssl} ) {
         &status("Connecting to port $port of server $server ".
-            "($ip_num) via ssl...");
+            "($ip_num) with ssl...");
     } else {
         &status("Connecting to port $port of server $server ".
             "($ip_num)...");
