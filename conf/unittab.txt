@@ -138,6 +138,7 @@ stere   m3
 floz    29.573 ml      # `floz' means `fluid ounce', which is different
                        # from `ounce', which is a measurement of mass.
                        # See `pound' below for more details.
+fluid   29.573ml/oz    # for "fluid ounce"
 fldram  1|8 floz
 minim   1|60 fldram
 cup     8 floz
@@ -568,19 +569,34 @@ quire           50 sheets
 ream            10 quires
 
 # INFORMATION
-byte		8 bits
-kbyte           1024 bytes   # `kilobyte' means 1000    bytes
+byte 8 bits
+KiB 1024 bytes
+Kibyte KiB
 # Don't use `K'; that's for Kelvins.
-kb              kbyte
-Kb              kbyte
-KB              kbyte
-mbyte           1024 kbytes  # `megabyte' means 1000000 bytes
-meg             mbyte
-kbit		1024 bits
-Kbit		kbit
-mbit		1024 kbits
-Mbit		mbit
-baud            bit/sec      # Not strictly correct
+kbyte KiB # `kilobyte' means 1000 bytes
+# Informal uses of the unit
+kb KiB
+Kb KiB
+KB KiB # not strictly
+MiB 1024 KiB
+Mibyte MiB
+mbyte MiB # `megabyte' means 1000000 bytes
+meg MiB
+GiB 1024 MiB
+Gibyte GiB
+TiB 1024 GiB
+Tibyte TiB
+PiB 1024 TiB
+Pibyte PiB
+
+kbit 1000 bits
+Kbit kbit
+mbit 1000 kbits
+Mbit mbit
+
+Kibit 1024 bits
+Mibit 1024 Kibit
+Gibit 1024 Mibit
 
 # MONEY
 # all this crap removed by awh@awh.org since we have a proper exchange
