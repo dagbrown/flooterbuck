@@ -149,8 +149,6 @@ sub aviation {
 sub metar {
     my $line = shift;
     my $parse = shift;
-    print $line;
-    print "\n";
     if ( $line =~ /metar\s+(for\s+)?(.*)/i or $line =~ /conditions\s+(for\s+)?(.*)/i) {
 
      # ICAO airport codes *can* contain numbers, despite earlier claims.
@@ -158,8 +156,6 @@ sub metar {
      # *usually* guess what they mean by prepending a 'K'. The author,
      # being Canadian, is similarly lazy.
         my $site_id = uc($2);
-	print $site_id;
-	print "\n";
         $site_id =~ s/[.?!]$//;
         $site_id =~ s/\s+$//g;
         return "'$site_id' doesn't look like a valid ICAO airport identifier."
