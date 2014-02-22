@@ -33,13 +33,16 @@
 #              to support more airports
 #            - Initial heading is now calculated internally with standard
 #              algorithm from http://williams.best.vwh.net/avform.htm.
+# 2012/12/19 matt@knm.org.uk
+#            - Added support for Geo::TAF module to parse METAR and TAF
+#              results into English
 #
 # $Id: aviation.pm,v 1.5 2005/08/31 13:39:08 rich_lafferty Exp $
 #------------------------------------------------------------------------
 
 package aviation;
 
-my ( $no_aviation, $no_entities, $no_posix );
+my ( $no_aviation, $no_entities, $no_posix, $no_parsing );
 my $pi = 3.1415926535;
 
 BEGIN {
@@ -51,6 +54,8 @@ BEGIN {
     if ($@) { $no_posix++ }
     eval "use HTML::TokeParser";
     if ($@) { $no_aviation++ }
+    eval "use Geo::TAF";
+    if ($@) { $no_parsing++ }
 }
 
 # Set the following to 1 if you want the forecast separators in
@@ -75,7 +80,9 @@ sub aviation::scan(&$$) {
            defined( ::getparam('aviation') )
         or defined( ::getparam('metar') )
         and $message =~ /^(metar             |
+                           conditions        |
                            taf               |
+                           forecast          |
                            great[-\s]?circle | 
                            zulutime          |
                            tsd               |
@@ -105,6 +112,8 @@ sub aviation::get {
     return 'NOREPLY' if $pid;  # parent does nothing
     if    ( $line =~ /^metar\s+/i ) { $callback->( metar($line) ) }
     elsif ( $line =~ /^taf\s+/i )   { $callback->( taf($line) ) }
+    elsif ( $line =~ /^conditions\s+/i )   { $callback->( metar($line,1) ) }
+    elsif ( $line =~ /^forecast\s+/i )   { $callback->( taf($line,1) ) }
     elsif ( $line =~ /^great[-\s]?circle\s+/i ) {
         $callback->( greatcircle($line) );
     } elsif ( $line =~ /^tsd\s+/i ) {
@@ -131,7 +140,7 @@ sub aviation::get {
 # aviation - list available aviation functions
 #
 sub aviation {
-    return "My aviation-related functions are metar, taf, great-circle, tsd, zulutime, rh, and airport. For help with any, ask me about '<function name> help'.";
+    return "My aviation-related functions are metar, conditions, taf, forecast, great-circle, tsd, zulutime, rh, and airport. For help with any, ask me about '<function name> help'.";
 }
 
 #
@@ -139,7 +148,8 @@ sub aviation {
 #
 sub metar {
     my $line = shift;
-    if ( $line =~ /^metar\s+(for\s+)?(.*)/i ) {
+    my $parse = shift;
+    if ( $line =~ /metar\s+(for\s+)?(.*)/i or $line =~ /conditions\s+(for\s+)?(.*)/i) {
 
      # ICAO airport codes *can* contain numbers, despite earlier claims.
      # Americans tend to use old FAA three-letter codes; luckily we can
@@ -155,7 +165,7 @@ sub metar {
         $site_id = "K" . $site_id if length($site_id) == 3;
 
         # HELP isn't an airport, so we use it for a reference work.
-        return "For observations, ask me 'metar <code>'. For information on decoding Aerodrome Weather Observations (METAR), see http://www.avweb.com/weather/metartaf.html"
+        return "For observations, ask me 'metar <code>'. For information on decoding Aerodrome Weather Observations (METAR), see http://www.avweb.com/weather/metartaf.html - or use 'conditions <code>'"
           if $site_id eq 'HELP';
 
         my $metar_url =
@@ -186,7 +196,13 @@ sub metar {
         return "I can't find any observations for $site_id."
           if length($metar) < 10;
 
-        return $metar;
+	if($no_parsing or not $parse){
+          return $metar;
+	} else {
+          my $t = new Geo::TAF;
+	  $t->metar($metar);
+          return $t->as_string;
+	}
     } else {
 
         # malformed
@@ -199,7 +215,8 @@ sub metar {
 #
 sub taf {
     my $line = shift;
-    if ( $line =~ /^taf\s+(for\s+)?(.*)/i ) {
+    my $parse = shift;
+    if ( $line =~ /^taf+\s+(for\s+)?(.*)/i or $line =~ /^forecast+\s+(for\s+)?(.*)/i ) {
 
      # ICAO airport codes *can* contain numbers, despite earlier claims.
      # Americans tend to use old FAA three-letter codes; luckily we can
@@ -215,7 +232,7 @@ sub taf {
         $site_id = "K" . $site_id if length($site_id) == 3;
 
         # HELP isn't an airport, so we use it for a reference work.
-        return "For a forecast, ask me 'taf <ICAO code>'. For information on decoding Terminal Area Forecasts, see http://www.avweb.com/toc/metartaf.html"
+        return "For a forecast, ask me 'taf <ICAO code>'. For information on decoding Terminal Area Forecasts, see http://www.avweb.com/toc/metartaf.html or use 'forecast <ICAO code>'"
           if $site_id eq 'HELP';
 
         my $taf_url =
@@ -254,7 +271,13 @@ sub taf {
         return "I can't find any forecast for $site_id."
           if length($taf) < 10;
 
-        return $taf;
+	if($no_parsing or not $parse){
+          return $taf;
+	} else {
+          my $t = new Geo::TAF;
+	  $t->taf($taf);
+          return $t->as_string;
+	}
     } else {
 
         # malformed
